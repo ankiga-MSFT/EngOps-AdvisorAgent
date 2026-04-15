@@ -406,3 +406,10 @@ venv.bak/
 # Azure Functions local settings
 local.settings.json
 /CXOAI/DotNet/UtilityApps/CXOAI/SkillTester/secret.json
+
+# VitePress build output and cache
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+
+# npm lock file (regenerated from package.json)
+docs/package-lock.json
