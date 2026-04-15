@@ -73,7 +73,7 @@ const ExportUtils = (() => {
     function exportToPDF(contentEl, filename) {
         const pdfStyles = `
           <style>
-            body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 10pt; color: #2d2d2d; line-height: 1.7; }
+            body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 10pt; color: #2d2d2d; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word; }
             h1 { font-size: 18pt; color: #1a3a6b; border-bottom: 2px solid #2672d9; padding-bottom: 5px; margin-top: 20px; }
             h2 { font-size: 14pt; color: #2672d9; margin-top: 18px; }
             h3 { font-size: 11pt; color: #16825d; font-style: italic; margin-top: 14px; }
@@ -81,14 +81,14 @@ const ExportUtils = (() => {
             p { margin: 5px 0; }
             strong { color: #1a1a1a; }
             em { color: #555; }
-            table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-            th { background: #2672d9; color: #fff; font-weight: bold; padding: 6px 10px; text-align: left; font-size: 9pt; border: 1px solid #1a5bb5; }
-            td { border: 1px solid #d1d1d1; padding: 5px 10px; text-align: left; font-size: 9pt; }
+            table { border-collapse: collapse; width: 100%; margin: 12px 0; table-layout: fixed; }
+            th { background: #2672d9; color: #fff; font-weight: bold; padding: 6px 8px; text-align: left; font-size: 8pt; border: 1px solid #1a5bb5; word-break: break-word; overflow-wrap: break-word; }
+            td { border: 1px solid #d1d1d1; padding: 5px 8px; text-align: left; font-size: 8pt; word-break: break-word; overflow-wrap: break-word; }
             tr:nth-child(even) td { background: #f4f7fb; }
             ul, ol { margin: 6px 0; padding-left: 22px; }
             li { margin-bottom: 3px; }
-            code { font-family: Consolas, monospace; background: #f0f4f8; padding: 1px 4px; font-size: 9pt; color: #c4314b; border-radius: 2px; }
-            pre { background: #f8f8f8; padding: 8px 12px; font-size: 9pt; border: 1px solid #ddd; border-radius: 3px; overflow-x: auto; }
+            code { font-family: Consolas, monospace; background: #f0f4f8; padding: 1px 4px; font-size: 8pt; color: #c4314b; border-radius: 2px; word-break: break-all; }
+            pre { background: #f8f8f8; padding: 8px 12px; font-size: 8pt; border: 1px solid #ddd; border-radius: 3px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
             pre code { background: none; color: inherit; padding: 0; }
             hr { border: none; border-top: 1px solid #e0e0e0; margin: 14px 0; }
             blockquote { border-left: 3px solid #2672d9; padding-left: 10px; color: #555; font-style: italic; margin: 10px 0; }
@@ -100,11 +100,11 @@ const ExportUtils = (() => {
             wrapper.innerHTML = pdfStyles + cleanContentForExport(contentEl);
 
             const opt = {
-                margin: [12, 12, 12, 12],
+                margin: [10, 10, 10, 10],
                 filename: filename || 'advisor-response.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                html2canvas: { scale: 2, useCORS: true, scrollY: 0, width: 1120 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
                 pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
             html2pdf().set(opt).from(wrapper).save();
