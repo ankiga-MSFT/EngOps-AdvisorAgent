@@ -1,5 +1,0 @@
-.create-or-alter function with (folder = "ADF", docstring = "Get IcmL2Aggregate Change Feed Count", skipvalidation = "true") GetIcmL2AggregateChangeFeedCount(startTime:datetime, endtime:datetime, batch:int, index:int) {
-let skiprow=batch*index;
-let latestl2aggregates=ChangeFeedPipelineIcmL2Aggregate|summarize arg_max(ExecutionTime,*) by IncidentIdCloud;
-latestl2aggregates|order by EventCreatedTime asc| extend rownum=row_number()|where rownum >skiprow|take batch| count
-} 

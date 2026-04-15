@@ -1,3 +1,0 @@
-.create-or-alter   materialized-view  with ( folder='SRICM',docString='IncidentLinkage Latest Event',autoUpdateSchema=true) IncidentLinkageView on table IncidentLinkage { IncidentLinkage
-        | summarize arg_max(EventDateTime, *)
-        by CaseNumber } 

@@ -1,1 +1,0 @@
-.create-merge table ValidationRatioICMLinkages_Staging (CaseNumber:string, IncidentId:string, Action:string, Processtimestamp:datetime, IcMCloud:string, Reason:string, Source:string)

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RunSettings>
-  <RunConfiguration>
-    <EnvironmentVariables>
-      <AppStorageAccountName>stmcxoaitestccan</AppStorageAccountName>
-      <AppEnvironmentName>test</AppEnvironmentName>
-    </EnvironmentVariables>
-  </RunConfiguration>
-</RunSettings>

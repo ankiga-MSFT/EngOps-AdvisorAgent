@@ -1,1 +1,0 @@
-.create-merge table ChangeFeedPipelineIcmL2Aggregate (IncidentIdCloud:string, EventCreatedTime:datetime, ExecutionTime:datetime) with (folder = "ADF", docstring = "L2Aggregate change feed pipeline helper tracker")  

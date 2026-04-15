@@ -1,1 +1,0 @@
-.create-merge table RatioLinkage(CaseNumber:string, Linkages:dynamic, EventType:string, EntityType:string , EntityAction:string , EntityEventDateTime:datetime , EntityID:string , CreatedBy:string , ModifiedBy:string , CreatedOn:datetime , ModifiedOn:datetime, EventDateTime:datetime, CosmosDbTs:long, Content:dynamic);

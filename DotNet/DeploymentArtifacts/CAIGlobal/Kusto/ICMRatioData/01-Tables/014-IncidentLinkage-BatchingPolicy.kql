@@ -1,1 +1,0 @@
-.alter table IncidentLinkage policy ingestionbatching ``` { "MaximumBatchingTimeSpan" : "00:00:10", "MaximumNumberOfItems" : 100, "MaximumRawDataSizeMB": 1024 } ```

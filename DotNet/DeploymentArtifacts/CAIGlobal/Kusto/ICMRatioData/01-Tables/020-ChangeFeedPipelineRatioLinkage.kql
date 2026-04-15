@@ -1,1 +1,0 @@
-.create-merge table ChangeFeedPipelineRatioLinkage (CaseNumber:string, EventDateTime:datetime, ExecutionTime:datetime) with (folder = "ADF", docstring = "Ratio Linkage missing change feed pipeline helper tracker") 

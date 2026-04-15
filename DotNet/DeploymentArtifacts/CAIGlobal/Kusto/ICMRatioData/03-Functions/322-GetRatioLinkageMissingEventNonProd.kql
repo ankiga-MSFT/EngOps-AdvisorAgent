@@ -1,4 +1,0 @@
-.create-or-alter function with (folder = "ADF", docstring = "Get Missing Ratio Linkage ", skipvalidation = "true") GetRatioLinkageMissingEventNonProd(executionTime:datetime) {
-let dt=datatable(CaseNumber:string,EventDateTime:datetime,ExecutionTime:datetime)[];
-dt| project CaseNumber,EventDateTime,ExecutionTime
-} 

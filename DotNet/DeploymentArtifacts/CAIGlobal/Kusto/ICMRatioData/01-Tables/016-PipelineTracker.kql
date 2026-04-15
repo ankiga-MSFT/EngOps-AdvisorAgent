@@ -1,1 +1,0 @@
-.create-merge table PipelineTracker (['count']:int, index:int, PipelineName:string, ExecutionTime:datetime) with (folder = "ADF", docstring = "ICMLinkage pipeline tracker")  

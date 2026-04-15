@@ -1,1 +1,0 @@
-.create-merge table ChangeFeedPipelineSRChange (CaseNumber:string, ModifiedOn:datetime, ExecutionTime:datetime) with (folder = "ADF", docstring = "ICMLinkage change feed pipeline helper for SRChange")  

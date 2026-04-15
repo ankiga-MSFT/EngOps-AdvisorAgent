@@ -1,3 +1,0 @@
-.create-or-alter   materialized-view  with ( folder='SRICM',docString='SR Change Latest Event',autoUpdateSchema=true) SRChangeView on table SRChange { SRChange
-        | summarize arg_max(EventDateTime, *)
-        by CaseNumber } 

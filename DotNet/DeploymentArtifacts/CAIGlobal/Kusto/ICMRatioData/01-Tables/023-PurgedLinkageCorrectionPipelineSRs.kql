@@ -1,1 +1,0 @@
-.create-merge table PurgedLinkageCorrectionPipelineSRs (CaseNumber:string, ModifiedOn:datetime, ExecutionTime:datetime) with (folder = "ADF", docstring = "Purged Linkage Correction PipelineSRs") 

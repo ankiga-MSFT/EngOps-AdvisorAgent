@@ -1,5 +1,0 @@
-.create-or-alter function with (folder = "ADF", docstring = "Get IncidentLinkage Change Feed Count", skipvalidation = "true") GetIncidentLinkageChangeFeedCount(startTime:datetime, endtime:datetime, batch:int, index:int) {
-let skiprow=batch*index;
-let latestIncidentLinkages=ChangeFeedPipelineIncidentLinkage|summarize arg_max(ExecutionTime,*) by CaseNumber;
-latestIncidentLinkages|order by EventDateTime asc| extend rownum=row_number()|where rownum >skiprow|take batch| count
-} 

@@ -1,7 +1,0 @@
-.create-or-alter function with (folder = "SRICM", docstring = "Return latest snapshot data from cold path that is more recent than hot path", skipvalidation = "true") GetSRDataBySRNumbers(SupportRequestNumbers:dynamic) {
-    SrSnapshot
-    | where CaseNumber  in (SupportRequestNumbers)
-    | summarize arg_max(EventDateTime, *) by CaseNumber
-    | where SREventActionType != 'Delete'
-    | project CaseNumber, SREventActionType, CritSit, State, Severity, Status, Product, LinkedICMs, ModifiedOn, CreatedOn, ModifiedBy, CreatedBy, DataBoundary, AzureSubscriptionId, Customers, SupportTopicTitle, SupportRegion, ResourceId, AgentId, Age, ResolvedDateTime, TenantId
-} 

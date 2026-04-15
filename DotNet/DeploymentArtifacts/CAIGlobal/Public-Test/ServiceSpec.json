@@ -1,8 +1,0 @@
-{
-  "contentVersion": "1.0.0.0",
-  "description": "CAIGLOBAL Service Specification",
-  "identifier": "61b4b63c-3588-445e-a558-5352b1bd06c2",
-  "ownerGroupContactEmail": "duvenkatteam@microsoft.com",
-  "policyCheckEnabled": false,
-  "providerType": "ServiceTree"
-}
