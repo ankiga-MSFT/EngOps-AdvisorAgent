@@ -1,0 +1,66 @@
+{
+  "OpenTelemetrySettings": {
+    "ServiceName": "CXOAIFunctions",
+    "ServiceNameSpace": "CXOAI",
+    "SourceName": "CXOAIFunctions",
+    "GenevaInstrumentation": {
+      "AccountName": "AssistantAITest",
+      "Namespace": "AssistantAITest",
+      "EtwSessionConnectionName": "OpenTelemetry",
+      "Tenant": "cxoai-public-test",
+      "Cloud": "public",
+      "LatencySliMetricName": "LatencySLI",
+      "CounterMeterMetricName": "CounterMeter",
+      "CustomFields": [
+        "OperationName",
+        "SessionId",
+        "StepName",
+        "SkillName",
+        "gen_ai.request.model",
+        "gen_ai.response.model",
+        "gen_ai.usage.input_tokens",
+        "gen_ai.usage.output_tokens",
+        "gen_ai.operation.name"
+      ]
+    }
+  },
+  "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT": "true",
+  "AzureOpenAIEndpoint": "https://aoi-cxpes-test-llm-1.openai.azure.com/",
+  "AzureSignalRConnectionString": "https://cxo-signalr-service.service.signalr.net",
+  "AzureOpenAIModelName": "gpt-5.2",
+  "AzureOpenAIModelNameV2": "gpt-4o-mini",
+  "EmbeddingDeployment": "text-embedding-3-small",
+  "SearchServiceEndpoint": "https://srch-cxpes-test-cxoai.search.windows.net",
+  "SearchIndexName": "cxoaiconfigurationstore",
+  "KeyVaultUrl": "https://kv-assistai-test-llm.vault.azure.net/",
+  "ArtifactBlobEndpoint": "https://sacxoaiaftestccan.blob.core.windows.net",
+  "ArtifactBlobContainerName": "reporttoolcontainer",
+  "ApplicationInsightsConnectionString": "",
+  "ServiceTreeId": "6a4a682c-8712-4efe-a8e6-bf5745d2ce52",
+  "cosmosDbsMaps": {
+    "MemoryStore": {
+      "databaseId": "CXOAI",
+      "containerId": "MemoryStore",
+      "leaseDatabaseId": "CXOAI",
+      "leaseContainerId": "memory-leases",
+      "accountEndpoint": "https://cdb-assistai-test.documents.azure.com:443/"
+    },
+    "ConversationStore": {
+      "databaseId": "CXOAI",
+      "leaseDatabaseId": "CXOAI",
+      "leaseContainerId": "conversations-leases",
+      "containerId": "ConversationStore",
+      "accountEndpoint": "https://cdb-assistai-test.documents.azure.com:443/"
+    },
+    "ConfigurationStore": {
+      "databaseId": "CXOAI",
+      "containerId": "ConfigurationStore",
+      "leaseContainerId": "configurations-leases",
+      "accountEndpoint": "https://cdb-assistai-test.documents.azure.com:443/"
+    }
+  },
+  "kustoDbConfig": {
+    "kustoClusterUrl": "https://supportadxwus3test.westus3.kusto.windows.net/",
+    "kustoDatabaseName": "ICMRatioData"
+  }
+}

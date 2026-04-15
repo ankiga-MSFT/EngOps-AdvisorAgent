@@ -1,0 +1,185 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "11984719653427064047"
+    }
+  },
+  "parameters": {
+    "PfunctionName": {
+      "type": "string"
+    },
+    "PstorageAccountName": {
+      "type": "string"
+    },
+    "PappInsightConnectionString": {
+      "type": "string"
+    },
+    "PBlobContainerName": {
+      "type": "string"
+    },
+    "PFunctionAppArtifactBlobFileName": {
+      "type": "string"
+    },
+    "PAppEnviromentName": {
+      "type": "string"
+    },
+    "PsourceEventHubNameSpace": {
+      "type": "string"
+    },
+    "PsourceEventHubName": {
+      "type": "string"
+    },
+    "PsourceEventHubConsumerGroup": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "storageEndpointSuffix": "[environment().suffixes.storage]",
+    "msdeployPackageUrl": "[format('https://{0}.blob.{1}/{2}/{3}', parameters('PstorageAccountName'), variables('storageEndpointSuffix'), parameters('PBlobContainerName'), parameters('PFunctionAppArtifactBlobFileName'))]",
+    "allowCors": [
+      "https://ms.portal.azure.com"
+    ],
+    "storageQueueUrl": "[format('https://{0}.queue.{1}/', parameters('PstorageAccountName'), variables('storageEndpointSuffix'))]",
+    "storageBlobUrl": "[format('https://{0}.blob.{1}/', parameters('PstorageAccountName'), variables('storageEndpointSuffix'))]",
+    "sourceEventHubNameSpaceConnectionString": "[format('{0}.servicebus.windows.net', parameters('PsourceEventHubNameSpace'))]",
+    "BASE_APPSETTINGS": [
+      {
+        "name": "SourceEventhubNameSpaceConnectionString__fullyQualifiedNamespace",
+        "value": "[variables('sourceEventHubNameSpaceConnectionString')]",
+        "slotSetting": false
+      },
+      {
+        "name": "StorageConnectionString__blobserviceUri",
+        "value": "[variables('storageBlobUrl')]",
+        "slotSetting": false
+      },
+      {
+        "name": "StorageConnectionString__queueserviceUri",
+        "value": "[variables('storageQueueUrl')]",
+        "slotSetting": false
+      },
+      {
+        "name": "SourceEventhubName",
+        "value": "[parameters('PsourceEventHubName')]",
+        "slotSetting": false
+      },
+      {
+        "name": "SourceConsumerGroup",
+        "value": "[parameters('PsourceEventHubConsumerGroup')]",
+        "slotSetting": false
+      },
+      {
+        "name": "ApplicationName",
+        "value": "[parameters('PfunctionName')]",
+        "slotSetting": false
+      },
+      {
+        "name": "AppEnvironmentName",
+        "value": "[parameters('PAppEnviromentName')]",
+        "slotSetting": false
+      },
+      {
+        "name": "AppLocationName",
+        "value": "[resourceGroup().location]",
+        "slotSetting": false
+      },
+      {
+        "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+        "value": "[parameters('PappInsightConnectionString')]",
+        "slotSetting": false
+      },
+      {
+        "name": "AzureWebJobsStorage__accountName",
+        "value": "[parameters('PstorageAccountName')]",
+        "slotSetting": false
+      },
+      {
+        "name": "WEBSITE_RUN_FROM_PACKAGE",
+        "value": "[variables('msdeployPackageUrl')]",
+        "slotSetting": false
+      },
+      {
+        "name": "WEBSITE_CONTENTOVERVNET",
+        "value": "1",
+        "slotSetting": false
+      },
+      {
+        "name": "WEBSITE_HEALTHCHECK_MAXPINGFAILURES",
+        "value": "10",
+        "slotSetting": false
+      },
+      {
+        "name": "FUNCTIONS_EXTENSION_VERSION",
+        "value": "~4",
+        "slotSetting": false
+      },
+      {
+        "name": "FUNCTIONS_INPROC_NET8_ENABLED",
+        "value": "0",
+        "slotSetting": false
+      },
+      {
+        "name": "FUNCTIONS_WORKER_RUNTIME",
+        "value": "dotnet-isolated",
+        "slotSetting": false
+      },
+      {
+        "name": "DiagnosticServices_EXTENSION_VERSION",
+        "value": "~3",
+        "slotSetting": true
+      },
+      {
+        "name": "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG",
+        "value": "true",
+        "slotSetting": false
+      },
+      {
+        "name": "WEBSITE_FIRST_PARTY_ID",
+        "value": "AntMDS",
+        "slotSetting": false
+      },
+      {
+        "name": "WEBSITE_NODE_DEFAULT_VERSION",
+        "value": "6.7.0",
+        "slotSetting": false
+      }
+    ],
+    "STAGING_SLOT_SETTINGS": [
+      {
+        "name": "cxoaihubName",
+        "value": "staging",
+        "slotSetting": true
+      }
+    ],
+    "STAGING_SETTINGS": "[concat(variables('BASE_APPSETTINGS'), variables('STAGING_SLOT_SETTINGS'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites/slots",
+      "apiVersion": "2021-02-01",
+      "name": "[format('{0}/{1}', parameters('PfunctionName'), 'staging')]",
+      "kind": "functionapp",
+      "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "reserved": true,
+        "httpsOnly": true,
+        "keyVaultReferenceIdentity": "SystemAssigned",
+        "siteConfig": {
+          "alwaysOn": true,
+          "appSettings": "[variables('STAGING_SETTINGS')]",
+          "cors": {
+            "allowedOrigins": "[variables('allowCors')]",
+            "supportCredentials": true
+          }
+        }
+      }
+    }
+  ]
+}

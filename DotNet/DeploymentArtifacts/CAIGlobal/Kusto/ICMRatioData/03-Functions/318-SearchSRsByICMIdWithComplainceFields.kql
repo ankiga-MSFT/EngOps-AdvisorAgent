@@ -1,0 +1,7 @@
+.create-or-alter function with (folder = "SRICM", docstring = "Returns The SRs linked with the ICM with L2 aggregation with complaince fields", skipvalidation = "true") SearchSRsByICMIdWithComplainceFields(IcmIds:dynamic, IcmDataboundary:string="PUBLIC") {
+let icmdata=SearchSRsByICMId(IcmIds,IcmDataboundary);
+let casenumbers=toscalar(icmdata | summarize make_list(SupportRequestNumber));
+let support=database('AceHubSupportData').GetSRComplianceFieldsByCaseNumber(casenumbers);
+icmdata| join kind=inner support on $left.SupportRequestNumber==$right.CaseNumber | project-away CaseNumber | extend ProductFamily=tostring(Product.productFamily)| extend CloudName=iif(IsM365==true,'M365',iff(ProductFamily=='Azure','Azure',iff(ProductFamily =='Dynamics','Dynamics','Misc')))
+|project-away IsM365,ProductFamily
+} 

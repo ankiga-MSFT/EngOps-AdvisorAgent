@@ -1,0 +1,10 @@
+.create-or-alter function with (folder = "SRICM/Reconciliation", docstring = "Return latest snapshot data from cold path that is more recent than hot path, in json format", skipvalidation = "true") GetSRSnapshotReconciliationDataJson(windowoffsethours:int=-4) {
+    GetSRSnapshotReconciliationData(windowoffsethours)
+    | project 
+        CaseNumber
+        , IncidentId=''// Can populate this if needed
+        , IcMCloud= '' // Can populate this for this data if needed.
+        , EventDateTime
+        , Type="SNAPSHOT"
+        , Content=bag_merge(Content, bag_pack("SdpServiceName", 'CXOAI', "ReconcileProccessTime",now()))
+} 

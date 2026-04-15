@@ -1,0 +1,54 @@
+{
+  "Name": "executive_summary_customer_workload",
+  "Domain": "support",
+  "IsActive": true,
+  "PluginType": "Cosmos",
+  "Description": "Provides a detailed executive summary for a customer or workload, including performance monitoring, advisor recommendations, outage istory, support cases, active engagements, consumption trends, resiliency score trends, and upcoming service retirements.",
+  "Keywords": [
+    "executive summary",
+    "customer summary",
+    "workload summary",
+    "Customer health overview",
+    "workload health overview",
+    "CXO summary",
+    "leadership summary"
+  ],
+  "SupportedEntityTypes": [
+    "customer",
+    "workload"
+  ],
+  "DataSource": {
+    "SourceType": "cosmos",
+    "SkipGuardrails": [
+      "view",
+      "unit",
+      "aggregation",
+      "dateRange"
+    ],
+    "Cosmos": {
+      "ConnectionKey": "CustomerSummaryDB",
+      "ContainerName": "EntitySummary",
+      "Query": "SELECT  c.summary FROM c WHERE c.entityId = @entityId and c.type='CustomerSummary' and c.source = 'CXO'",
+      "PartitionKeyPath": "/key",
+      "MaxItemCount": 1
+    }
+  },
+  "Parameters": {
+    "Name": "entityId",
+    "Description": "The Customer ID or workload entity ID (e.g., 123456 or workloadId [which will be guid only]). ALWAYS get the value of customer ID from get_customer_id_by_customer_name before proceeding",
+    "Type": "string",
+    "Required": true
+  },
+  "Filters": [],
+  "Select": [],
+  "SelectGroupBy": [],
+  "AdditionalMetadata": {
+    "MetricViewpath": "summary",
+    "MetricUiComponentMap": "executiveSummaryDashboard",
+    "AgentPrompt": "Return the summary content exactly as-is. Preserve all markdown formatting, hyperlinks, and HTML spans. Do not summarize,rephrase, or remove any links. Include the CXO Dashboard link provided at the end of the content",
+    "PostProcessingSchemaMapping": {
+        "SelectFields": [ "summary" ]
+    }
+  }
+}
+ 

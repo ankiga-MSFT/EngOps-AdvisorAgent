@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "PkeyvaultAccountName": {
+      "value": "__CREATECAIGLOBALINFRA__DEFAULTKEYVALUENAME__"
+    },
+    "PkeyvaultRoleDefinationIds": {
+      "value": [
+        "__KEYVAULT_ROLE_DEFINATION_IDS__"
+      ]
+    },
+    "PresourceManagedIdentityId": {
+      "value": "__EV2_ASSISTED_IDENTITY_APP_OBJECT_ID__"
+    }
+  }
+}

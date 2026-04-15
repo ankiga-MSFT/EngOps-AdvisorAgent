@@ -1,0 +1,12 @@
+{
+    "name": "DataSetCXOAIADXConfigurationStore",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "KustoCxoAIAssistantLinkedService",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureDataExplorerTable",
+        "schema": []
+    }
+}

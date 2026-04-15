@@ -1,0 +1,93 @@
+.create-or-alter function with (folder = "SRICM", docstring = "Returns The SRs linked with the ICM with L2 aggregation", skipvalidation = "true") SearchSRsByICMId(IcmIds:dynamic, IcmDataboundary:string="PUBLIC") {
+// let IcmIds=dynamic(['675266580','675262929']); //
+// let IcmDataboundary='PUBLIC';
+//
+let databoundary=toupper(IcmDataboundary);
+ //convert dynamics to table structure
+let Icms= print Icm =IcmIds |mv-expand Icm|extend Icm=tostring(Icm);
+//based on databoundry identify create possible IncidentIdCloud
+let inputIcmWithBoundary=Icms| summarize Public=make_list(strcat(Icm,'-PUBLIC')),EU=make_list(strcat(Icm,'-EU'))| extend icms=iff(databoundary=='PUBLIC',Public,iff(databoundary =='EU',EU,array_concat(Public,EU))) | project-away Public,EU | mv-expand icms| extend IcmCloud=tostring(icms);
+// get l2 aggregate recieved from icm L2Details identifies if icm result will be L1 or L2 
+let L2Details= inputIcmWithBoundary| join kind=leftouter IcmL2AggregateView
+ on $left.IcmCloud==$right.IncidentIdCloud 
+ | project IcmCloud,
+ Public=todynamic(iff(isempty(LinkedSupportRequests_Ids_PUBLIC),'[]',LinkedSupportRequests_Ids_PUBLIC)),
+ EU=todynamic(iff(isempty(LinkedSupportRequests_Ids_EU),'[]',LinkedSupportRequests_Ids_EU)),
+ SRIncidentsMap=LinkedSupportRequests_LinkedIncidents,
+ EventCreatedTime,
+ IncidentId,
+ DataBoundary;
+//get icms for which L1 aggrerate is returned
+let directIcms= L2Details| where isempty(EventCreatedTime)| summarize IcmCloud=make_list(IcmCloud)|  mv-expand IcmCloud| extend IcmCloud=tostring(IcmCloud);
+// get casenumbers for L1 aggregate ICMS
+let CaseNumbers = toscalar(SrSnapshotByIcmNumberView | extend parts = split(SRNumIcmId, "-")| extend ICMId = parts[1]
+    | where  strcat(ICMId,'-',DataBoundary) in (directIcms)
+    | summarize max(EventDateTime) by CaseNumber | project CaseNumber| summarize casenumbers=make_list(CaseNumber)) ; 
+//get L1 aggregate SR info for L1 aggregate Icms
+let directsrs=SrSnapshotView
+    | where CaseNumber in (CaseNumbers )
+    |mv-expand LinkedICMs
+    |extend IncidentIdCloud=tostring(LinkedICMs.IncidentIdCloud),
+        Number=tostring(LinkedICMs.Number),
+        IncidentDataBoundary=tostring(LinkedICMs.DataBoundary),
+        Source=tostring(LinkedICMs.Source),
+        Type=tostring(LinkedICMs.Type),
+        LinkedDateTime=todatetime(LinkedICMs.LinkedDateTime)
+    | where IncidentIdCloud in (directIcms)
+    |project ICMId=Number, SupportRequestNumber=CaseNumber, SupportTopicTitle, Severity, CritSit, State, Status, Product=tostring(Product), SupportRegion, Customers=tostring(Customers), CreatedOn, IncidentId=Number,IncidentDataBoundary,  Source, LinkedDateTime, Type, ResourceId, AgentId, Age, ResolvedDateTime, AzureSubscriptionId, TenantId, ModifiedOn, DataBoundary,CaseUri,AggregationSource='Direct';
+//get L2 aggregate ICMs details
+let indirectIcms=L2Details| where isnotempty(EventCreatedTime)
+| mv-expand SRIncidentsMap
+|extend SRIncidentsMap=todynamic(SRIncidentsMap)
+| extend SrNumberBoundary = bag_keys(SRIncidentsMap)
+| mv-expand SrNumberBoundary
+|extend SrNumberBoundary=tostring(SrNumberBoundary)
+| extend ICMBoundary = SRIncidentsMap[SrNumberBoundary]
+//|extend CheckIn=array_concat(Public,EU)
+| mv-expand ICMBoundary | extend ICMBoundary=tostring(ICMBoundary)
+//|where set_has_element(CheckIn,tostring(split(SrNumberBoundary, ".")[1])) == true;
+| extend ICMBoundary=strcat(split(ICMBoundary, ".")[1], "-", toupper(split(ICMBoundary, ".")[0]))
+|extend SrNumber=tostring(split(SrNumberBoundary, ".")[1])
+|extend SRICMRelation=strcat(SrNumber,'-',ICMBoundary)
+|project-away EU,Public, SRIncidentsMap,SrNumberBoundary;
+//get all L2 aggregate ICMs SR irrespective of Direct or Indirect Aggregation source
+let alll2srswithalllinkages=indirectIcms | distinct IcmCloud,IncidentId, SrNumber | join kind=leftouter SrSnapshotView on $left.SrNumber==$right.CaseNumber 
+| project IcmCloud,ICMId=IncidentId, SupportRequestNumber=CaseNumber, SupportTopicTitle, Severity, CritSit, State, Status, Product=tostring(Product), SupportRegion, Customers=tostring(Customers), CreatedOn,  ResourceId, AgentId, Age, ResolvedDateTime, AzureSubscriptionId, TenantId, ModifiedOn, DataBoundary,LinkedICMs,CaseUri
+| mv-expand LinkedICMs 
+| extend IncidentIdCloud=tostring(LinkedICMs.IncidentIdCloud),
+        Number=tostring(LinkedICMs.Number),
+        IncidentDataBoundary=tostring(LinkedICMs.DataBoundary),
+        Source=tostring(LinkedICMs.Source),
+        Type=tostring(LinkedICMs.Type),
+        LinkedDateTime=todatetime(LinkedICMs.LinkedDateTime)
+| extend SRICMRelation=strcat(SupportRequestNumber,'-',IncidentIdCloud)
+|project-away LinkedICMs;
+// get all L2 aggregate data
+let all=indirectIcms| join kind=inner alll2srswithalllinkages on SRICMRelation
+//| where SRICMRelation ==SRICMRelation1  //| extend AggMatchWith=strcat(Number,'-',IncidentDataBoundary)
+| project IcmCloud,ICMId, SupportRequestNumber, SupportTopicTitle, Severity, CritSit, State, Status, Product, SupportRegion, Customers, CreatedOn,IncidentId=Number,IncidentDataBoundary, Source, LinkedDateTime, Type, ResourceId, AgentId, Age, ResolvedDateTime, AzureSubscriptionId, TenantId, ModifiedOn, DataBoundary,CaseUri,IncidentIdCloud
+|distinct IcmCloud,ICMId, SupportRequestNumber, SupportTopicTitle, Severity, CritSit, State, Status, Product, SupportRegion, Customers, CreatedOn,IncidentId,IncidentDataBoundary, Source, LinkedDateTime, Type, ResourceId, AgentId, Age, ResolvedDateTime, AzureSubscriptionId, TenantId, ModifiedOn, DataBoundary,CaseUri,IncidentIdCloud;
+// get all L2 aggregate direct linked ICM
+// let minDirect=all| where strcat(IncidentId,'-',IncidentDataBoundary) == IcmCloud
+// |summarize arg_min(LinkedDateTime,*) by IcmCloud,SupportRequestNumber,IncidentId,IncidentDataBoundary 
+// | extend Priority=0
+// |project IcmCloud,Priority, ICMId, SupportRequestNumber, SupportTopicTitle, Severity, CritSit, State, Status, Product, SupportRegion, Customers, CreatedOn,IncidentId,IncidentDataBoundary, Source, LinkedDateTime, Type, ResourceId, AgentId, Age, ResolvedDateTime, AzureSubscriptionId, TenantId, ModifiedOn, DataBoundary,CaseUri,AggregationSource=iff(IncidentIdCloud==strcat(IcmCloud),'Direct','Indirect');
+// get all L2 aggregate min linkedDateTime Manual
+let minmanual=all| where Type =='Manual'
+|summarize arg_min(LinkedDateTime,*) by IcmCloud,SupportRequestNumber | extend Priority=1
+|project IcmCloud,Priority, ICMId, SupportRequestNumber, SupportTopicTitle, Severity, CritSit, State, Status, Product, SupportRegion, Customers, CreatedOn,IncidentId,IncidentDataBoundary, Source, LinkedDateTime, Type, ResourceId, AgentId, Age, ResolvedDateTime, AzureSubscriptionId, TenantId, ModifiedOn, DataBoundary,CaseUri,AggregationSource=iff(IncidentIdCloud==strcat(IcmCloud),'Direct','Indirect'); //IncidentId,'-',IncidentDataBoundary
+// get all L2 aggregate min linkedDateTime Automatic
+let minautomatic=all| where Type =='Automatic'
+|summarize arg_min(LinkedDateTime,*) by IcmCloud,SupportRequestNumber | extend Priority=2
+|project IcmCloud,Priority, ICMId, SupportRequestNumber, SupportTopicTitle, Severity, CritSit, State, Status, Product, SupportRegion, Customers, CreatedOn,IncidentId,IncidentDataBoundary, Source, LinkedDateTime, Type, ResourceId, AgentId, Age, ResolvedDateTime, AzureSubscriptionId, TenantId, ModifiedOn, DataBoundary,CaseUri,AggregationSource=iff(IncidentIdCloud==strcat(IcmCloud),'Direct','Indirect');
+// get all L2 aggregate min linkedDateTime for manual if not present then get automatic
+//let l2Indirectlinkages=union kind=outer minDirect,minmanual,minautomatic
+let l2Indirectlinkages=union kind=outer minmanual,minautomatic
+|summarize arg_min(Priority,*) by IcmCloud,SupportRequestNumber | project-away Priority
+|extend ICMId=tostring(split(IcmCloud,'-')[0]);
+// union L1 aggregate, L2 aggregate Direct Aggregation source and L2 aggregate Indirect Aggregation source
+union kind=outer directsrs,l2Indirectlinkages
+|project ICMId=tostring(ICMId), SupportRequestNumber, SupportTopicTitle, Severity, CritSit, State, Status, Product=todynamic(Product), SupportRegion, Customers=todynamic(Customers), CreatedOn,IncidentId,IncidentDataBoundary, Source, LinkedDateTime, Type, ResourceId, AgentId, Age, ResolvedDateTime, AzureSubscriptionId, TenantId, ModifiedOn, DataBoundary,CaseUri,AggregationSource
+| where isnotempty( Source)
+|order by ICMId,AggregationSource asc
+} 

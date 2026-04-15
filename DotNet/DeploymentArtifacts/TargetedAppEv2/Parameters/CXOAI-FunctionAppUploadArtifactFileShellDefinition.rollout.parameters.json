@@ -1,0 +1,63 @@
+{
+  "$schema": "http://schema.express.azure.com/schemas/2015-01-01-alpha/RolloutParameters.json",
+  "contentVersion": "1.0.0.0",
+  "shellExtensions": [
+    {
+      "name": "FunctionAppArtifactFileUpload",
+      "type": "FileUploadToBlobStorage",
+      "properties": {
+        "maxExecutionTime": "__CXOAI__SHELL_MAX_EXECUTION_TIME__"
+      },
+      "package": {
+        "reference": {
+          "path": "__CXOAI__EV2_PACKAGE_NAME__"
+        }
+      },
+      "launch": {
+        "command": [
+          "__CXOAI__COMMANDS_TO_EXECUTE_IN_SHELL__"
+        ],
+        "environmentVariables": [
+          {
+            "name": "ContainerName",
+            "value": "__CXOAI__BLOBCONTAINERNAME__"
+          },
+          {
+            "name": "StorageName",
+            "value": "__CXOAI__CREATECXOAIINFRA__APP_STORAGEACCOUNTNAME__"
+          },
+          {
+            "name": "FunctionAppArtifactBlobFileName",
+            "value": "__CXOAI__FUNCTION_APP_ARTIFACT_BLOB_FILE_NAME__"
+          },
+          {
+            "name": "IdentityClientId",
+            "value": "__CXOAI__GET_APP_MANAGED_USER_IDENTITY_CLIENT_ID__"
+          },
+          {
+            "name": "FunctionAppArtifactZipFileName",
+            "value": "__CXOAI__FUNCTION_APP_ARTIFACT_BLOB_FILE_NAME__"
+          },
+          {
+            "name": "resourceGroupName",
+            "value": "__CXOAI__STORAGE_ACCOUNT_RESOURCE_GROUP_NAME__"
+          },
+          {
+            "name": "EnvironmentName",
+            "value": "__CXOAI__APP_ENVIRONMENT_NAME__"
+          },
+          {
+            "name": "CurrentApplicationSubscription",
+            "value": "__CXOAI__CURRENT_APPLICATION_SUBSCRIPTION__"
+          }
+        ],
+        "identity": {
+          "type": "UserAssigned",
+          "UserAssignedIdentities": [
+            "__CXOAI__GET_APP_MANAGED_USER_IDENTITY_RESOURCE_ID__"
+          ]
+        }
+      }
+    }
+  ]
+}

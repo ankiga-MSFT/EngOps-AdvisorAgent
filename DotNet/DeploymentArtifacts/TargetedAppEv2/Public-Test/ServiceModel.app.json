@@ -1,0 +1,695 @@
+{
+  "$schema": "https://ev2schema.azure.net/schemas/2020-04-01/RegionAgnosticServiceModel.json",
+  "contentVersion": "1.0.0",
+  "serviceMetadata": {
+    "serviceIdentifier": "61b4b63c-3588-445e-a558-5352b1bd06c2",
+    "displayName": "targetedappev2 Deployment",
+    "serviceGroup": "Microsoft.Azure.EngOps.TargetedAppEv2.Test-sg",
+    "environment": "test",
+    "TenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "serviceSpecificationPath": "Public-Test\\ServiceSpec.json"
+  },
+  "serviceResourceGroupDefinitions": [
+    {
+      "name": "Microsoft.Azure.EngOps.Default.Test-sg",
+      "azureResourceGroupName": "rg-default-test-$location()",
+      "subscriptionKey": "SDPDefaultTestSubscriptionKey",
+      "serviceResourceDefinitions": [
+        {
+          "name": "Default-MergeEv2Metadata",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-MergeEv2Metadata.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-StorageAccountResourceDefinition",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-StorageAccountResourceDefinition.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-StorageSystemTopicResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-StorageSystemTopicResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-ServicePlanResourceDefinition",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-ServicePlanResourceDefinition.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-AppInsightResourceDefinition",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-AppInsightResourceDefinition.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-AppMUIResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-AppMUIResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-MuiStorageRbacAssignmentResourceDefination.bicep",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-MuiStorageRbacAssignmentResourceDefination.bicep.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-FunctionResourceDefinition",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-FunctionResourceDefinition.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-FunctionSettingResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-FunctionSettingResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-MUIRoleAssignmentResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-MUIRoleAssignmentResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-FunctionCosmosDbRbacResourceDescription",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-FunctionCosmosDbRbacResourceDescription.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-FuncStorageRbacAssignmentResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-FuncStorageRbacAssignmentResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-MultiFunctionRedisRbacAssignmentResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-MultiFunctionRedisRbacAssignmentResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-NsgResourceDefinition",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-NsgResourceDefinition.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-NATGateWay",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-NATGateWay.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "Default-FunctionVnetSettingResourceDefinition",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\Default-MergeEv2Metadata.json",
+              "parametersPath": "Parameters\\Default-FunctionVnetSettingResourceDefinition.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Microsoft.Azure.EngOps.CXOAI.Test-sg",
+      "azureResourceGroupName": "rg-cxoai-test-$location()",
+      "subscriptionKey": "SDPCXOAITestSubscriptionKey",
+      "serviceResourceDefinitions": [
+        {
+          "name": "CXOAI-ConfigurableStopByFailureDeployment",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-ConfigurableStopByFailureDeployment.json",
+              "parametersPath": "Parameters\\CXOAI-ConfigurableStopByFailureDeployment.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-CreateCXOAIInfra",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-CreateCXOAIInfra.json",
+              "parametersPath": "Parameters\\CXOAI-CreateCXOAIInfra.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-MuiStorageRbacAssignmentResourceDefination.bicep",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-MuiStorageRbacAssignmentResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-MuiStorageRbacAssignmentResourceDefination.bicep.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-MUIRoleAssignmentResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-MUIRbacResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-MUIRoleAssignmentResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-AssignStorageRoles",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-GeneralFunctionRbacAssignmentResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-AssignStorageRoles.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-MultiFunctionRedisRbacAssignmentResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-MultiFunctionRedisRbacAssignmentResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-MultiFunctionRedisRbacAssignmentResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-FuncKeyVaultRbacAssignmentResourceGroup",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-GeneralFunctionRbacAssignmentResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-FuncKeyVaultRbacAssignmentResourceGroup.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-FuncSupportCaseEventHubNameSpaceRbacAssignmentResourceGroup",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-GeneralFunctionRbacAssignmentResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-FuncSupportCaseEventHubNameSpaceRbacAssignmentResourceGroup.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-FuncCSEventhubNameSpaceRbacAssignmentResourceGroup",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-GeneralFunctionRbacAssignmentResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-FuncCSEventhubNameSpaceRbacAssignmentResourceGroup.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-FunctionCosmosDbRbacResourceDescription",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-FunctionCosmosDbRbacResourceDescription.json",
+              "parametersPath": "Parameters\\CXOAI-FunctionCosmosDbRbacResourceDescription.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-FuncSearchServiceRbacAssignmentResourceGroup",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-MultiSearchServiceFunctionRbacResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-FuncSearchServiceRbacAssignmentResourceGroup.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-CreateStoragePrivateEndpoints",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-FuncStoragePrivateEndpointResourceDefinition.json",
+              "parametersPath": "Parameters\\CXOAI-CreateStoragePrivateEndpoints.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-RedisPrivateEndpointResourceDefinition",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-MultiFuncRedisVnetPrivateEndpointResourceDefinition.json",
+              "parametersPath": "Parameters\\CXOAI-RedisPrivateEndpointResourceDefinition.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-keyVaultPrivateEndpointResourceDefinition",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-FuncKeyvaultVnetPrivateEndpointResourceDefinition.json",
+              "parametersPath": "Parameters\\CXOAI-keyVaultPrivateEndpointResourceDefinition.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-CreateSupportCaseEventHubNameSpacePrivateEndpoints",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-FuncEHsPrivateEndpointResourceDefinition.json",
+              "parametersPath": "Parameters\\CXOAI-CreateSupportCaseEventHubNameSpacePrivateEndpoints.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-CSEventhubNameSpacePrivateEndpointResourceDefinition",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-FuncEHsPrivateEndpointResourceDefinition.json",
+              "parametersPath": "Parameters\\CXOAI-CSEventhubNameSpacePrivateEndpointResourceDefinition.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-FunctionCosmosDbVnetPrivateEndpointResourceDefinition",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-FuncCosmosDbVnetPrivateEndpointResourceDefinition.json",
+              "parametersPath": "Parameters\\CXOAI-FunctionCosmosDbVnetPrivateEndpointResourceDefinition.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-MultiSearchPrivateEndpointResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-MultiSearchPrivateEndpointResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-MultiSearchPrivateEndpointResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-AppSlotStopResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-SlotStopResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-AppSlotStopResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-GetAppMUIResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-GetUserManagedIdentityResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-GetAppMUIResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-FunctionAppUploadArtifactFileShellDefinition",
+          "composedOf": {
+            "extension": {
+              "rolloutParametersPath": "Parameters\\CXOAI-FunctionAppUploadArtifactFileShellDefinition.rollout.parameters.json",
+              "shell": [
+                {
+                  "type": "FileUploadToBlobStorage",
+                  "properties": {
+                    "imageName": "adm-mariner-20-l",
+                    "imageVersion": "v6"
+                  }
+                }
+              ]
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-SlotStartResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-SlotStartResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-SlotStartResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-SlotDeployResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-SlotDeployResourceDefinition.json",
+              "parametersPath": "Parameters\\CXOAI-SlotDeployResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-SlotWaitResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-SlotWaitResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-SlotWaitResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-SlotValidateResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-SlotValidateResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-SlotValidateResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-SlotSwapResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-SlotSwapResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-SlotSwapResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-SlotStopResourceDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-SlotStopResourceDefination.json",
+              "parametersPath": "Parameters\\CXOAI-SlotStopResourceDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "CXOAI-AFDProfileOriginRouteDefination",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CXOAI-ScopedAFDProfileOriginRouteDefination.json",
+              "parametersPath": "Parameters\\CXOAI-AFDProfileOriginRouteDefination.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

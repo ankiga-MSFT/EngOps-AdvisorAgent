@@ -1,0 +1,886 @@
+[
+  {
+    "Name": "get_azores_score_for_customer_workloads",
+    "PluginType": "KustoExecutor",
+    "Description": "Gets the Azores Score for a workload or customer with additional filtering conditions. Please modify the format such that the result is displayed at the top, at the workload name level, instead of at the bottom of the workloads. Additionally, replace the links provided as details with the workload name itself as a hyperlink.",
+    "Keywords": [
+      "azores",
+      "azores score",
+      "zone resiliency",
+      "zone resilient",
+      "ZR score",
+      "customer workloads",
+      "workload score",
+      "azure zone resiliency score"
+    ],
+    "Domain": "Reliability",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "customer",
+      "workload"
+    ],
+    "DataSource": {
+      "SourceType": "kusto",
+      "ConnectionKey": "reliabilityKusto",
+      "BaseQuery": "get_azores_score_for_customer_workloads({workloadIdList}, '{customerId}', {azoresScoreLowerThreshold}, {azoresScoreUpperThreshold}, {zoneResilientResourceCount}, '{operatorForZoneResilientResourcesCount}', {resourcesCount}, '{operatorForResourcesCount}', {topN})",
+      "DefaultProjection": [
+        "WorkloadName",
+        "CustomerName",
+        "WorkloadId",
+        "ZR_Score",
+        "Total_ZR_Resources",
+        "Total_Resources"
+      ],
+      "DefaultTopN": 5
+    },
+    "Filters": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "workloadIdList",
+        "Type": "dynamic",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "dynamic(null)",
+        "Description": "List of Workload ID(s) as a dynamic array. The format of Workload identifier is 'ch:customer:{GUID}:id:{GUID}'. Example: dynamic(['ch:customer:xxx:id:yyy', 'ch:customer:aaa:id:bbb']). If this filter is to be used, ALWAYS get the value of workload ID from function get_azores_workload_id_and_name_by_customer_id before proceeding."
+      },
+      {
+        "Name": "customerId",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "The Customer ID. Should be the numeric TPID value (e.g., '123456'). If provided in full format 'ch:customer::tpid:123456', extract just the TPID value. ALWAYS get the value of customer ID from function get_customer_id_by_customer_name before proceeding."
+      },
+      {
+        "Name": "azoresScoreLowerThreshold",
+        "Type": "real",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "real(null)",
+        "Description": "The azores score lower bound threshold. Example: if user says 'azores score greater than 10', set this to 10.0. Use real(null) if not specified."
+      },
+      {
+        "Name": "azoresScoreUpperThreshold",
+        "Type": "real",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "real(null)",
+        "Description": "The azores score upper bound threshold. Example: if user says 'azores score less than 20', set this to 20.0. Use real(null) if not specified."
+      },
+      {
+        "Name": "zoneResilientResourceCount",
+        "Type": "int",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "int(null)",
+        "Description": "The number of zone resilient resources to filter by. Use int(null) if not specified."
+      },
+      {
+        "Name": "operatorForZoneResilientResourcesCount",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [ ">", "<" ],
+        "Default": "",
+        "Description": "The comparison operator for zone resilient resource count. Set to '>' if user says 'greater than' or '<' if user says 'less than'. Leave empty if not specified."
+      },
+      {
+        "Name": "resourcesCount",
+        "Type": "int",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "int(null)",
+        "Description": "The total number of resources (sum of zone resilient and non-zone resilient) to filter by. Use int(null) if not specified."
+      },
+      {
+        "Name": "operatorForResourcesCount",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [ ">", "<" ],
+        "Default": "",
+        "Description": "The comparison operator for total resource count. Set to '>' if user says 'greater than' or '<' if user says 'less than'. Leave empty if not specified."
+      },
+      {
+        "Name": "topN",
+        "Type": "int",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": 5,
+        "Description": "The number of records to retrieve. Also known as Top 'N'. Defaults to 5 if not provided. Maximum is 50."
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "reliability/Resiliency%20Insights/Zone%20Resiliency",
+      "MetricUIComponentMap": "zoneResilientResource",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {
+        "List": {
+          "Fields": [ "WorkloadName", "CustomerName", "WorkloadId", "ZR_Score", "Total_ZR_Resources", "Total_Resources" ],
+          "FieldRenames": {
+            "WorkloadName": "Workload Name",
+            "CustomerName": "Customer Name",
+            "WorkloadId": "Workload Id",
+            "ZR_Score": "Azores Score",
+            "Total_ZR_Resources": "Zone Resilient Resources",
+            "Total_Resources": "Total Resources",
+            "NavigationLink": "{CxobserveBaseUrl}/customers/{WorkloadId}/reliability/Resiliency%20Insights/Zone%20Resiliency?highLightId=zoneResilientResource",
+            "AzoresScoreFormatted": "{ZR_Score}({Total_ZR_Resources}/{Total_Resources})"
+          },
+          "MessageTemplate": "Here are the Azores Score details for the workloads:\n{data}"
+        }
+      }
+    }
+  },
+  {
+    "Name": "get_all_workloads_with_azores_score",
+    "PluginType": "KustoExecutor",
+    "Description": "Gets the Workloads and their Azores Score with additional filtering conditions. Call this function when customer or workload specific information is not needed.",
+    "Keywords": [
+      "azores",
+      "all workloads",
+      "workloads azores score",
+      "lowest azores",
+      "highest azores",
+      "zone resiliency across workloads",
+      "workload ranking"
+    ],
+    "Domain": "Reliability",
+    "IsActive": true,
+    "SupportedEntityTypes": [],
+    "DataSource": {
+      "SourceType": "kusto",
+      "ConnectionKey": "reliabilityKusto",
+      "BaseQuery": "get_all_workloads_with_azores_score('{lowestOrHighest}', {azoresScoreLowerThreshold}, {azoresScoreUpperThreshold}, {zoneResilientResourceCount}, '{operatorForZoneResilientResourcesCount}', {resourcesCount}, '{operatorForResourcesCount}', {topN})",
+      "DefaultProjection": [
+        "WorkloadName",
+        "CustomerName",
+        "WorkloadId",
+        "ZR_Score",
+        "Total_ZR_Resources",
+        "Total_Resources"
+      ],
+      "DefaultTopN": 5
+    },
+    "Filters": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "lowestOrHighest",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [ "lowest", "highest" ],
+        "Default": "",
+        "Description": "Set to 'lowest' to get workloads with lowest Azores scores, or 'highest' to get workloads with highest scores. Leave empty if not specified."
+      },
+      {
+        "Name": "azoresScoreLowerThreshold",
+        "Type": "real",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "real(null)",
+        "Description": "The azores score lower bound threshold. Example: if user says 'azores score greater than 10', set this to 10.0. Use real(null) if not specified."
+      },
+      {
+        "Name": "azoresScoreUpperThreshold",
+        "Type": "real",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "real(null)",
+        "Description": "The azores score upper bound threshold. Example: if user says 'azores score less than 20', set this to 20.0. Use real(null) if not specified."
+      },
+      {
+        "Name": "zoneResilientResourceCount",
+        "Type": "int",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "int(null)",
+        "Description": "The number of zone resilient resources to filter by. Use int(null) if not specified."
+      },
+      {
+        "Name": "operatorForZoneResilientResourcesCount",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [ ">", "<" ],
+        "Default": "",
+        "Description": "The comparison operator for zone resilient resource count. Set to '>' if user says 'greater than' or '<' if user says 'less than'. Leave empty if not specified."
+      },
+      {
+        "Name": "resourcesCount",
+        "Type": "int",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "int(null)",
+        "Description": "The total number of resources (sum of zone resilient and non-zone resilient) to filter by. Use int(null) if not specified."
+      },
+      {
+        "Name": "operatorForResourcesCount",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [ ">", "<" ],
+        "Default": "",
+        "Description": "The comparison operator for total resource count. Set to '>' if user says 'greater than' or '<' if user says 'less than'. Leave empty if not specified."
+      },
+      {
+        "Name": "topN",
+        "Type": "int",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": 5,
+        "Description": "The number of records to retrieve. Also known as Top 'N'. Defaults to 5 if not provided. Maximum is 50."
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "reliability/Resiliency%20Insights/Zone%20Resiliency",
+      "MetricUIComponentMap": "zoneResilientResource",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {
+        "List": {
+          "Fields": [ "WorkloadName", "CustomerName", "WorkloadId", "ZR_Score", "Total_ZR_Resources", "Total_Resources" ],
+          "FieldRenames": {
+            "WorkloadName": "Workload Name",
+            "CustomerName": "Customer Name",
+            "WorkloadId": "Workload Id",
+            "ZR_Score": "Azores Score",
+            "Total_ZR_Resources": "Zone Resilient Resources",
+            "Total_Resources": "Total Resources",
+            "NavigationLink": "{CxobserveBaseUrl}/customers/{WorkloadId}/reliability/Resiliency%20Insights/Zone%20Resiliency?highLightId=zoneResilientResource",
+            "AzoresScoreFormatted": "{ZR_Score}({Total_ZR_Resources}/{Total_Resources})"
+          },
+          "MessageTemplate": "Here are the Azores Score details for all workloads:\n{data}"
+        }
+      }
+    }
+  },
+  {
+    "Name": "get_resources_for_workload",
+    "PluginType": "KustoExecutor",
+    "Description": "Gets the Azure resources (zone resilient/non-zone resilient) under a customer workload provided the filtering conditions.",
+    "Keywords": [
+      "resources",
+      "workload resources",
+      "zone resilient resources",
+      "non-zone resilient",
+      "azure resources",
+      "subscription resources",
+      "resource type"
+    ],
+    "Domain": "Reliability",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "customer",
+      "workload"
+    ],
+    "DataSource": {
+      "SourceType": "kusto",
+      "ConnectionKey": "reliabilityKusto",
+      "BaseQuery": "get_resources_for_workload('{workloadId}', '{customerId}', '{subscriptionId}', '{resourceType}', '{region}', {isZoneResilient}, {topN})",
+      "DefaultProjection": [
+        "WorkloadName",
+        "CustomerName",
+        "SubscriptionId",
+        "SubscriptionName",
+        "ResourceType",
+        "ResourceName",
+        "Region",
+        "ZoneResilient"
+      ],
+      "DefaultTopN": 5
+    },
+    "Filters": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "workloadId",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "The Workload ID. The format of Workload identifier is 'ch:customer:{GUID}:id:{GUID}'. ALWAYS get the value of workload ID from function get_azores_workload_id_and_name_by_customer_id before proceeding."
+      },
+      {
+        "Name": "customerId",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "The Customer ID. Should be the numeric TPID value (e.g., '123456'). ALWAYS get the value of customer ID from function get_customer_id_by_customer_name before proceeding."
+      },
+      {
+        "Name": "subscriptionId",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "The Subscription ID in which the customer's resources are present."
+      },
+      {
+        "Name": "resourceType",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "The type of resource. For example - Microsoft.Storage/storageAccounts, Microsoft.Sql/servers, Microsoft.Compute/virtualMachines etc. Search for the resource type in ResourceTypesVectorIndex to get the correct resource type."
+      },
+      {
+        "Name": "region",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "The Azure region in which the customer's resources are present. For example - eastus, westus2, westeurope.Search for the region name in AzureRegionsVectorIndex to get the correct region name."
+      },
+      {
+        "Name": "isZoneResilient",
+        "Type": "bool",
+        "Required": false,
+        "ValueEnums": [ "true", "false" ],
+        "Default": "bool(null)",
+        "Description": "Filter by zone resilient status. Set to true for zone resilient resources, false for non-zone resilient. Use bool(null) if not specified."
+      },
+      {
+        "Name": "topN",
+        "Type": "int",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": 5,
+        "Description": "The number of records to retrieve. Also known as Top 'N'. Defaults to 5 if not provided. Maximum is 50."
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "reliability/Resiliency%20Insights/Zone%20Resiliency",
+      "MetricUIComponentMap": "zoneResilientResource",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {
+        "List": {
+          "Fields": [ "WorkloadName", "CustomerName", "SubscriptionId", "SubscriptionName", "ResourceType", "ResourceName", "Region", "ZoneResilient" ],
+          "FieldRenames": {
+            "WorkloadName": "Workload Name",
+            "CustomerName": "Customer Name",
+            "SubscriptionId": "Subscription Id",
+            "SubscriptionName": "Subscription Name",
+            "ResourceType": "Resource Type",
+            "ResourceName": "Resource Name",
+            "Region": "Region",
+            "ZoneResilient": "Is Zone Resilient"
+          },
+          "MessageTemplate": "Here are the Azure resources for the workload:\n{data}"
+        }
+      }
+    }
+  },
+  {
+    "Name": "get_azores_workload_id_and_name_by_customer_id",
+    "PluginType": "KustoExecutor",
+    "Description": "Gets the Azores Workloads for a customer provided the customer ID. **Use this function ONLY if the user explicitly specifies that they want information in the context of Azores or Zone Resiliency**. All the workloads returned will have workload ID and workload name.",
+    "Keywords": [
+      "azores workloads",
+      "workloads by customer",
+      "customer workloads",
+      "workload id",
+      "workload name",
+      "zone resiliency workloads"
+    ],
+    "Domain": "Reliability",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "customer"
+    ],
+    "DataSource": {
+      "SourceType": "kusto",
+      "ConnectionKey": "reliabilityKusto",
+      "BaseQuery": "get_azores_workload_id_and_name_by_customer_id('{customerId}')",
+      "DefaultProjection": [
+        "WorkloadId",
+        "WorkloadName",
+        "CustomerId",
+        "CustomerName"
+      ],
+      "DefaultTopN": 50
+    },
+    "Filters": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "customerId",
+        "Type": "string",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "The Customer ID. Should be the numeric TPID value (e.g., '123456'). If provided in full format 'ch:customer::tpid:123456', extract just the TPID value. ALWAYS get the value of customer ID from function get_customer_id_by_customer_name before proceeding."
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "reliability/Resiliency%20Insights/Zone%20Resiliency",
+      "MetricUIComponentMap": "zoneResilientResource",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {
+        "List": {
+          "Fields": [ "WorkloadId", "WorkloadName", "CustomerId", "CustomerName" ],
+          "FieldRenames": {
+            "WorkloadId": "Workload Id",
+            "WorkloadName": "Workload Name",
+            "CustomerId": "Customer Id",
+            "CustomerName": "Customer Name",
+            "NavigationLink": "{CxobserveBaseUrl}/customers/{WorkloadId}/reliability/Resiliency%20Insights/Zone%20Resiliency?highLightId=zoneResilientResource"
+          },
+          "MessageTemplate": "Here are the Azores workloads for the customer:\n{data}"
+        }
+      }
+    }
+  },
+  {
+    "Name": "get_azores_score_by_workload_name",
+    "PluginType": "KustoExecutor",
+    "Description": "Gets the Azores Workloads and their Azores score provided the workload name. Uses partial matching to find workloads containing the specified name(s).",
+    "Keywords": [
+      "azores score",
+      "workload name",
+      "score by name",
+      "zone resiliency score",
+      "ZR score by workload"
+    ],
+    "Domain": "Reliability",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "workload"
+    ],
+    "DataSource": {
+      "SourceType": "kusto",
+      "ConnectionKey": "reliabilityKusto",
+      "BaseQuery": "FN_LLM_GetAzoresScoreByWorkloadName({workloadNameList})",
+      "DefaultProjection": [
+        "WorkloadId",
+        "WorkloadName",
+        "CustomerId",
+        "CustomerName",
+        "ZR_Score",
+        "Total_ZR_Resources",
+        "Total_Resources"
+      ],
+      "DefaultTopN": 50
+    },
+    "Filters": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "workloadNameList",
+        "Type": "dynamic",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": "dynamic([])",
+        "Description": "The workload name(s) to search for as a dynamic array. Example: dynamic(['Contoso', 'Fabrikam']). Uses partial matching (has_any) to find workloads containing any of the specified names."
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "reliability/Resiliency%20Insights/Zone%20Resiliency",
+      "MetricUIComponentMap": "zoneResilientResource",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {
+        "List": {
+          "Fields": [ "WorkloadId", "WorkloadName", "CustomerId", "CustomerName", "ZR_Score", "Total_ZR_Resources", "Total_Resources" ],
+          "FieldRenames": {
+            "WorkloadId": "Workload Id",
+            "WorkloadName": "Workload Name",
+            "CustomerId": "Customer Id",
+            "CustomerName": "Customer Name",
+            "ZR_Score": "Azores Score",
+            "Total_ZR_Resources": "Zone Resilient Resources",
+            "Total_Resources": "Total Resources",
+            "NavigationLink": "{CxobserveBaseUrl}/customers/{WorkloadId}/reliability/Resiliency%20Insights/Zone%20Resiliency?highLightId=zoneResilientResource",
+            "AzoresScoreFormatted": "{ZR_Score}({Total_ZR_Resources}/{Total_Resources})"
+          },
+          "MessageTemplate": "Here are the Azores Score details for the matching workloads:\n{data}"
+        }
+      }
+    }
+  },
+  {
+    "Name": "get_ergw_for_customer",
+    "PluginType": "KustoExecutor",
+    "Description": "Gets the Express Route Gateways (ERGW or GW or Gateways) for a customer. Types of ERGWs: Multi Homed ERGW, Single Homed ERGW, Zone Resilient ERGW. Returns total gateways, count and percentage of multi-homed and zone resilient gateways for a customer.",
+    "Keywords": [
+      "express route gateway",
+      "ERGW",
+      "gateway",
+      "multi homed",
+      "single homed",
+      "zone resilient gateway",
+      "customer gateways"
+    ],
+    "Domain": "Reliability",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "customer"
+    ],
+    "DataSource": {
+      "SourceType": "kusto",
+      "ConnectionKey": "reliabilityKusto",
+      "BaseQuery": "get_ergw_for_customer('{customerId}', '{timePeriod}')",
+      "DefaultProjection": [
+        "CustomerName",
+        "TotalGateways",
+        "MultiHomedGateways",
+        "MultiHomedGatewaysPercent",
+        "ZoneRedundantGateways",
+        "ZoneRedundantGatewaysPercent",
+        "DeltaTotalGateways"
+      ],
+      "DefaultTopN": 5
+    },
+    "Filters": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "customerId",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "The Customer ID. Should be the numeric TPID value (e.g., '123456'). ALWAYS get the value of customer ID from function get_customer_id_by_customer_name before proceeding."
+      },
+      {
+        "Name": "timePeriod",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [ "week", "month" ],
+        "Default": "week",
+        "Description": "Time period for which user wants to view data. This can be 'week' or 'month'. Defaults to 'week' if not provided."
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "reliability/Resiliency%20Insights/Express%20Routes",
+      "MetricUIComponentMap": "azureExpressRouteGateways",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {
+        "List": {
+          "Fields": [ "CustomerName", "TotalGateways", "MultiHomedGateways", "MultiHomedGatewaysPercent", "ZoneRedundantGateways", "ZoneRedundantGatewaysPercent", "DeltaTotalGateways" ],
+          "FieldRenames": {
+            "CustomerName": "Customer Name",
+            "TotalGateways": "Total Gateways",
+            "MultiHomedGateways": "Multi Homed Gateways",
+            "MultiHomedGatewaysPercent": "Multi Homed %",
+            "ZoneRedundantGateways": "Zone Resilient Gateways",
+            "ZoneRedundantGatewaysPercent": "Zone Resilient %",
+            "DeltaTotalGateways": "Change in Total Gateways",
+            "MultiHomedFormatted": "{MultiHomedGateways} ({MultiHomedGatewaysPercent}%)",
+            "ZoneRedundantFormatted": "{ZoneRedundantGateways} ({ZoneRedundantGatewaysPercent}%)",
+            "NavigationLink": "{CxobserveBaseUrl}/customers/ch:customer::tpid:{CustomerId}/reliability/Resiliency%20Insights/Express%20Routes?highLightId=azureExpressRouteGateways"
+          },
+          "MessageTemplate": "Here are the Express Route Gateway details for the customer:\n{data}"
+        }
+      }
+    }
+  },
+  {
+    "Name": "get_ergw_for_customer_workloads",
+    "PluginType": "KustoExecutor",
+    "Description": "Gets the Express Route Gateways (ERGW or GW or Gateways) for workloads with additional filtering conditions. Types of ERGWs: Multi Homed ERGW, Single Homed ERGW, Zone Resilient ERGW. Returns total gateways, count and percentage of multi-homed and zone resilient gateways for workloads.",
+    "Keywords": [
+      "express route gateway",
+      "ERGW",
+      "gateway",
+      "workload gateways",
+      "multi homed",
+      "single homed",
+      "zone resilient gateway"
+    ],
+    "Domain": "Reliability",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "customer",
+      "workload"
+    ],
+    "DataSource": {
+      "SourceType": "kusto",
+      "ConnectionKey": "reliabilityKusto",
+      "BaseQuery": "get_ergw_for_customer_workloads('{customerId}', '{workloadId}', '{timePeriod}', {topN})",
+      "DefaultProjection": [
+        "CustomerName",
+        "WorkloadName",
+        "TotalGateways",
+        "MultiHomedGateways",
+        "MultiHomedGatewaysPercent",
+        "ZoneRedundantGateways",
+        "ZoneRedundantGatewaysPercent",
+        "DeltaTotalGateways"
+      ],
+      "DefaultTopN": 5
+    },
+    "Filters": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "customerId",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "The Customer ID. Should be the numeric TPID value (e.g., '123456'). ALWAYS get the value of customer ID from function get_customer_id_by_customer_name before proceeding."
+      },
+      {
+        "Name": "workloadId",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "The Workload ID. ALWAYS get the value of workload ID from function get_expressroute_gateway_workload_from_customer_id before proceeding."
+      },
+      {
+        "Name": "timePeriod",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [ "week", "month" ],
+        "Default": "week",
+        "Description": "Time period for which user wants to view data. This can be 'week' or 'month'. Defaults to 'week' if not provided."
+      },
+      {
+        "Name": "topN",
+        "Type": "int",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": 5,
+        "Description": "The number of records to retrieve. Also known as Top 'N'. Defaults to 5 if not provided."
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "reliability/Resiliency%20Insights/Express%20Routes",
+      "MetricUIComponentMap": "azureExpressRouteGateways",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {
+        "List": {
+          "Fields": [ "CustomerName", "WorkloadName", "TotalGateways", "MultiHomedGateways", "MultiHomedGatewaysPercent", "ZoneRedundantGateways", "ZoneRedundantGatewaysPercent", "DeltaTotalGateways" ],
+          "FieldRenames": {
+            "CustomerName": "Customer Name",
+            "WorkloadName": "Workload Name",
+            "TotalGateways": "Total Gateways",
+            "MultiHomedGateways": "Multi Homed Gateways",
+            "MultiHomedGatewaysPercent": "Multi Homed %",
+            "ZoneRedundantGateways": "Zone Resilient Gateways",
+            "ZoneRedundantGatewaysPercent": "Zone Resilient %",
+            "DeltaTotalGateways": "Change in Total Gateways",
+            "MultiHomedFormatted": "{MultiHomedGateways} ({MultiHomedGatewaysPercent}%)",
+            "ZoneRedundantFormatted": "{ZoneRedundantGateways} ({ZoneRedundantGatewaysPercent}%)",
+            "NavigationLink": "{CxobserveBaseUrl}/customers/{WorkloadId}/reliability/Resiliency%20Insights/Express%20Routes?highLightId=azureExpressRouteGateways"
+          },
+          "MessageTemplate": "Here are the Express Route Gateway details for the workloads:\n{data}"
+        }
+      }
+    }
+  },
+  {
+    "Name": "get_ergw_areas",
+    "PluginType": "KustoExecutor",
+    "Description": "Gets all the Areas in which Express Route Gateways (ERGW or GW or gateways) are present. Returns list of areas and their express route gateway counts including multi-homed, single homed, mixed and zone resilient gateways.",
+    "Keywords": [
+      "express route gateway areas",
+      "ERGW areas",
+      "gateway regions",
+      "area gateways",
+      "multi homed area",
+      "zone resilient area"
+    ],
+    "Domain": "Reliability",
+    "IsActive": true,
+    "SupportedEntityTypes": [],
+    "DataSource": {
+      "SourceType": "kusto",
+      "ConnectionKey": "reliabilityKusto",
+      "BaseQuery": "get_ergw_areas('{timePeriod}')",
+      "DefaultProjection": [
+        "Area",
+        "TotalCustomers",
+        "MultiHomedCustomers",
+        "SingleHomedCustomers",
+        "MixedCustomers",
+        "ZoneRedundantCustomers"
+      ],
+      "DefaultTopN": 50
+    },
+    "Filters": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "timePeriod",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [ "week", "month" ],
+        "Default": "week",
+        "Description": "Time period for which user wants to view data. This can be 'week' or 'month'. Defaults to 'week' if not provided."
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "reliability/Resiliency%20Insights/Express%20Routes",
+      "MetricUIComponentMap": "azureExpressRouteGateways",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {
+        "List": {
+          "Fields": [ "Area", "TotalCustomers", "MultiHomedCustomers", "SingleHomedCustomers", "MixedCustomers", "ZoneRedundantCustomers" ],
+          "FieldRenames": {
+            "Area": "Area",
+            "TotalCustomers": "Total Customers with ERGW",
+            "MultiHomedCustomers": "Customers with Multi-Homed ERGW",
+            "SingleHomedCustomers": "Customers with Single-Homed ERGW",
+            "MixedCustomers": "Customers with Mixed ERGW",
+            "ZoneRedundantCustomers": "Customers with Zone Resilient ERGW"
+          },
+          "MessageTemplate": "Here are the Express Route Gateway areas:\n{data}"
+        }
+      }
+    }
+  },
+  {
+    "Name": "get_ergw_customer_details_by_area",
+    "PluginType": "KustoExecutor",
+    "Description": "Gets the list of customers with their Express Route Gateways (ERGW or GW) and their area. Returns area wise list of customers with total gateways, multi-homed and zone resilient gateways.",
+    "Keywords": [
+      "express route gateway customers",
+      "ERGW by area",
+      "customers area gateways",
+      "area customer ERGW",
+      "gateway customers"
+    ],
+    "Domain": "Reliability",
+    "IsActive": true,
+    "SupportedEntityTypes": [],
+    "DataSource": {
+      "SourceType": "kusto",
+      "ConnectionKey": "reliabilityKusto",
+      "BaseQuery": "get_ergw_customer_details_by_area('{timePeriod}', '{areaName}', '{programName}', {topN})",
+      "DefaultProjection": [
+        "CustomerId",
+        "CustomerName",
+        "Area",
+        "TotalGateways",
+        "MultiHomedGateways",
+        "MultiHomedGatewaysPercent",
+        "SingleHomedGateways",
+        "SingleHomedGatewaysPercent",
+        "ZoneRedundantGateways",
+        "ZoneRedundantGatewaysPercent"
+      ],
+      "DefaultTopN": 10
+    },
+    "Filters": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "timePeriod",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [ "week", "month" ],
+        "Default": "week",
+        "Description": "Time period for which user wants to view data. This can be 'week' or 'month'. Defaults to 'week' if not provided."
+      },
+      {
+        "Name": "areaName",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Area name for which user wants to see the customers with express route gateways. Leave empty for all areas."
+      },
+      {
+        "Name": "programName",
+        "Type": "string",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "S500",
+        "Description": "The program in which the customer is enrolled. ALWAYS check for Program value from user. Defaults to 'S500' if not provided."
+      },
+      {
+        "Name": "topN",
+        "Type": "int",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": 10,
+        "Description": "The number of records to retrieve. Also known as Top 'N'. Defaults to 10 if not provided."
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "reliability/Resiliency%20Insights/Express%20Routes",
+      "MetricUIComponentMap": "azureExpressRouteGateways",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {
+        "List": {
+          "Fields": [ "CustomerName", "CustomerId", "Area", "TotalGateways", "MultiHomedGateways", "MultiHomedGatewaysPercent", "SingleHomedGateways", "SingleHomedGatewaysPercent", "ZoneRedundantGateways", "ZoneRedundantGatewaysPercent" ],
+          "FieldRenames": {
+            "CustomerName": "Customer",
+            "CustomerId": "TPID",
+            "Area": "Area",
+            "TotalGateways": "Total ERGW",
+            "MultiHomedGateways": "Multi-Homed ERGW",
+            "MultiHomedGatewaysPercent": "Multi-Homed %",
+            "SingleHomedGateways": "Single-Homed ERGW",
+            "SingleHomedGatewaysPercent": "Single-Homed %",
+            "ZoneRedundantGateways": "Zone Resilient ERGW",
+            "ZoneRedundantGatewaysPercent": "Zone Resilient %",
+            "MultiHomedFormatted": "{MultiHomedGateways} ({MultiHomedGatewaysPercent}%)",
+            "SingleHomedFormatted": "{SingleHomedGateways} ({SingleHomedGatewaysPercent}%)",
+            "ZoneRedundantFormatted": "{ZoneRedundantGateways} ({ZoneRedundantGatewaysPercent}%)",
+            "NavigationLink": "{CxobserveBaseUrl}/customers/ch:customer::tpid:{CustomerId}/reliability/Resiliency%20Insights/Express%20Routes?highLightId=azureExpressRouteGateways"
+          },
+          "MessageTemplate": "Here are the customer Express Route Gateway details by area:\n{data}"
+        }
+      }
+    }
+  },
+  {
+    "Name": "get_expressroute_gateway_workload_from_customer_id",
+    "PluginType": "KustoExecutor",
+    "Description": "Gets the ExpressRoute Gateways (ERGW) Workloads for a customer provided the customer ID. All the workloads returned will have workload ID and workload name. Returns ERGW Workload Ids and Workload name for a customer.",
+    "Keywords": [
+      "express route gateway workload",
+      "ERGW workload",
+      "workload id",
+      "workload name",
+      "customer workloads"
+    ],
+    "Domain": "Reliability",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "customer"
+    ],
+    "DataSource": {
+      "SourceType": "kusto",
+      "ConnectionKey": "reliabilityKusto",
+      "BaseQuery": "get_expressroute_gateway_workload_from_customer_id('{customerId}')",
+      "DefaultProjection": [
+        "WorkloadId",
+        "WorkloadName",
+        "CustomerId",
+        "CustomerName"
+      ],
+      "DefaultTopN": 50
+    },
+    "Filters": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "customerId",
+        "Type": "string",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "The Customer ID. Should be the numeric TPID value (e.g., '123456'). If provided in full format 'ch:customer::tpid:123456', extract just the TPID value."
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "reliability/Resiliency%20Insights/Express%20Routes",
+      "MetricUIComponentMap": "azureExpressRouteGateways",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {
+        "List": {
+          "Fields": [ "WorkloadId", "WorkloadName", "CustomerId", "CustomerName" ],
+          "FieldRenames": {
+            "WorkloadId": "Workload Id",
+            "WorkloadName": "Workload Name",
+            "CustomerId": "Customer Id",
+            "CustomerName": "Customer Name",
+            "NavigationLink": "{CxobserveBaseUrl}/customers/{WorkloadId}/reliability/Resiliency%20Insights/Express%20Routes?highLightId=azureExpressRouteGateways"
+          },
+          "MessageTemplate": "Here are the ExpressRoute Gateway workloads for the customer:\n{data}"
+        }
+      }
+    }
+  }
+]

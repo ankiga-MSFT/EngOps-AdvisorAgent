@@ -1,0 +1,128 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.34.44.8038",
+      "templateHash": "8029679779677707253"
+    }
+  },
+  "parameters": {
+    "pkustoManagedPrivateEndpointConnectionMapping": {
+      "type": "array"
+    },
+    "PdeployKustoManagedPrivateEndpoint": {
+      "type": "string"
+    },
+    "PkustoClusterResourceId": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "deployManagedPrivateEndpoint": "[bool(parameters('PdeployKustoManagedPrivateEndpoint'))]",
+    "jsonArray": "[parameters('pkustoManagedPrivateEndpointConnectionMapping')]",
+    "subscriptionId": "[if(variables('deployManagedPrivateEndpoint'), split(parameters('PkustoClusterResourceId'), '/')[2], '')]",
+    "resourceGroupName": "[if(variables('deployManagedPrivateEndpoint'), split(parameters('PkustoClusterResourceId'), '/')[4], '')]",
+    "clusterName": "[if(variables('deployManagedPrivateEndpoint'), split(parameters('PkustoClusterResourceId'), '/')[8], '')]"
+  },
+  "resources": [
+    {
+      "copy": {
+        "name": "ScopedKustoManagedPrivateEndpoints",
+        "count": "[length(variables('jsonArray'))]",
+        "mode": "serial",
+        "batchSize": 1
+      },
+      "condition": "[variables('deployManagedPrivateEndpoint')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('ScopedKustoManagedPrivateEndpoints-{0}', copyIndex())]",
+      "subscriptionId": "[variables('subscriptionId')]",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "PKustoClusterName": {
+            "value": "[variables('clusterName')]"
+          },
+          "pkustoPrivateEndpointConnectionMapping": {
+            "value": "[variables('jsonArray')[copyIndex()]]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.34.44.8038",
+              "templateHash": "6563133247850788676"
+            }
+          },
+          "parameters": {
+            "PKustoClusterName": {
+              "type": "string"
+            },
+            "pkustoPrivateEndpointConnectionMapping": {
+              "type": "object"
+            }
+          },
+          "variables": {
+            "obj": "[parameters('pkustoPrivateEndpointConnectionMapping')]"
+          },
+          "resources": [
+            {
+              "condition": "[equals(variables('obj').kustoConnectionKind, 'CosmosDb')]",
+              "type": "Microsoft.Kusto/clusters/managedPrivateEndpoints",
+              "apiVersion": "2024-04-13",
+              "name": "[format('{0}/{1}', parameters('PKustoClusterName'), variables('obj').managePrivateEndpointName)]",
+              "properties": {
+                "privateLinkResourceId": "[variables('obj').resourceId]",
+                "groupId": "SQL",
+                "requestMessage": "[variables('obj').message]"
+              }
+            },
+            {
+              "condition": "[equals(variables('obj').kustoConnectionKind, 'Storage')]",
+              "type": "Microsoft.Kusto/clusters/managedPrivateEndpoints",
+              "apiVersion": "2024-04-13",
+              "name": "[format('{0}/{1}', parameters('PKustoClusterName'), variables('obj').managePrivateEndpointName)]",
+              "properties": {
+                "privateLinkResourceId": "[variables('obj').resourceId]",
+                "groupId": "blob",
+                "requestMessage": "[variables('obj').message]"
+              }
+            },
+            {
+              "condition": "[equals(variables('obj').kustoConnectionKind, 'Kusto')]",
+              "type": "Microsoft.Kusto/clusters/managedPrivateEndpoints",
+              "apiVersion": "2024-04-13",
+              "name": "[format('{0}/{1}', parameters('PKustoClusterName'), variables('obj').managePrivateEndpointName)]",
+              "properties": {
+                "privateLinkResourceId": "[variables('obj').resourceId]",
+                "privateLinkResourceRegion": "WestUS3",
+                "groupId": "cluster",
+                "requestMessage": "[variables('obj').message]"
+              }
+            },
+            {
+              "condition": "[equals(variables('obj').kustoConnectionKind, 'EventHubNamespace')]",
+              "type": "Microsoft.Kusto/clusters/managedPrivateEndpoints",
+              "apiVersion": "2024-04-13",
+              "name": "[format('{0}/{1}', parameters('PKustoClusterName'), variables('obj').managePrivateEndpointName)]",
+              "properties": {
+                "privateLinkResourceId": "[variables('obj').resourceId]",
+                "groupId": "namespace",
+                "requestMessage": "[variables('obj').message]"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

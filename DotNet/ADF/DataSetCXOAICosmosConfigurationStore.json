@@ -1,0 +1,14 @@
+{
+    "name": "DataSetCXOAICosmosConfigurationStore",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "ls_CosmosDB_CXOAI",
+            "type": "LinkedServiceReference"
+        },
+        "type": "CosmosDbSqlApiCollection",
+        "typeProperties": {
+            "collectionName": "Configurations"
+        },
+        "annotations": []
+    }
+}

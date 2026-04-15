@@ -1,0 +1,95 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "13133109668847383823"
+    }
+  },
+  "parameters": {
+    "PmuiResourceId": {
+      "type": "string"
+    },
+    "PdelayInSeconds": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "scriptId": "WaitAfterDeploymentSlot-deploy"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('scriptId')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "Pps_command": {
+            "value": "[format('Start-Sleep -Seconds {0}', parameters('PdelayInSeconds'))]"
+          },
+          "PmuiResourceId": {
+            "value": "[parameters('PmuiResourceId')]"
+          },
+          "PScriptId": {
+            "value": "[variables('scriptId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.37.4.10188",
+              "templateHash": "4644440018653794433"
+            }
+          },
+          "parameters": {
+            "utcValue": {
+              "type": "string",
+              "defaultValue": "[utcNow()]"
+            },
+            "Pps_command": {
+              "type": "string"
+            },
+            "PmuiResourceId": {
+              "type": "string"
+            },
+            "PScriptId": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deploymentScripts",
+              "apiVersion": "2020-10-01",
+              "name": "[format('runPsScript-{0}', guid(parameters('PScriptId')))]",
+              "location": "[resourceGroup().location]",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', parameters('PmuiResourceId'))]": {}
+                }
+              },
+              "kind": "AzurePowerShell",
+              "properties": {
+                "forceUpdateTag": "[parameters('utcValue')]",
+                "azPowerShellVersion": "5.6.0",
+                "scriptContent": "[parameters('Pps_command')]",
+                "timeout": "PT30M",
+                "cleanupPreference": "OnSuccess",
+                "retentionInterval": "P1D"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

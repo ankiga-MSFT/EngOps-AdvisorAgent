@@ -1,0 +1,20 @@
+.create-or-alter function with (folder = "SRICM", docstring = "", skipvalidation = "true") CleanICMs(text:string) {
+let clean1=
+iff(isnotempty(extract(@"(\d{15})",0,text)),extract(@"(\d{15})",0,text),
+iff(isnotempty(extract(@"(\d{14})",0,text)),extract(@"(\d{14})",0,text),
+iff(isnotempty(extract(@"(\d{13})",0,text)),extract(@"(\d{13})",0,text),
+iff(isnotempty(extract(@"(\d{12})",0,text)),extract(@"(\d{12})",0,text),
+iff(isnotempty(extract(@"(\d{11})",0,text)),extract(@"(\d{11})",0,text),
+iff(isnotempty(extract(@"(\d{10})",0,text)),extract(@"(\d{10})",0,text),
+iff(isnotempty(extract(@"(\d{9})",0,text)),extract(@"(\d{9})",0,text),
+iff(isnotempty(extract(@"(\d{8})",0,text)),extract(@"(\d{8})",0,text),
+iff(isnotempty(extract(@"(\d{7})",0,text)),extract(@"(\d{7})",0,text),'')))))))));
+let cleaned=iff(strlen(clean1) in (15,13,11,8) , '',
+iff(strlen(clean1)==14 and toint(substring(clean1,0,1))>=2 and text !contains('visualstudio') and text !contains('azure') and text !contains('office'), clean1,
+iff(strlen(clean1)==12 and toint(substring(clean1,0,3)) in (999,900,111) and text !contains('visualstudio') and text !contains('azure') and text !contains('office'), substring(clean1,3,9),
+iff(strlen(clean1)==10 and toint(substring(clean1,0,1)) in (1) and text !contains('visualstudio') and text !contains('azure') and text !contains('office'), substring(clean1,1,9),
+iff(strlen(clean1)==9 and toint(substring(clean1,0,1)) >=1 and text !contains('visualstudio') and text !contains('azure') and text !contains('office'), clean1,
+iff(strlen(clean1)==7 and toint(substring(clean1,0,1)) !=0 and text !contains('visualstudio') and text !contains('azure') and text !contains('office'), clean1,''
+))))));
+cleaned
+} 

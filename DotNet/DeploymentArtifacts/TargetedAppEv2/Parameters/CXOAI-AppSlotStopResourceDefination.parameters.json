@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "PfunctionName": {
+      "value": "__CXOAI__CREATECXOAIINFRA__FUNCTIONNAME__"
+    },
+    "PstorageAccountRGroupName": {
+      "value": "__CXOAI__APP__RESOURCEGROUP__NAME__"
+    },
+    "PmuiResourceId": {
+      "value": "__CXOAI__CREATECXOAIINFRA__CREATEAPPMUI_USERMANAGEDIDENTITYRESOURCEID__"
+    },
+    "Pdeploy": {
+      "value": "__CXOAI__DEPLOY_INFRA__"
+    }
+  }
+}

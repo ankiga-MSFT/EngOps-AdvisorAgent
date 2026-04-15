@@ -1,0 +1,37 @@
+---
+layout: home
+hero:
+  name: Advisor Agent
+  text: Azure Advisory Intelligence
+  tagline: An AI-powered orchestration engine that delivers actionable Azure recommendations across reliability, cost, retirement, outage remediation, and architecture.
+  actions:
+    - theme: brand
+      text: Architecture Overview
+      link: /architecture/
+    - theme: alt
+      text: Skills & Capabilities
+      link: /skills/
+    - theme: alt
+      text: API Reference
+      link: /api/
+
+features:
+  - icon: 🧠
+    title: LLM-Driven Orchestration
+    details: Uses Azure OpenAI to classify intent, decompose tasks into skill-based plans, and generate context-aware responses across multi-turn conversations.
+  - icon: ⚙️
+    title: Skill-Based Execution
+    details: Five modular skills — Retirement, Resiliency, Cost Optimization, Outage Remediation, and Architecture — each with dedicated tools and system prompts.
+  - icon: 🔄
+    title: Durable Task Planning
+    details: Tasks are decomposed into a DAG, topologically sorted, and executed via Azure Durable Functions with dependency chaining and progress tracking.
+  - icon: 🔌
+    title: Live Azure Data
+    details: Tools query Azure Resource Graph, ARM REST APIs, Advisor recommendations, and Service Health in real time using the caller's identity.
+  - icon: 💬
+    title: Multi-Turn Conversations
+    details: Conversation history is persisted in Cosmos DB, enabling context-aware follow-up questions and continuity across requests.
+  - icon: 📡
+    title: Async & Real-Time
+    details: Orchestrations run asynchronously with progress tracking via polling endpoints and SignalR for real-time status updates.
+---

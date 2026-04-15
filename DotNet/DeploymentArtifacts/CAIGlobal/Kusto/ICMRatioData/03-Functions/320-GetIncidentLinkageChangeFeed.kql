@@ -1,0 +1,30 @@
+.create-or-alter function with (folder = "ADF", docstring = "Get IncidentLinkage Change Feed", skipvalidation = "true") GetIncidentLinkageChangeFeed(startTime:datetime, endtime:datetime, batch:int, correctionReason:string, index:int) {
+let skiprow=batch*index;
+let currentTime=now();
+let latestSrs=ChangeFeedPipelineIncidentLinkage|summarize arg_max(ExecutionTime,*) by CaseNumber|order by EventDateTime asc| extend rownum=row_number()|where rownum >skiprow|take batch;
+latestSrs| join kind=inner (IncidentLinkage | where LinkSource =='RATIO'| summarize arg_max(EventDateTime,*) by CaseNumber )  on CaseNumber |
+where EventDateTime between (startTime.. endtime)
+|order by EventDateTime asc 
+| project CaseNumber,Aggregate_Add,Content,Aggregate_Remove
+|mv-expand Aggregate_Add
+| extend Number=tostring(Aggregate_Add.Number),
+Type=tostring(Aggregate_Add.Type),
+DataBoundary=tostring(Aggregate_Add.DataBoundary),
+Source=tostring(Aggregate_Add.Source),
+LinkedDateTime=todatetime(Aggregate_Add.LinkedDateTime),
+IncidentIdCloud=tostring(Aggregate_Add.IncidentIdCloud),
+Action=tostring(Aggregate_Add.Action),
+Reason=tostring(Aggregate_Add.Reason)
+| extend Number=CleanICMs(Number) | extend IncidentIdCloud=strcat(Number,'-',DataBoundary)
+| extend Aggregate_Add=bag_pack('Number',Number,'Type',Type,'DataBoundary',DataBoundary,'Source',Source,'LinkedDateTime',LinkedDateTime,'IncidentIdCloud',IncidentIdCloud,'Action',Action,'Reason',Reason)
+| summarize Aggregate_Add=make_list(Aggregate_Add) by CaseNumber,tostring(Aggregate_Remove),tostring(Content)
+| extend AggregatedNonDfmLinks=bag_pack("Add",Aggregate_Add,"Remove",todynamic(Aggregate_Remove)) 
+|extend Content=todynamic(Content) | project-away Aggregate_Add,Aggregate_Remove
+| extend InnerContent=Content.Content, Raw=Content.RawProperties, User=Content.RawProperties.UserProperties
+|extend InnerContent=bag_merge(bag_remove_keys(InnerContent, dynamic(["AggregatedNonDfmLinks","EventDateTime"])),bag_pack("AggregatedNonDfmLinks",AggregatedNonDfmLinks,"EventDateTime",currentTime,"SDPIncidentLinkageCorrection",correctionReason,"SdpServiceName","CXOAI"))
+|extend User=bag_merge(bag_remove_keys(User, dynamic(["EventDateTime"])),bag_pack("EventDateTime",currentTime))
+|extend Raw=bag_merge(bag_remove_keys(Raw, dynamic(["UserProperties"])),bag_pack("UserProperties",User)) | project-away User
+|extend Content=bag_merge(bag_remove_keys(Content, dynamic(["Content","RawProperties"])),bag_pack("Content",InnerContent,"RawProperties",Raw)) 
+| project-away InnerContent,Raw,AggregatedNonDfmLinks
+| project Key=CaseNumber,Value=tostring(Content)
+} 

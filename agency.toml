@@ -1,0 +1,57 @@
+[mcps.builtins]
+ado = true
+kusto = true
+icm = true
+#bluebird = { branch = "Staging", full = false, local = false, mini = false, organization = "msazure", project = "One", repositories = ["EngOps-CXObserve-AI"], type = "bluebird" }
+bluebird = true
+workiq = true
+mail = true
+teams = true
+word = true
+msft-learn = true
+
+[mcps.builtins.msazure_ado]
+type = "ado"
+organization = "msazure"
+
+[mcps.builtins.advisor_cluster]
+type = "kusto"
+service_uri = "https://azureadvisorpartner.centralus.kusto.windows.net"
+database = "AzEE-DB"
+
+[mcps.builtins.advisor_ai_repo]
+type = "bluebird"
+organization = "msazure"
+project = "One"
+repositories = ["EngOps-CXObserve-AI"]
+branch = "Staging"
+
+[mcps.servers.enghub]
+type = "stdio"
+command = "enghub-mcp"
+args = ["start"]
+
+[marketplaces]
+# Restrict the Agency service to only these marketplace sources
+strict = true
+
+# Register marketplace sources
+allowed = [
+    "agency-microsoft/.github-private",
+    "agency-microsoft/playground",
+]
+
+[plugins]
+# Plugins to load for every session
+default = [
+    "market:s360-breeze-toolkit@agency-microsoft/.github-private",
+    "market:deep-review@agency-microsoft/playground",
+    "market:deep-wiki@agency-microsoft/.github-private",
+    "market:plugin-eval@agency-microsoft/.github-private",
+    "local:./plugins/placeholder"
+]
+
+# Block these plugins on service-side runs
+blocked = [
+    "market:legacy-tool@agency-microsoft/.github-private",
+]

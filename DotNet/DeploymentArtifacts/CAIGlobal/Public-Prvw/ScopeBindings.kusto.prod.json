@@ -1,0 +1,75 @@
+{
+  "$schema": "https://ev2schema.azure.net/schemas/2020-01-01/scopeBindings.json",
+  "contentVersion": "1.0.0.0",
+  "scopeBindings": [
+    {
+      "scopeTagName": "prvw",
+      "bindings": [
+        {
+          "find": "__FAIL_DEPLOYMENT__",
+          "replaceWith": "$config(config_failicmkustodeployment)"
+        },
+        {
+          "find": "__KUSTO_CLUSTER_RESOURCE_ID__",
+          "replaceWith": "/subscriptions/443efde9-a0c0-4d0e-8f52-63cdcd9e0931/resourceGroups/rg-Support-wus3-prvw/providers/Microsoft.Kusto/clusters/supportadxwus3prvw"
+        },
+        {
+          "find": "\"__KUSTO_DATABASE_NAMES__\"",
+          "replaceWith": "\"ICMRatioData\""
+        },
+        {
+          "find": "__DEPLOYICMRATIODATA__",
+          "replaceWith": "true"
+        },
+        {
+          "find": "\"__KUSTO_RESOURCE_IDS_ROLE_DEFINATION_IDS_MAPPINGS__\"",
+          "replaceWith": "{\"kustoDatabaseName\":\"ICMRatioData\",\"principleid\":\"be55f430-c2ad-4523-88f4-8f97b0d7237e\",\"tenantid\":\"72f988bf-86f1-41af-91ab-2d7cd011db47\",\"role\":\"Admin\",\"principleType\":\"User\"},{\"kustoDatabaseName\":\"ICMRatioData\",\"principleid\":\"21ca88c9-f159-4c8e-8264-a7fa3855d542\",\"tenantid\":\"72f988bf-86f1-41af-91ab-2d7cd011db47\",\"role\":\"Admin\",\"principleType\":\"User\"},{\"kustoDatabaseName\":\"ICMRatioData\",\"principleid\":\"30ab5b72-08cc-4f8c-ab3a-5008438c384b\",\"tenantid\":\"33e01921-4d64-4f8c-a055-5bdaffd5e33d\",\"role\":\"Admin\",\"principleType\":\"App\"},{\"kustoDatabaseName\":\"SupportValidationData\",\"principleid\":\"30ab5b72-08cc-4f8c-ab3a-5008438c384b\",\"tenantid\":\"33e01921-4d64-4f8c-a055-5bdaffd5e33d\",\"role\":\"Admin\",\"principleType\":\"App\"}"
+        },
+        {
+          "find": "__DEPLOY_KUSTO_ROLE_ASSIGNMENT__",
+          "replaceWith": "true"
+        },
+        {
+          "find": "\"__EVENTHUBNAMERESOURCEIDSCONSUMERMAPPINGS__\"",
+          "replaceWith": "{\"eventhubResourceId\":\"/subscriptions/86612d19-f7d0-48b5-85d4-ae2f603a842e/resourceGroups/rg-caiglobal-prvw-canadacentral/providers/Microsoft.EventHub/namespaces/ehns-icm-srevent-prvw-ccan/eventhubs/srchange\",\"consumergroupName\":\"srchange\"}"
+        },
+        {
+          "find": "__DEPLOY_EVENTHUB_CONSUMER_GROUP__",
+          "replaceWith": "true"
+        },
+        {
+          "find": "__DEPLOY_KUSTO_MANAGED_PRIVATE_ENDPOINT__",
+          "replaceWith": "true"
+        },
+        {
+          "find": "\"__KUSTO_MANAGED_PRIVATE_ENDPOINT_CONNECTION_MAPPINGS__\"",
+          "replaceWith": "{\"kustoConnectionKind\":\"EventHubNamespace\",\"managePrivateEndpointName\":\"mpe-srchange-eh\",\"message\":\"Please approve the connection\",\"resourceId\":\"/subscriptions/86612d19-f7d0-48b5-85d4-ae2f603a842e/resourceGroups/rg-caiglobal-prvw-canadacentral/providers/Microsoft.EventHub/namespaces/ehns-icm-srevent-prvw-ccan\"},{\"kustoConnectionKind\":\"CosmosDb\",\"managePrivateEndpointName\":\"mpe-ratiolinkage-cosmos\",\"message\":\"Please approve the connection\",\"resourceId\":\"/subscriptions/86612d19-f7d0-48b5-85d4-ae2f603a842e/resourceGroups/rg-caiglobal-prvw-canadacentral/providers/Microsoft.DocumentDB/databaseAccounts/csms-caiglobal-prvw-cm\"}"
+        },
+        {
+          "find": "\"__COSMOSDB_RESOURCE_IDS_ROLE_DEFINATION_IDS_MAPPINGS__\"",
+          "replaceWith": "{\"cosmosDbAccountResourceId\":\"/subscriptions/86612d19-f7d0-48b5-85d4-ae2f603a842e/resourceGroups/rg-caiglobal-prvw-canadacentral/providers/Microsoft.DocumentDB/databaseAccounts/csms-caiglobal-prvw-cm\",\"roleDefinitionId\":\"00000000-0000-0000-0000-000000000001\",\"principleId\":\"f0557ffa-0659-419b-b89d-344c05f4b5bf\",\"appName\":\"icmratio\",\"deploySqlAssignment\":\"true\",\"deployRoleAssignment\":\"true\"}"
+        },
+        {
+          "find": "__DEPLOY_COSMOS_ROLE_ASSIGNMENT__",
+          "replaceWith": "true"
+        },
+        {
+          "find": "\"__EVENTHUB_RESOURCE_IDS_ROLE_DEFINATION_IDS_MAPPINGS__\"",
+          "replaceWith": "{\"eventhubResourceId\":\"/subscriptions/86612d19-f7d0-48b5-85d4-ae2f603a842e/resourceGroups/rg-caiglobal-prvw-canadacentral/providers/Microsoft.EventHub/namespaces/ehns-icm-srevent-prvw-ccan/eventhubs/srchange\",\"roleDefinationId\":\"a638d3c7-ab3a-418d-83e6-5f17a39d4fde\",\"principleId\":\"f0557ffa-0659-419b-b89d-344c05f4b5bf\"}"
+        },
+        {
+          "find": "__DEPLOY_EVENTHUB_ROLE_ASSIGNMENT__",
+          "replaceWith": "true"
+        },
+        {
+          "find": "__DEPLOY_KUSTO_DATA_CONNECTION__",
+          "replaceWith": "true"
+        },
+        {
+          "find": "\"__KUSTO_DATA_CONNECTIONS_MAPPINGS__\"",
+          "replaceWith": "{\"kustoDatabaseName\":\"ICMRatioData\",\"kustoDataConnectionName\":\"eh-srchange\",\"kustoConnectionKind\":\"EventHub\",\"eventHubResourceId\":\"/subscriptions/86612d19-f7d0-48b5-85d4-ae2f603a842e/resourceGroups/rg-caiglobal-prvw-canadacentral/providers/Microsoft.EventHub/namespaces/ehns-icm-srevent-prvw-ccan/eventhubs/srchange\",\"eventhubConsumerGroup\":\"srchange\",\"mappingRuleName\":\"SRChange_mapping\",\"retrievalStartDate\":\"2023-10-01T00:00:00Z\",\"tableName\":\"SRChange\"},{\"kustoDatabaseName\":\"ICMRatioData\",\"kustoDataConnectionName\":\"cosmosdb-SrSnapshot\",\"kustoConnectionKind\":\"CosmosDb\",\"cosmosDbAccountResourceId\":\"/subscriptions/86612d19-f7d0-48b5-85d4-ae2f603a842e/resourceGroups/rg-caiglobal-prvw-canadacentral/providers/Microsoft.DocumentDB/databaseAccounts/csms-caiglobal-prvw-cm\",\"cosmosDbContainer\":\"SrSnapshot\",\"cosmosDbDatabase\":\"SRData\",\"mappingRuleName\":\"SrSnapshot_mapping\",\"retrievalStartDate\":\"2023-10-01T00:00:00Z\",\"tableName\":\"SrSnapshot\"},{\"kustoDatabaseName\":\"ICMRatioData\",\"kustoDataConnectionName\":\"cosmosdb-RatioLinkage\",\"kustoConnectionKind\":\"CosmosDb\",\"cosmosDbAccountResourceId\":\"/subscriptions/86612d19-f7d0-48b5-85d4-ae2f603a842e/resourceGroups/rg-caiglobal-prvw-canadacentral/providers/Microsoft.DocumentDB/databaseAccounts/csms-caiglobal-prvw-cm\",\"cosmosDbContainer\":\"RatioLinkage\",\"cosmosDbDatabase\":\"SRData\",\"mappingRuleName\":\"RatioLinkage_mapping\",\"retrievalStartDate\":\"2023-10-01T00:00:00Z\",\"tableName\":\"RatioLinkage\"},{\"kustoDatabaseName\":\"ICMRatioData\",\"kustoDataConnectionName\":\"cosmosdb-IcmL2Aggregates\",\"kustoConnectionKind\":\"CosmosDb\",\"cosmosDbAccountResourceId\":\"/subscriptions/86612d19-f7d0-48b5-85d4-ae2f603a842e/resourceGroups/rg-caiglobal-prvw-canadacentral/providers/Microsoft.DocumentDB/databaseAccounts/csms-caiglobal-prvw-cm\",\"cosmosDbContainer\":\"IcmL2Aggregates\",\"cosmosDbDatabase\":\"SRData\",\"mappingRuleName\":\"IcmL2Aggregate_mapping\",\"retrievalStartDate\":\"2023-10-01T00:00:00Z\",\"tableName\":\"IcmL2Aggregate\"},{\"kustoDatabaseName\":\"ICMRatioData\",\"kustoDataConnectionName\":\"cosmosdb-IncidentLinkage\",\"kustoConnectionKind\":\"CosmosDb\",\"cosmosDbAccountResourceId\":\"/subscriptions/86612d19-f7d0-48b5-85d4-ae2f603a842e/resourceGroups/rg-caiglobal-prvw-canadacentral/providers/Microsoft.DocumentDB/databaseAccounts/csms-caiglobal-prvw-cm\",\"cosmosDbContainer\":\"IncidentLinkage\",\"cosmosDbDatabase\":\"SRData\",\"mappingRuleName\":\"IncidentLinkage_mapping\",\"retrievalStartDate\":\"2023-10-01T00:00:00Z\",\"tableName\":\"IncidentLinkage\"}"
+        }
+      ]
+    }
+  ]
+}

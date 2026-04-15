@@ -1,0 +1,90 @@
+.create-or-alter function with (folder = "ADF", docstring = "Get SrSnapshot Change Feed", skipvalidation = "true") GetSrSnapshotPurgedLinkageCorrectionChangeFeed(startTime:datetime, endtime:datetime, batch:int, correctionReason:string, index:int) {
+// 
+// let startTime=datetime('2001-01-01');
+// let endtime=now();
+// let batch=10;
+// let correctionReason='restoring purge event linked incidents';
+// let index=0;
+let skiprow=batch*index;
+let dayStringMapping = 
+    union 
+    (print FieldPath = '$.SDPICMLinkageCorrection', Value = correctionReason, DataType='string' ),
+    (print FieldPath = '$.SdpServiceName', Value = 'CXOAI',  DataType='string' );
+let MetaData= toscalar(dayStringMapping |extend bag= bag_pack("FieldPath",FieldPath,"Value",Value,"DataType",DataType)| summarize make_list(bag) | project list_bag);
+let cs=PurgedLinkageCorrectionPipelineSRs|summarize arg_max(ExecutionTime,*) by CaseNumber|order by ModifiedOn asc| extend rownum=row_number()|where rownum >skiprow|take batch | project PurgedCaseNumber=CaseNumber;
+let latestEvents=cs 
+| join kind=inner SrSnapshot on $left.PurgedCaseNumber==$right.CaseNumber  |
+where EventDateTime between (startTime.. endtime)  and isnotempty(State)
+|summarize arg_max(EventDateTime,*) by CaseNumber;
+// let bins =
+//     SrSnapshot | where CaseNumber in(cs)
+//     | extend hourBin = bin(EventDateTime, 6h)
+//     | summarize binMaxEvent = max(EventDateTime) by CaseNumber, hourBin;
+// let lastnopurgeRecords=bins| summarize latestBin = max(hourBin) by CaseNumber
+// | join kind=inner (bins) on CaseNumber
+// | where hourBin < latestBin
+// | summarize arg_max(hourBin, binMaxEvent) by CaseNumber
+// | project CaseNumber, EventDateTime = binMaxEvent;
+// let snapshots=lastnopurgeRecords| join kind=inner  SrSnapshot on CaseNumber and EventDateTime
+// |project  CaseNumber, LinkedICMs, LinkedIncidents, AdditionalIncidentIds,IncidentId,EventDateTime 
+// | order by CaseNumber,EventDateTime ;
+// let historicalLinkages=snapshots | extend AdditionalIncidentIds = array_concat(AdditionalIncidentIds, pack_array(IncidentId))
+// | mv-apply element = AdditionalIncidentIds on (
+//     summarize AdditionalIncidentIds = make_set(element)
+//     )
+// | mv-expand AdditionalIncidentIds
+// | extend IncidentObj = pack(
+//                 "IncidentId", tostring(AdditionalIncidentIds),
+//                 "DataBoundary", "ICM-WW",
+//                 "LinkSource", "DFM",
+//                 "LinkCreatedOn", EventDateTime
+//               )
+// |summarize IncidentObjArray = make_list(IncidentObj) by CaseNumber,EventDateTime,tostring(LinkedICMs),tostring(LinkedIncidents)
+// | extend LinkedICMs=todynamic(LinkedICMs),LinkedIncidents=todynamic(LinkedIncidents)
+// |extend LinkedIncidents =iff(isempty(LinkedIncidents),IncidentObjArray ,LinkedIncidents) | project-away IncidentObjArray
+// | mv-expand LinkedIncidents
+// |extend IncidentId=tostring(LinkedIncidents.IncidentId),DataBoundary=tostring(LinkedIncidents.DataBoundary),
+//          LinkSource=tostring(LinkedIncidents.LinkSource),LinkCreatedOn=tostring(LinkedIncidents.LinkCreatedOn)
+// | where isnotempty(IncidentId)
+// | summarize LinkedIncidents=make_set(LinkedIncidents) by CaseNumber;
+// let removedIncidents=IncidentLinkage | where CaseNumber in(cs)| where EntityAction =='IncidentLinkDeleted'
+// | extend removeObj=pack( "IncidentId",IncidentId ,
+//                 "DataBoundary", DataBoundary,
+//                 "LinkSource", LinkSource,
+//                 "LinkCreatedOn", LinkCreatedOn)| summarize RemoveIncidents=make_list(removeObj) by CaseNumber ;
+// let processeddata=historicalLinkages| join kind=leftouter  removedIncidents on CaseNumber| extend RemoveIncidents=todynamic(iff(isempty( RemoveIncidents),'[]',RemoveIncidents)) | project-away CaseNumber1;
+// let restoredLinkedIncidents=processeddata | extend ToBeRemoved=RemoveIncidents
+// | mv-apply RemoveIncidents on (
+//    extend    rIncidentId   = tostring(RemoveIncidents["IncidentId"]),
+//              rDataBoundary = tostring(RemoveIncidents["DataBoundary"]),
+//              rLinkSource   = tostring(RemoveIncidents["LinkSource"]),
+//              rLinkCreatedOn= tostring(RemoveIncidents["LinkCreatedOn"])
+//     | extend rKey = strcat(rIncidentId, "-", rDataBoundary, "-", rLinkSource, "-", rLinkCreatedOn)
+//     | summarize RemoveKeys = make_set(rKey)
+// )
+// | mv-expand LinkedIncidents
+// | extend lIncidentId    = tostring(LinkedIncidents["IncidentId"]),
+//          lDataBoundary  = tostring(LinkedIncidents["DataBoundary"]),
+//          lLinkSource    = tostring(LinkedIncidents["LinkSource"]),
+//          lLinkCreatedOn = tostring(LinkedIncidents["LinkCreatedOn"])
+// | extend lKey = strcat(lIncidentId, "-", lDataBoundary, "-", lLinkSource, "-",lLinkCreatedOn)
+// | where not(set_has_element(RemoveKeys, lKey))
+// | extend obj = pack(
+//     "IncidentId", lIncidentId,
+//     "DataBoundary", lDataBoundary,
+//     "LinkSource", lLinkSource,
+//     "LinkCreatedOn", lLinkCreatedOn
+// )
+// | summarize CalculatedLinkedIncidents = make_list(obj) by CaseNumber;
+let dynamicpurgedCaseNumbers=toscalar(cs|summarize make_list(PurgedCaseNumber));
+let restoredLinkedIncidents=database('SAData').ExtractLinkedIncidents(dynamicpurgedCaseNumbers);  
+latestEvents| join kind=leftouter restoredLinkedIncidents on CaseNumber //| extend LinkedIncidents=CalculatedLinkedIncidents 
+ | project Content,RawProperties,CaseNumber,LinkedIncidents=LinkedIncidents1
+| extend UserProperties=todynamic(extract_json("$.UserProperties",tostring(RawProperties)))
+|extend UserProperties=bag_merge(bag_remove_keys(UserProperties,dynamic(["EventType"])),bag_pack("EventType","DeleteUpdated"))
+|extend RawProperties=bag_merge(bag_remove_keys(RawProperties,dynamic(["UserProperties"])),bag_pack("UserProperties",UserProperties))
+| extend Content=bag_merge(bag_remove_keys(Content,dynamic(["LinkedIncidents"])),bag_pack("LinkedIncidents",LinkedIncidents)) //remove
+| extend Snapshot= bag_pack("Content",Content,"RawProperties",RawProperties)
+| extend Value=bag_pack("Snapshot",Snapshot,"MetaData",MetaData,"Source","raw")
+| project Key=CaseNumber,tostring(Value)
+}

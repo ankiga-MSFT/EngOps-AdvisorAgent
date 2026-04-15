@@ -1,0 +1,191 @@
+{
+  "$schema": "https://ev2schema.azure.net/schemas/2020-04-01/RegionAgnosticRolloutSpecification.json",
+  "contentVersion": "1.0.0",
+  "rolloutMetadata": {
+    "serviceModelPath": "Public-Prod/ServiceModel.infra.json",
+    "scopeBindingsPath": "Public-Prod/ScopeBindings.infra.prod.json",
+    "configuration": {
+      "serviceGroupScope": {
+        "specPath": "Public-Prod/ConfigurationSpecification.infra.json"
+      }
+    },
+    "name": "CAIGLOBAL-INFRA - Complete Rollout",
+    "rolloutType": "major",
+    "buildSource": {
+      "parameters": {
+        "versionFile": "version.txt"
+      }
+    },
+    "notification": {
+      "email": {
+        "to": "duvenkatteam@microsoft.com"
+      }
+    }
+  },
+  "orchestratedSteps": [
+    {
+      "name": "StopDeployment",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "ConfigurableStopByFailureDeployment",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": []
+    },
+    {
+      "name": "CreateCAIGlobalInfra",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CreateCAIGlobalInfra",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "StopDeployment"
+      ]
+    },
+    {
+      "name": "resourceGroupRbacAssign",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "ResourceGroupRbacAssignmentResourceDefinition",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CreateCAIGlobalInfra"
+      ]
+    },
+    {
+      "name": "StorageRbacAssign",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "StorageRbacAssignmentResourceDefinition",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CreateCAIGlobalInfra"
+      ]
+    },
+    {
+      "name": "KeyvaultRbacAssign",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "KeyvaultRbacAssignmentResourceDefinition",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CreateCAIGlobalInfra"
+      ]
+    },
+    {
+      "name": "AssistantEv2KeyvaultRbacAssign",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "AssistantEv2KeyvaultRbacAssign",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CreateCAIGlobalInfra",
+        "KeyvaultRbacAssign"
+      ]
+    },
+    {
+      "name": "GenevaMSAppServiceKeyvaultRbacAssign",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "GenevaMSAppServiceKeyvaultRbacAssign",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "AssistantEv2KeyvaultRbacAssign",
+        "CreateCAIGlobalInfra"
+      ]
+    },
+    {
+      "name": "AssistantEv2KeyvaultRbacAssignAppMui",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "AssistantEv2KeyvaultRbacAssignAppMui",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CreateCAIGlobalInfra",
+        "GenevaMSAppServiceKeyvaultRbacAssign"
+      ]
+    },
+    {
+      "name": "EnabledAssistedIdentityKeyVaultNetwork",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "EnabledAssistedIdentityKeyVaultNetwork",
+      "actions": [
+        "Shell/FunctionAppArtifactFileUpload"
+      ],
+      "dependsOn": [
+        "AssistantEv2KeyvaultRbacAssignAppMui",
+        "CreateCAIGlobalInfra"
+      ]
+    },
+    {
+      "name": "EnabledCertificateKeyVaultNetwork",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "EnabledCertificateKeyVaultNetwork",
+      "actions": [
+        "Shell/FunctionAppArtifactFileUpload"
+      ],
+      "dependsOn": [
+        "AssistantEv2KeyvaultRbacAssignAppMui",
+        "CreateCAIGlobalInfra"
+      ]
+    },
+    {
+      "name": "CreateCertificates",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CreateCertificates",
+      "actions": [
+        "Extension/SetCertificateIssuer",
+        "Extension/CreateCertificate"
+      ],
+      "dependsOn": [
+        "CreateCAIGlobalInfra",
+        "EnabledAssistedIdentityKeyVaultNetwork",
+        "EnabledCertificateKeyVaultNetwork"
+      ]
+    },
+    {
+      "name": "CreateAppCertificates",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CreateAppCertificates",
+      "actions": [
+        "Extension/SetCertificateIssuer",
+        "Extension/CreateCertificate"
+      ],
+      "dependsOn": [
+        "CreateCAIGlobalInfra",
+        "CreateCertificates"
+      ]
+    },
+    {
+      "name": "DisabledCertificateKeyVaultNetwork",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "DisabledCertificateKeyVaultNetwork",
+      "actions": [
+        "Shell/FunctionAppArtifactFileUpload"
+      ],
+      "dependsOn": [
+        "CreateAppCertificates",
+        "CreateCAIGlobalInfra"
+      ]
+    },
+    {
+      "name": "DisabledAssistedIdentityKeyVaultNetwork",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "DisabledAssistedIdentityKeyVaultNetwork",
+      "actions": [
+        "Shell/FunctionAppArtifactFileUpload"
+      ],
+      "dependsOn": [
+        "CreateAppCertificates",
+        "CreateCAIGlobalInfra"
+      ]
+    }
+  ]
+}

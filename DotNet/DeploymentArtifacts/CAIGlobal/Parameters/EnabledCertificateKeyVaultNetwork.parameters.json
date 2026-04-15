@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "identityClientId": {
+      "value": "__CREATECAIGLOBALINFRA__CREATEAPPMUI_USERMANAGEDIDENTITYCLIENTID__"
+    },
+    "resourceGroupName": {
+      "value": "__APP__RESOURCEGROUP__NAME__"
+    },
+    "muiResourceId": {
+      "value": "__CREATECAIGLOBALINFRA__CREATEAPPMUI_USERMANAGEDIDENTITYRESOURCEID__"
+    },
+    "commandsToExecuteInShell": {
+      "value": [
+        "__COMMANDS_TO_EXECUTE_IN_SHELL__"
+      ]
+    },
+    "packageName": {
+      "value": "__EV2_PACKAGE_NAME__"
+    },
+    "maxExecutionTime": {
+      "value": "__SHELL_MAX_EXECUTION_TIME__"
+    },
+    "publicNetworkAccessState": {
+      "value": "__PUBLIC_NETWORK_ACCESS_STATE_ENABLED__"
+    },
+    "keyvaultName": {
+      "value": "__CREATECAIGLOBALINFRA__DEFAULTKEYVALUENAME__"
+    },
+    "deployCertificates": {
+      "value": "__DEPLOY_CERTIFICATES__"
+    }
+  }
+}

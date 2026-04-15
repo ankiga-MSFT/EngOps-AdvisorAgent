@@ -1,0 +1,46 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "7609456334039329649"
+    }
+  },
+  "parameters": {
+    "PfunctionName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of function app."
+      }
+    },
+    "PmuiPrincipleId": {
+      "type": "string"
+    },
+    "PdeployInfra": {
+      "type": "string",
+      "metadata": {
+        "description": "MUI name"
+      }
+    }
+  },
+  "variables": {
+    "deployInfra": "[bool(parameters('PdeployInfra'))]",
+    "websiteContributorRoleId": "de139f84-1756-47ae-9be6-808fbbe84772"
+  },
+  "resources": [
+    {
+      "condition": "[variables('deployInfra')]",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.Web/sites/{0}', parameters('PfunctionName'))]",
+      "name": "[guid(format('{0}-{1}-{2}-{3} ', subscription().id, variables('websiteContributorRoleId'), parameters('PmuiPrincipleId'), parameters('PfunctionName')))]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('websiteContributorRoleId'))]",
+        "principalId": "[parameters('PmuiPrincipleId')]",
+        "principalType": "ServicePrincipal"
+      }
+    }
+  ]
+}

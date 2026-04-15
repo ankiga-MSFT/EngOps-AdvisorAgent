@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "PkustoClusterResourceId": {
+      "value": "__KUSTO_CLUSTER_RESOURCE_ID__"
+    },
+    "PkustoResourceIdsPrincipleMappings": {
+      "value": [
+        "__KUSTO_RESOURCE_IDS_ROLE_DEFINATION_IDS_MAPPINGS__"
+      ]
+    },
+    "PdeployKustoRoleAssignment": {
+      "value": "__DEPLOY_KUSTO_ROLE_ASSIGNMENT__"
+    }
+  }
+}

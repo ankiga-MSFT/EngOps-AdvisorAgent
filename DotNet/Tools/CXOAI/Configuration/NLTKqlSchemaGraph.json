@@ -1,0 +1,443 @@
+{
+  "$schema": "#/definitions/SchemaGraphData",
+  "_comment": "Test data for ISchemaGraphProvider. Deserializes into SchemaGraphData (Providers/ISchemaGraphProvider.cs). Mirrors Python GraphConfig.json structure.",
+
+  "Entities": [
+    {
+      "Name": "Incident",
+      "Description": "A customer-reported support incident (ICM ticket). Central entity linking customers, services, and resolution workflows.",
+      "Tags": ["ICM", "outage", "critsit", "ticket", "case", "issue", "problem"],
+      "Fields": [
+        "Id",
+        "ParentId",
+        "Title",
+        "InternalTitle",
+        "Severity",
+        "Status",
+        "CreatedDate",
+        "ResolvedDate",
+        "OwningTeam",
+        "IsOutage",
+        "IsCritSit",
+        "IncidentType",
+        "ProgramNames",
+        "RootCause"
+      ]
+    },
+    {
+      "Name": "Customer",
+      "Description": "A customer with one or more Azure subscriptions.",
+      "Tags": ["client", "tenant", "organization", "company", "S500", "subscriber", "enterprise"],
+      "Fields": [
+        "Id",
+        "TenantId",
+        "Name",
+        "DerivedName",
+        "ProgramNames",
+        "MSCustomerName",
+        "S500",
+        "CustomerType"
+      ]
+    },
+    {
+      "Name": "Recommendation",
+      "Description": "A linked recommendation associated with an incident, tracking ACM recommendations and their approval status.",
+      "Tags": ["ACM", "suggestion", "advisory", "guidance", "action item"],
+      "Fields": [
+        "TypeId",
+        "IncidentId",
+        "LinkingSource",
+        "LinkingStatus",
+        "Timestamp",
+        "AcmId",
+        "ImpactedSubscriptions",
+        "IsAcmExpired",
+        "Approver"
+      ]
+    },
+    {
+      "Name": "SupportTicket",
+      "Description": "A support request ticket with case details, topic, state, and severity information. Linked to incidents via SearchSRsByICMId function. When user asks for 'related incidents' or 'linked incidents' to an ICM, this means support tickets.",
+      "Tags": ["SR", "support request", "case", "support ticket", "related incident", "linked incident", "child incident", "associated incident", "related case", "linked case"],
+      "Fields": [
+        "SupportRequestNumber",
+        "CaseUri",
+        "SupportTopicTitle",
+        "State",
+        "Severity",
+        "IncidentId",
+        "ICMId"
+      ]
+    },
+    {
+      "Name": "RecommendationType",
+      "Description": "Reference data for recommendation types with categories, impacts, and metadata. Joined with LinkedRecommendations to get descriptive fields.",
+      "Tags": ["recommendation type", "ACM type"],
+      "Fields": [
+        "Id",
+        "Label",
+        "Description",
+        "Category",
+        "SubCategory",
+        "Impact",
+        "PotentialBenefit",
+        "LearnMoreLink",
+        "ResourceType",
+        "OriginSourceType",
+        "RecommendationType",
+        "IsDeleted"
+      ]
+    }
+  ],
+
+  "Relationships": [
+    {
+      "From": "Incident",
+      "To": "Recommendation",
+      "Type": "1:N",
+      "DataCompleteness": "complete",
+      "CompletenessNote": null,
+      "Prerequisite": null,
+      "Labels": [ "HasRecommendation", "LinkedToIncident" ],
+      "JoinKeys": {
+        "Incident.Id": "Recommendation.IncidentId"
+      }
+    },
+    {
+      "From": "Recommendation",
+      "To": "RecommendationType",
+      "Type": "N:1",
+      "DataCompleteness": "complete",
+      "CompletenessNote": null,
+      "Prerequisite": null,
+      "Labels": [ "HasType", "TypeOf" ],
+      "JoinKeys": {
+        "Recommendation.TypeId": "RecommendationType.Id"
+      }
+    },
+    {
+      "From": "Incident",
+      "To": "Customer",
+      "Type": "N:N",
+      "DataCompleteness": "complete",
+      "CompletenessNote": "Obtained via SearchSRsByICMId function and joined to ObserveCustomerModel",
+      "Prerequisite": null,
+      "Labels": [ "HasCustomer", "OwnsIncident" ],
+      "JoinKeys": {
+        "Customer.Name": "Customer.MSCustomerName"
+      }
+    },
+    {
+      "From": "Incident",
+      "To": "SupportTicket",
+      "Type": "1:N",
+      "DataCompleteness": "complete",
+      "CompletenessNote": "Obtained via SearchSRsByICMId function. ICMId is parent incident, IncidentId is child incident linked to SR.",
+      "Prerequisite": null,
+      "Labels": [ "HasSupportTicket", "LinkedToIncident" ],
+      "JoinKeys": {
+        "Incident.ParentId": "SupportTicket.ICMId"
+      }
+    }
+  ],
+
+  "Tables": [
+    {
+      "Table": "LinkedRecommendations",
+      "Cluster": "https://supportadxwus3test.westus3.kusto.windows.net/",
+      "Database": "IncidentImpactLink",
+      "Description": "Table for recommendations linked to incidents with ACM tracking and approval status. Filter by IncidentId directly (ICM ID = IncidentId).",
+      "Deduplication": {
+        "Function": "arg_max",
+        "OrderByColumn": "Timestamp",
+        "GroupByColumns": ["RecommendationTypeId", "IncidentId"]
+      },
+      "FieldMapping": {
+        "Recommendation.TypeId": {
+          "TableColumnName": "RecommendationTypeId",
+          "Type": "String"
+        },
+        "Recommendation.IncidentId": {
+          "TableColumnName": "IncidentId",
+          "Type": "String"
+        },
+        "Recommendation.LinkingStatus": {
+          "TableColumnName": "LinkingStatus",
+          "Type": "String"
+        },
+        "Recommendation.AcmId": {
+          "TableColumnName": "AcmId",
+          "Type": "String"
+        },
+        "Recommendation.IsAcmExpired": {
+          "TableColumnName": "IsAcmExpired",
+          "Type": "boolean"
+        },
+        "Incident.Id": {
+          "TableColumnName": "IncidentId",
+          "Type": "String"
+        }
+      },
+      "ImplicitFilters": [
+        {
+          "Field": "Recommendation.LinkingStatus",
+          "Operator": "==",
+          "Value": "Approved"
+        },
+        {
+          "Field": "Recommendation.IsAcmExpired",
+          "Operator": "!=",
+          "Value": "true"
+        }
+      ]
+    },
+    {
+      "Table": "ExternalRecommendationTypes",
+      "Cluster": "https://recommendrptwus3test.westus3.kusto.windows.net/",
+      "Database": "recommenddata",
+      "CrossCluster": true,
+      "Description": "Reference table containing recommendation type definitions with categories, impacts, and metadata. IMPORTANT: This table is on a different cluster - use cluster() annotation for cross-cluster queries.",
+      "FieldMapping": {
+        "Recommendation.TypeId": {
+          "TableColumnName": "RecommendationTypeId",
+          "Type": "String"
+        },
+        "RecommendationType.Label": {
+          "TableColumnName": "Label",
+          "Type": "String"
+        },
+        "RecommendationType.Description": {
+          "TableColumnName": "Description",
+          "Type": "String"
+        },
+        "RecommendationType.Category": {
+          "TableColumnName": "Category",
+          "Type": "String"
+        },
+        "RecommendationType.Impact": {
+          "TableColumnName": "Impact",
+          "Type": "String"
+        },
+        "RecommendationType.LearnMoreLink": {
+          "TableColumnName": "LearnMoreLink",
+          "Type": "String"
+        },
+        "RecommendationType.ResourceType": {
+          "TableColumnName": "ResourceType",
+          "Type": "String"
+        },
+        "RecommendationType.OriginSourceType": {
+          "TableColumnName": "OriginSourceType",
+          "Type": "String"
+        },
+        "RecommendationType.RecommendationType": {
+          "TableColumnName": "RecommendationType",
+          "Type": "String"
+        },
+        "RecommendationType.PotentialBenefit": {
+          "TableColumnName": "PotentialBenefit",
+          "Type": "String"
+        },
+        "RecommendationType.IsDeleted": {
+          "TableColumnName": "IsDeleted",
+          "Type": "boolean"
+        },
+        "RecommendationType.SubCategory": {
+          "TableColumnName": "SubCategory",
+          "Type": "String"
+        }
+      },
+      "ImplicitFilters": [
+        {
+          "Field": "RecommendationType.IsDeleted",
+          "Operator": "!=",
+          "Value": "true"
+        }
+      ]
+    },
+    {
+      "Table": "ObserveCustomerModel",
+      "Cluster": "https://supportadxwus3test.westus3.kusto.windows.net/",
+      "Database": "customerdomdata",
+      "Description": "Customer observation model with S500 status and customer details for enterprise customers.",
+      "FieldMapping": {
+        "Customer.MSCustomerName": {
+          "TableColumnName": "MSCustomerName",
+          "Type": "String"
+        },
+        "Customer.S500": {
+          "TableColumnName": "S500",
+          "Type": "String"
+        },
+        "Customer.Name": {
+          "TableColumnName": "MSCustomerName",
+          "Type": "String"
+        }
+      },
+      "ImplicitFilters": []
+    }
+  ],
+
+  "Functions": [
+    {
+      "Name": "SearchSRsByICMId",
+      "Cluster": "https://supportadxwus3test.westus3.kusto.windows.net/",
+      "Database": "ICMRatioData",
+      "Description": "Returns The SRs linked with the ICM with L2 aggregation. Output includes Customers array with CustomerName and CustomerType.",
+      "Folder": "SRICM",
+      "TriggerTags": ["ICM", "outage", "critsit", "incident"],
+      "Parameters": [
+        {
+          "Name": "IcmIds",
+          "Type": "dynamic",
+          "DefaultValue": null,
+          "Description": "List of ICM IDs to search for (e.g., dynamic(['737636804']))"
+        },
+        {
+          "Name": "IcmDataboundary",
+          "Type": "string",
+          "DefaultValue": "PUBLIC",
+          "Description": "Data boundary filter"
+        }
+      ],
+      "Transformations": [
+        {
+          "Column": "Customers",
+          "Operation": "mv-expand todynamic(Customers)",
+          "Reason": "Customers is a dynamic array that must be expanded to get individual customer rows",
+          "WhenRequired": "ONLY when query FILTERS on Customer fields (S500, CustomerType, CustomerName) or JOINS to customer tables (ObserveCustomerModel). For ticket-only queries (list/count SupportRequestNumber), do NOT expand - just project SupportTicket.* columns directly.",
+          "ExtendColumns": {
+            "CustomerName": "tostring(Customers.CustomerName)",
+            "CustomerType": "tostring(Customers.CustomerType)"
+          },
+          "ExtendGuidance": "ALWAYS extract ALL fields you will filter on. If filtering on CustomerType (e.g., 'Enterprise'), you MUST include CustomerType in extend. Common pattern: | mv-expand todynamic(Customers) | extend CustomerName = tostring(Customers.CustomerName), CustomerType = tostring(Customers.CustomerType) | where CustomerType == 'Enterprise'",
+          "DistinctGuidance": "After filtering, use distinct to remove duplicate rows before joining: | distinct ParentIncidentId = ICMId, IncidentId, CustomerName"
+        }
+      ],
+      "UsagePattern": "let IcmIds = dynamic(['<ICM_ID>']);\ndatabase('ICMRatioData').SearchSRsByICMId(IcmIds)",
+      "OutputMapping": {
+        "SupportTicket.SupportRequestNumber": {
+          "TableColumnName": "SupportRequestNumber",
+          "Type": "String"
+        },
+        "SupportTicket.SupportTopicTitle": {
+          "TableColumnName": "SupportTopicTitle",
+          "Type": "String"
+        },
+        "SupportTicket.Severity": {
+          "TableColumnName": "Severity",
+          "Type": "String"
+        },
+        "SupportTicket.State": {
+          "TableColumnName": "State",
+          "Type": "String"
+        },
+        "SupportTicket.IncidentId": {
+          "TableColumnName": "IncidentId",
+          "Type": "String"
+        },
+        "SupportTicket.ICMId": {
+          "TableColumnName": "ICMId",
+          "Type": "String"
+        },
+        "Incident.Id": {
+          "TableColumnName": "IncidentId",
+          "Type": "String"
+        },
+        "Incident.ParentId": {
+          "TableColumnName": "ICMId",
+          "Type": "String"
+        },
+        "SupportTicket.CaseUri": {
+          "TableColumnName": "CaseUri",
+          "Type": "String"
+        },
+        "Customer.Name": {
+          "TableColumnName": "Customers",
+          "Type": "dynamic",
+          "Note": "Array of objects with CustomerName and CustomerType. Use mv-expand Customers to flatten."
+        }
+      }
+    }
+  ],
+
+  "QueryRules": [
+    {
+      "Name": "KqlJoinSyntax",
+      "Description": "When joining on columns with different names, rename the column in the inner table using project. Wrap cross-database tables in parentheses.",
+      "Pattern": "| join kind=inner (<inner_table> | project <NewName> = <OldName>, <OtherColumns>) on <NewName>",
+      "Example": "| join kind=inner (database('customerdomdata').ObserveCustomerModel | project CustomerName = MSCustomerName, S500) on CustomerName",
+      "Important": "KQL join 'on' clause requires matching column names. Rename columns in the inner query using project."
+    },
+    {
+      "Name": "MvExpandExtract",
+      "Description": "After mv-expand on a bag column, you must extend to extract ALL fields you'll filter or join on",
+      "Pattern": "| mv-expand todynamic(<BagColumn>) | extend <Field1> = tostring(<BagColumn>.<Field1>), <Field2> = tostring(<BagColumn>.<Field2>)",
+      "Example": "| mv-expand todynamic(Customers) | extend CustomerName = tostring(Customers.CustomerName), CustomerType = tostring(Customers.CustomerType)",
+      "Important": "Extract ALL fields needed for filtering or joining in the same extend statement. Use todynamic() with mv-expand for explicit type handling. If filtering on CustomerType, you MUST extend it first."
+    },
+    {
+      "Name": "KqlSummarizeSyntax",
+      "Description": "KQL summarize uses assignment syntax, NOT 'as' keyword",
+      "Pattern": "| summarize <AliasName> = <aggregation>()",
+      "Example": "| summarize ImpactedCount = count(), TotalRevenue = sum(Revenue)",
+      "Important": "CORRECT: summarize MyCount = count(). WRONG: summarize count() as MyCount"
+    },
+    {
+      "Name": "MultiPartQuestions",
+      "Description": "When user asks multiple questions (detected by multiple '?' or 'and' conjunctions), generate separate numbered queries for each part",
+      "OutputFormat": "Query 1: [purpose]\nQuery 2: [purpose]\n..."
+    },
+    {
+      "Name": "S500CustomerFilter", 
+      "Description": "To filter S500 customers: 1) mv-expand Customers, 2) extend CustomerName AND CustomerType from bag, 3) optionally filter CustomerType, 4) use distinct before join, 5) join to ObserveCustomerModel WITH S500 filter INSIDE the join subquery",
+      "TriggeredBy": ["S500", "enterprise customer", "strategic customer"],
+      "JoinPattern": "| mv-expand todynamic(Customers) | extend CustomerName = tostring(Customers.CustomerName), CustomerType = tostring(Customers.CustomerType) | where CustomerType == 'Enterprise' | distinct ParentIncidentId = ICMId, IncidentId, CustomerName | join kind=inner (database('customerdomdata').ObserveCustomerModel | where S500 == 'Yes' | project CustomerName = MSCustomerName, S500) on CustomerName | distinct CustomerName",
+      "Composition": {
+        "JoinTable": "ObserveCustomerModel",
+        "JoinOn": { "Left": "CustomerName", "Right": "MSCustomerName" },
+        "FilterInsideJoin": { "Field": "S500", "Operator": "==", "Value": "Yes" },
+        "PreJoinFilter": { "Field": "CustomerType", "Operator": "==", "Value": "Enterprise" },
+        "PreJoinDistinct": true,
+        "PostJoinDistinct": ["CustomerName"]
+      },
+      "Important": "Place filters INSIDE join subquery for performance. Use distinct before joins to reduce data volume and after joins to get unique results."
+    },
+    {
+      "Name": "DistinctBeforeAggregate",
+      "Description": "When counting unique entities after joins or mv-expand, use distinct before summarize to avoid counting duplicates",
+      "Pattern": "| distinct <UniqueColumns> | summarize <AggregationName> = count()",
+      "Example": "| distinct CustomerName | summarize ImpactedCount = count()",
+      "Important": "Without distinct, count() will include duplicates from joins and expansions. Always use distinct on the entity being counted BEFORE summarize."
+    },
+    {
+      "Name": "FilterPlacementInJoins",
+      "Description": "Place filters on the inner table INSIDE the join subquery, not after the join. This improves performance and ensures correct semantics.",
+      "Pattern": "| join kind=inner (<table> | where <filter> | project ...) on <key>",
+      "CorrectExample": "| join kind=inner (database('customerdomdata').ObserveCustomerModel | where S500 == 'Yes' | project CustomerName = MSCustomerName, S500) on CustomerName",
+      "WrongExample": "| join kind=inner (database('customerdomdata').ObserveCustomerModel | project CustomerName = MSCustomerName, S500) on CustomerName | where S500 == 'Yes'",
+      "Important": "Filtering inside reduces data before join. Filtering outside may produce wrong results if outer table has matching rows with different filter values."
+    },
+    {
+      "Name": "CrossClusterJoin",
+      "Description": "When joining tables from different clusters, use cluster() annotation for the remote table",
+      "Pattern": "| join kind=inner (cluster('<cluster_url>').database('<database>').TableName | project ...) on <JoinKey>",
+      "Example": "| join kind=inner (cluster('recommendrptwus3test.westus3.kusto.windows.net').database('recommenddata').ExternalRecommendationTypes | project RecommendationTypeId, Label, Description) on RecommendationTypeId",
+      "Important": "Tables with CrossCluster=true MUST use cluster() annotation. Check the CrossClusterAnnotation field for the exact syntax."
+    },
+    {
+      "Name": "RecommendationsFromIncident",
+      "Description": "To get recommendations for an ICM/incident, query LinkedRecommendations filtered by IncidentId, then join to ExternalRecommendationTypes using cross-cluster annotation",
+      "TriggeredBy": ["recommendation", "ACM", "advisory"],
+      "Composition": {
+        "BaseTable": "LinkedRecommendations",
+        "ApplyDeduplication": true,
+        "ApplyImplicitFilters": true,
+        "FilterParam": { "Field": "IncidentId", "Placeholder": "<ICM_ID>" },
+        "JoinTable": "ExternalRecommendationTypes",
+        "OutputColumns": ["RecommendationTypeId", "Label", "Description", "LearnMoreLink", "Impact"],
+        "Distinct": true
+      }
+    }
+  ]
+}

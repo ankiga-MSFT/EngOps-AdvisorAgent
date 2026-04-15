@@ -1,0 +1,12 @@
+{
+  "name": "advisor-agent-ui",
+  "version": "1.0.0",
+  "description": "Azure Advisor Agent – Frontend UI",
+  "private": true,
+  "scripts": {
+    "start": "npx serve . -l 3000 -s"
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}

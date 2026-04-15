@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Azure Advisor Agent</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+
+  <!-- ── Top Navigation Bar ──────────────────────────── -->
+  <nav class="topbar">
+    <div class="azure-logo">
+      <svg viewBox="0 0 18 18" fill="none">
+        <path d="M9.084.006l-5.27 4.568L0 12.576h4.263L9.084.006zM8.037 3.676L5.636 13.55l7.258 4.444H18L8.037 3.676z"
+          fill="#0078d4" />
+      </svg>
+      Azure
+    </div>
+    <div class="breadcrumb">/ &nbsp; <span>Advisor Agent</span></div>
+    <button class="back-btn" id="backBtn" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      Back to Advisor Agent
+    </button>
+    <div class="connection-status" id="connectionStatus" title="SignalR disconnected">
+      <span class="status-dot disconnected"></span>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════
+       PAGE 1 – HOME (Advisor Agent Landing)
+  ══════════════════════════════════════════════════════ -->
+  <main id="home-view">
+    <div class="advisor-icon">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path
+          d="M12 2a1 1 0 0 1 .894.553l2.382 4.823 5.324.774a1 1 0 0 1 .554 1.706l-3.853 3.756.91 5.302a1 1 0 0 1-1.452 1.054L12 17.347l-4.76 2.502a1 1 0 0 1-1.451-1.054l.91-5.302L2.846 9.737a1 1 0 0 1 .554-1.706l5.324-.774L11.106 2.434A1 1 0 0 1 12 2z"
+          fill="#fff" />
+      </svg>
+    </div>
+    <h1>Hi there, I'm your Azure Advisor agent</h1>
+    <p class="subtitle">I help you optimize, protect, and modernize your Azure workloads. Ask me anything about cost,
+      reliability, security, or architecture.</p>
+
+    <div class="prompt-box" id="homePromptBox">
+      <textarea id="homeTextarea" rows="1"
+        placeholder="Describe what you need — optimize costs, improve resiliency, find retiring resources, get architecture guidance…"></textarea>
+      <button class="send-btn" aria-label="Submit" id="homeSendBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="categories">
+      <span class="pill"><svg viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm-.5 3h1v5h-1V4zm0 6h1v1h-1v-1z" />
+        </svg> Reliability</span>
+      <span class="pill"><svg viewBox="0 0 16 16" fill="currentColor">
+          <path
+            d="M8 1.5a.5.5 0 0 1 .5.5v5.793l3.146 3.147a.5.5 0 0 1-.353.854H4.707a.5.5 0 0 1-.353-.854L7.5 7.793V2a.5.5 0 0 1 .5-.5z" />
+        </svg> Cost Optimization</span>
+      <span class="pill"><svg viewBox="0 0 16 16" fill="currentColor">
+          <path
+            d="M8 1a.5.5 0 0 1 .424.235l7 11.5A.5.5 0 0 1 15 13.5H1a.5.5 0 0 1-.424-.765l7-11.5A.5.5 0 0 1 8 1zm0 3.236L2.696 12.5h10.608L8 4.236z" />
+        </svg> Retiring Resources</span>
+      <span class="pill"><svg viewBox="0 0 16 16" fill="currentColor">
+          <path d="M2 2h5v5H2V2zm7 0h5v5H9V2zM2 9h5v5H2V9zm7 0h5v5H9V9z" />
+        </svg> Architecture</span>
+    </div>
+
+    <div class="suggestions-label">Try asking</div>
+    <div class="suggestions" id="suggestionsGrid">
+      <div class="card" data-prompt="Help me find retiring resources in my subscriptions along with an action plan.">
+        <div class="card-icon retiring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg></div>
+        <span class="card-text">Help me find retiring resources in my subscriptions along with an action plan.</span>
+      </div>
+      <div class="card" data-prompt="Show me post outage action plan.">
+        <div class="card-icon outage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" />
+            <line x1="12" y1="2" x2="12" y2="12" />
+          </svg></div>
+        <span class="card-text">Show me post outage action plan.</span>
+      </div>
+      <div class="card" data-prompt="Improve the resiliency posture of my workload.">
+        <div class="card-icon resiliency"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg></div>
+        <span class="card-text">Improve the resiliency posture of my workload.</span>
+      </div>
+      <div class="card" data-prompt="How can I optimize cost for my workload?">
+        <div class="card-icon cost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg></div>
+        <span class="card-text">How can I optimize cost for my workload?</span>
+      </div>
+      <div class="card extra-card"
+        data-prompt="Show me the architectural guidance and help me choose the correct Azure technology for my application.">
+        <div class="card-icon arch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg></div>
+        <span class="card-text">Show me the architectural guidance and help me choose the correct Azure technology for
+          my application.</span>
+      </div>
+      <div class="card extra-card" data-prompt="Show reliability insights for my service groups.">
+        <div class="card-icon servicegrp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg></div>
+        <span class="card-text">Show reliability insights for my service groups.</span>
+      </div>
+    </div>
+    <button class="view-toggle" id="viewToggle">
+      View more
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </button>
+  </main>
+
+  <!-- ══════════════════════════════════════════════════════
+       PAGE 2 – CHAT / REASONING VIEW
+  ══════════════════════════════════════════════════════ -->
+  <div id="chat-view">
+    <div class="chat-scroll" id="chatScroll">
+      <!-- User message -->
+      <div class="user-msg" id="userBubble">
+        <div class="bubble" id="userBubbleText"></div>
+      </div>
+
+      <!-- Agent response -->
+      <div class="agent-response">
+        <div class="agent-avatar">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 2a1 1 0 0 1 .894.553l2.382 4.823 5.324.774a1 1 0 0 1 .554 1.706l-3.853 3.756.91 5.302a1 1 0 0 1-1.452 1.054L12 17.347l-4.76 2.502a1 1 0 0 1-1.451-1.054l.91-5.302L2.846 9.737a1 1 0 0 1 .554-1.706l5.324-.774L11.106 2.434A1 1 0 0 1 12 2z"
+              fill="#fff" />
+          </svg>
+        </div>
+        <div class="agent-body">
+          <!-- Reasoning block -->
+          <div class="reasoning-block">
+            <div class="reasoning-header thinking expanded" id="reasoningHeader">
+              <div class="sparkle-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#0078d4" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <polygon
+                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              </div>
+              <span class="reasoning-title" id="reasoningTitle">Thinking…</span>
+              <svg class="reasoning-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+            <div class="reasoning-steps open" id="reasoningSteps">
+              <!-- Steps injected dynamically from SignalR -->
+            </div>
+          </div>
+
+          <!-- Answer -->
+          <div class="answer-block" id="answerBlock">
+            <div class="answer-content" id="answerContent"></div>
+            <!-- Follow-up suggestions -->
+            <div class="followups" id="followups">
+              <div class="followups-label">Continue exploring</div>
+              <div id="followupChips"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom prompt bar -->
+    <div class="chat-bottom">
+      <div class="prompt-box" id="chatPromptBox">
+        <textarea id="chatTextarea" rows="1" placeholder="Ask a follow-up question…"></textarea>
+        <button class="send-btn" aria-label="Submit" id="chatSendBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">AI-generated content may be incorrect. Review recommendations before applying.</footer>
+
+  <!-- SignalR client from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+  <!-- Marked.js for Markdown rendering -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
+  <!-- DOMPurify for safe HTML -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
+
+  <script src="js/config.js"></script>
+  <script src="js/signalr-client.js"></script>
+  <script src="js/api-client.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>

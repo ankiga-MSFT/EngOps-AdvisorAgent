@@ -1,0 +1,1 @@
+.create-merge table ChangeFeedPipelineIncidentLinkage (CaseNumber:string, EventDateTime:datetime, ExecutionTime:datetime) with (folder = "ADF", docstring = "IncidentLinkage change feed pipeline helper tracker")  

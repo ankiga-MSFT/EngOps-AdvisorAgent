@@ -1,0 +1,4 @@
+.create-or-alter function with (folder = "SRICM/Reconciliation", docstring = "Return reconciliation data in json format", skipvalidation = "true") GetReconciliationDataJson() {
+    GetReconciliationData()
+    | project CaseNumber, Content = replace(@'\r\n|\n', "", tostring(Content))
+} 

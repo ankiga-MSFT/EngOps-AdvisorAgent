@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "PfunctionName": {
+      "value": "__CXOAI__CREATECXOAIINFRA__FUNCTIONNAME__"
+    },
+    "PmuiPrincipleId": {
+      "value": "__CXOAI__CREATECXOAIINFRA__CREATEAPPMUI_USERMANAGEDIDENTITYPRINCIPLEID__"
+    },
+    "PdeployInfra": {
+      "value": "__CXOAI__DEPLOY_INFRA__"
+    }
+  }
+}

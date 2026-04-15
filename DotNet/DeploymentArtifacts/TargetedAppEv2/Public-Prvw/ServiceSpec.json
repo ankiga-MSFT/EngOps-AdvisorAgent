@@ -1,0 +1,9 @@
+{
+  "contentVersion": "1.0.0.0",
+  "description": "TARGETEDAPPEV2 Service Specification",
+  "identifier": "61b4b63c-3588-445e-a558-5352b1bd06c2",
+  "ownerGroupContactEmail": "madhulikafte@microsoft.com",
+  "ownerGroupObjectId": "60012848-5ae7-4d4d-931a-191222984335",
+  "policyCheckEnabled": false,
+  "providerType": "ServiceTree"
+}

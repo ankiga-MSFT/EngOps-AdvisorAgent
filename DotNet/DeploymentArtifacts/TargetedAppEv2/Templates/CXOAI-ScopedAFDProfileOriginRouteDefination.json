@@ -1,0 +1,145 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "10457515526708864156"
+    }
+  },
+  "parameters": {
+    "PAFDResourceId": {
+      "type": "string"
+    },
+    "PoriginGroupName": {
+      "type": "string"
+    },
+    "PWafPolicyPatternMatch": {
+      "type": "string"
+    },
+    "PfunctionName": {
+      "type": "string"
+    },
+    "PoriginName": {
+      "type": "string"
+    },
+    "ProuteName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "subscriptionId": "[split(parameters('PAFDResourceId'), '/')[2]]",
+    "resourceGroupName": "[split(parameters('PAFDResourceId'), '/')[4]]",
+    "resourceName": "[split(parameters('PAFDResourceId'), '/')[8]]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "ExternaldAFDProfileOriginRouteDefination",
+      "subscriptionId": "[variables('subscriptionId')]",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "PAFDName": {
+            "value": "[variables('resourceName')]"
+          },
+          "PFunctionName": {
+            "value": "[parameters('PfunctionName')]"
+          },
+          "PWafPolicyPatternMatch": {
+            "value": "[parameters('PWafPolicyPatternMatch')]"
+          },
+          "PoriginGroupName": {
+            "value": "[parameters('PoriginGroupName')]"
+          },
+          "PoriginName": {
+            "value": "[parameters('PoriginName')]"
+          },
+          "ProuteName": {
+            "value": "[parameters('ProuteName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.37.4.10188",
+              "templateHash": "1498787310856480968"
+            }
+          },
+          "parameters": {
+            "PAFDName": {
+              "type": "string"
+            },
+            "PoriginGroupName": {
+              "type": "string"
+            },
+            "PWafPolicyPatternMatch": {
+              "type": "string"
+            },
+            "PFunctionName": {
+              "type": "string"
+            },
+            "PoriginName": {
+              "type": "string"
+            },
+            "ProuteName": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Cdn/profiles/originGroups/origins",
+              "apiVersion": "2024-09-01",
+              "name": "[format('{0}/{1}/{2}', parameters('PAFDName'), parameters('PoriginGroupName'), parameters('PoriginName'))]",
+              "properties": {
+                "hostName": "[format('{0}.azurewebsites.net', parameters('PFunctionName'))]",
+                "httpPort": 80,
+                "httpsPort": 443,
+                "originHostHeader": "[format('{0}.azurewebsites.net', parameters('PFunctionName'))]",
+                "priority": 1,
+                "weight": 1000,
+                "enabledState": "Enabled",
+                "enforceCertificateNameCheck": true
+              }
+            },
+            {
+              "type": "Microsoft.Cdn/profiles/afdEndpoints/routes",
+              "apiVersion": "2024-09-01",
+              "name": "[format('{0}/{1}/{2}', parameters('PAFDName'), parameters('PAFDName'), parameters('ProuteName'))]",
+              "properties": {
+                "customDomains": [],
+                "originGroup": {
+                  "id": "[resourceId('Microsoft.Cdn/profiles/originGroups', parameters('PAFDName'), parameters('PoriginGroupName'))]"
+                },
+                "ruleSets": [],
+                "supportedProtocols": [
+                  "Http",
+                  "Https"
+                ],
+                "patternsToMatch": [
+                  "[parameters('PWafPolicyPatternMatch')]"
+                ],
+                "forwardingProtocol": "MatchRequest",
+                "linkToDefaultDomain": "Enabled",
+                "httpsRedirect": "Enabled",
+                "enabledState": "Enabled"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Cdn/profiles/originGroups/origins', parameters('PAFDName'), parameters('PoriginGroupName'), parameters('PoriginName'))]"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "1520425074546392878"
+    }
+  },
+  "parameters": {
+    "PuserManagedIdentityName": {
+      "type": "string"
+    },
+    "PusermanagedIdentityRGName": {
+      "type": "string"
+    }
+  },
+  "resources": [],
+  "outputs": {
+    "userManagedIdentityResourceId": {
+      "type": "string",
+      "value": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('PusermanagedIdentityRGName')), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('PuserManagedIdentityName'))]"
+    },
+    "userManagedIdentityClientId": {
+      "type": "string",
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('PusermanagedIdentityRGName')), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('PuserManagedIdentityName')), '2018-11-30').clientId]"
+    },
+    "userManagedIdentityPrincipleId": {
+      "type": "string",
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('PusermanagedIdentityRGName')), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('PuserManagedIdentityName')), '2018-11-30').principalId]"
+    }
+  }
+}

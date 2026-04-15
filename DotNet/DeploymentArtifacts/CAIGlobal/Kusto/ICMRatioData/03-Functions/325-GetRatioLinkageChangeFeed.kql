@@ -1,0 +1,38 @@
+.create-or-alter function with (folder = "ADF", docstring = "Get RatioRecords for CaseNumbers", skipvalidation = "true") GetRatioLinkageChangeFeed(startTime:datetime, endtime:datetime, batch:int, correctionReason:string, index:int) {
+let skiprow=batch*index;
+let currentTime=now();
+let casenumbers=ChangeFeedPipelineRatioLinkage  |summarize arg_max(ExecutionTime,*) by CaseNumber|order by EventDateTime asc| extend rownum=row_number()|where rownum >skiprow|take batch | distinct CaseNumber;
+let csinput= toscalar(casenumbers
+    | summarize CaseNumberlist=iff(array_length(make_list(CaseNumber))==0,dynamic(['0']),make_list(CaseNumber))
+    //| extend result=bag_pack('updatesince', datetime("2001-01-01"), 'CaseNumberlist', CaseNumberlist)
+    | extend result=bag_pack('CaseNumberlist', CaseNumberlist)
+    | project result);
+cluster('ratiorepwus3prod.westus3').database('ratiodata').Generate_SR_History(csinput)|extend Source='RATIO'
+| extend sortfield=strcat(Processtimestamp, '-', Action)
+| order by sortfield asc
+| project-away sortfield
+| extend DataBoundary=iff(tolower(IcMCloud) contains "eu", "EU", "PUBLIC")
+| summarize
+    Linkages = make_list
+               ( 
+                   bag_pack("Number", tostring(IncidentId), "Type", "Automatic", "Source", Source, "DataBoundary", DataBoundary, "IncidentIdCloud", strcat(IncidentId, "-", DataBoundary), "LinkedDateTime", Processtimestamp, "Action", iff(Action == "Add", "Linked", "Removed"), "Reason", "")
+               ),
+    EntityType  = any("ratiolinkage"), 
+    EntityAction = any("Create"), 
+    EventDateTime= currentTime
+    by CaseNumber 
+| extend
+    Content = bag_pack("CaseNumber", CaseNumber, "Linkages", Linkages),
+    id = CaseNumber,
+    EventType = "ratiolinkage", 
+    RawProperties = bag_pack("UserProperties", bag_pack("EntityType", EntityType, "EntityAction", EntityAction, "EventDateTime", EventDateTime, "EntityID", CaseNumber)), 
+    createdBy = "TouchProcessor",
+    modifiedBy = "TouchProcessor",
+    createdOn = currentTime,
+    modifiedOn = currentTime, 
+    SdpInternal = bag_pack("CornerStoneServiceBusEnqueueTime", now()) 
+| project-away Linkages,EntityType,EventDateTime,EntityAction
+| project CaseNumber, Value= tostring(pack_all())
+| project CaseNumber, Content = replace(@"\r\n|\n", "", tostring(Value))
+| project Key=CaseNumber,Value=tostring(Content) 
+} 

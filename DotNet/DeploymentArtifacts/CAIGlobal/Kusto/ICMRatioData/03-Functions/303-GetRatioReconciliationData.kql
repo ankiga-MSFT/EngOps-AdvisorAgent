@@ -1,0 +1,26 @@
+.create-or-alter function with (folder = "SRICM/Reconciliation", docstring = "Return latest snapshot data from cold path that is more recent than hot path", skipvalidation = "true") GetRatioReconciliationData() {
+    let hot = database("ICMSRLinkageData").RatioLinkage
+    | mv-expand Linkage=Linkages
+    | project 
+        CaseNumber
+        , IncidentId=tostring(Linkage.Number)
+        , Action=tostring(Linkage.Action)
+        , LinkedDateTime=todatetime(Linkage.LinkedDateTime)
+        , IcMCloud=toupper(tostring(Linkage.DataBoundary))
+        , Reason=tostring(Linkage.Reason)
+        , Source=tostring(Linkage.Source)
+    | summarize arg_max(LinkedDateTime, *) by CaseNumber, IncidentId, IcMCloud;
+    let cold = database("ICMSRLinkageData").ValidationRatioICMLinkages
+    | project 
+        CaseNumber
+        , IncidentId
+        , Action=case(tolower(Action)=='add', 'Linked', tolower(Action)=='remove', 'Removed', Action)
+        , Processtimestamp
+        , IcMCloud=toupper(IcMCloud)
+        , Reason
+        , Source
+    | summarize arg_max(Processtimestamp, *) by CaseNumber, IncidentId, IcMCloud;
+    cold
+    | join kind=fullouter hot on $left.CaseNumber==$right.CaseNumber and $left.IncidentId==$right.IncidentId and $left.IcMCloud==$right.IcMCloud
+    | where Processtimestamp > LinkedDateTime or isempty(LinkedDateTime)
+} 

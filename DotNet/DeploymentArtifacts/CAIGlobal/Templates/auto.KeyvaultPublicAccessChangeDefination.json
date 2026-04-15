@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.34.44.8038",
+      "templateHash": "39611386851990886"
+    }
+  },
+  "parameters": {
+    "identityClientId": {
+      "type": "string"
+    },
+    "resourceGroupName": {
+      "type": "string"
+    },
+    "muiResourceId": {
+      "type": "string"
+    },
+    "commandsToExecuteInShell": {
+      "type": "array"
+    },
+    "packageName": {
+      "type": "string"
+    },
+    "maxExecutionTime": {
+      "type": "string"
+    },
+    "publicNetworkAccessState": {
+      "type": "string"
+    },
+    "keyvaultName": {
+      "type": "string"
+    },
+    "deployCertificates": {
+      "type": "string"
+    }
+  },
+  "resources": [],
+  "outputs": {
+    "KeyvaultPublicAccessChanges": {
+      "type": "string",
+      "value": "[format('deployCertificates: {0}, identityClientId: {1}, resourceGroupName: {2}, muiResourceId: {3}, commandsToExecuteInShell: {4}, packageName: {5}, maxExecutionTime: {6}, publicNetworkAccessState: {7}, keyvaultName: {8}, ', parameters('deployCertificates'), parameters('identityClientId'), parameters('resourceGroupName'), parameters('muiResourceId'), parameters('commandsToExecuteInShell'), parameters('packageName'), parameters('maxExecutionTime'), parameters('publicNetworkAccessState'), parameters('keyvaultName'))]"
+    }
+  }
+}

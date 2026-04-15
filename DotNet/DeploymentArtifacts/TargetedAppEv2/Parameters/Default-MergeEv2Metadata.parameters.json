@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "CurrentApplicationSubscription": {
+      "value": "__DEFAULT__CURRENT_APPLICATION_SUBSCRIPTION__"
+    },
+    "CurrentApplicationResourceGroup": {
+      "value": "__DEFAULT__CURRENT_APPLICATION_RESOURCE_GROUP__"
+    }
+  }
+}

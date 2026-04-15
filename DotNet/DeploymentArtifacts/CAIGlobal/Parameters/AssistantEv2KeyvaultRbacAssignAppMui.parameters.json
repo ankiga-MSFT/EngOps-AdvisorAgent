@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "PkeyvaultResourceId": {
+      "value": "__ASSISTANT_KEYVAULT_RESOURCE_ID__"
+    },
+    "PdeployKeyvaultRoleAssignment": {
+      "value": "__DEPLOY_ASSISTANT_KEYVAULT_ROLE_ASSIGNMENT__"
+    },
+    "PkeyvaultRoleDefinationIds": {
+      "value": [
+        "__KEYVAULT_ROLE_DEFINATION_IDS__"
+      ]
+    },
+    "PresourceManagedIdentityId": {
+      "value": "__CREATECAIGLOBALINFRA__CREATEAPPMUI_USERMANAGEDIDENTITYPRINCIPLEID__"
+    }
+  }
+}

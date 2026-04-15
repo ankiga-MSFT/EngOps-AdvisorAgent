@@ -1,0 +1,432 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "15900004167604873311"
+    }
+  },
+  "parameters": {
+    "PredisResourceIds": {
+      "type": "array"
+    },
+    "PvnetName": {
+      "type": "string"
+    },
+    "PfunctionName": {
+      "type": "string"
+    },
+    "PredismuiResourceId": {
+      "type": "string"
+    },
+    "PdeployRedisPrivateEndpoints": {
+      "type": "string"
+    },
+    "PdeployInfra": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "copy": [
+      {
+        "name": "PredisCacheNames",
+        "count": "[length(parameters('PredisResourceIds'))]",
+        "input": "[split(parameters('PredisResourceIds')[copyIndex('PredisCacheNames')], '/')[8]]"
+      }
+    ],
+    "deployInfra": "[bool(parameters('PdeployInfra'))]",
+    "deployRedisPrivateEndpoints": "[bool(parameters('PdeployRedisPrivateEndpoints'))]"
+  },
+  "resources": [
+    {
+      "condition": "[and(variables('deployRedisPrivateEndpoints'), variables('deployInfra'))]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "RedisUnLinkedResourceDefination",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "PmuiResourceId": {
+            "value": "[parameters('PredismuiResourceId')]"
+          },
+          "PredisCacheNames": {
+            "value": "[variables('PredisCacheNames')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.37.4.10188",
+              "templateHash": "6284331206853122700"
+            }
+          },
+          "parameters": {
+            "PredisCacheNames": {
+              "type": "array"
+            },
+            "PmuiResourceId": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "formattedArray": "[replace(replace(replace(string(json(string(parameters('PredisCacheNames')))), '[', '@('), ']', ')'), '\"', '''')]",
+            "scriptVariables": "[format(' $redisCacheNames = {0} \n  ', variables('formattedArray'))]",
+            "mainScript": " \r\ntry {\r\n      if ($RedisCacheNames.Length -gt 1) {\r\n        $PrimaryRedisCache = $RedisCacheNames[0]\r\n        $SecondaryRedisCaches = $RedisCacheNames[1..($RedisCacheNames.Length - 1)]\r\n        \r\n        # Link secondary Redis caches to primary\r\n        foreach ($SecondaryRedisCache in $SecondaryRedisCaches) {\r\n            Write-Output \"UnLinking $SecondaryRedisCache to $PrimaryRedisCache\"\r\n            Remove-AzRedisCacheLink  -PrimaryServerName $PrimaryRedisCache -SecondaryServerName $SecondaryRedisCache \r\n        Start-Sleep -Seconds 300    \r\n        }\r\n      }\r\n      else {\r\n        Write-Output \"Only one Redis cache in the array. Skipping Unlinking.\"\r\n      }\r\n} \r\ncatch {\r\nWrite-Error \"An error occurred: $_\"\r\nthrow $_\r\n}\r\n",
+            "script": "[format('{0}{1}', variables('scriptVariables'), variables('mainScript'))]",
+            "scriptId": "UnLinkRedisClusters"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "[variables('scriptId')]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "Pps_command": {
+                    "value": "[variables('script')]"
+                  },
+                  "PmuiResourceId": {
+                    "value": "[parameters('PmuiResourceId')]"
+                  },
+                  "PScriptId": {
+                    "value": "[variables('scriptId')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.37.4.10188",
+                      "templateHash": "4644440018653794433"
+                    }
+                  },
+                  "parameters": {
+                    "utcValue": {
+                      "type": "string",
+                      "defaultValue": "[utcNow()]"
+                    },
+                    "Pps_command": {
+                      "type": "string"
+                    },
+                    "PmuiResourceId": {
+                      "type": "string"
+                    },
+                    "PScriptId": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Resources/deploymentScripts",
+                      "apiVersion": "2020-10-01",
+                      "name": "[format('runPsScript-{0}', guid(parameters('PScriptId')))]",
+                      "location": "[resourceGroup().location]",
+                      "identity": {
+                        "type": "UserAssigned",
+                        "userAssignedIdentities": {
+                          "[format('{0}', parameters('PmuiResourceId'))]": {}
+                        }
+                      },
+                      "kind": "AzurePowerShell",
+                      "properties": {
+                        "forceUpdateTag": "[parameters('utcValue')]",
+                        "azPowerShellVersion": "5.6.0",
+                        "scriptContent": "[parameters('Pps_command')]",
+                        "timeout": "PT30M",
+                        "cleanupPreference": "OnSuccess",
+                        "retentionInterval": "P1D"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "metadata": {
+        "description": "Create private endpoint redis "
+      }
+    },
+    {
+      "copy": {
+        "name": "CreateRedisPrivateEndpoints",
+        "count": "[length(parameters('PredisResourceIds'))]",
+        "mode": "serial",
+        "batchSize": 1
+      },
+      "condition": "[and(variables('deployRedisPrivateEndpoints'), variables('deployInfra'))]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('pe-redis-{0}', guid(parameters('PredisResourceIds')[copyIndex()], parameters('PvnetName'), parameters('PfunctionName')))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "PredisAccountId": {
+            "value": "[parameters('PredisResourceIds')[copyIndex()]]"
+          },
+          "PvnetName": {
+            "value": "[parameters('PvnetName')]"
+          },
+          "PfunctionName": {
+            "value": "[parameters('PfunctionName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.37.4.10188",
+              "templateHash": "92293430854259233"
+            }
+          },
+          "parameters": {
+            "PredisAccountId": {
+              "type": "string"
+            },
+            "PvnetName": {
+              "type": "string"
+            },
+            "PfunctionName": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "redisAccountName": "[split(parameters('PredisAccountId'), '/')[8]]",
+            "PprivateEndpointRedisSubnetName": "storage",
+            "PprivateRedisDnsZoneName": "privatelink.redis.cache.azure.net",
+            "PprivateEndpointRedisName": "[format('{0}.{1}-endpoint', replace(variables('redisAccountName'), '-', ''), replace(parameters('PfunctionName'), '-', ''))]",
+            "Plocation": "[resourceGroup().location]",
+            "cnameRecordName": "[format('privatelink.{0}', variables('redisAccountName'))]",
+            "cnameRecordAlias": "[format('{0}.privatelink.redis.cache.azure.net', variables('redisAccountName'))]",
+            "ttl": 86400
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/privateDnsZones",
+              "apiVersion": "2020-06-01",
+              "name": "[variables('PprivateRedisDnsZoneName')]",
+              "location": "global"
+            },
+            {
+              "type": "Microsoft.Network/privateDnsZones/CNAME",
+              "apiVersion": "2020-06-01",
+              "name": "[format('{0}/{1}', variables('PprivateRedisDnsZoneName'), variables('cnameRecordName'))]",
+              "properties": {
+                "ttl": "[variables('ttl')]",
+                "cnameRecord": {
+                  "cname": "[variables('cnameRecordAlias')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', variables('PprivateRedisDnsZoneName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+              "apiVersion": "2020-06-01",
+              "name": "[format('{0}/{1}', variables('PprivateRedisDnsZoneName'), format('{0}-link', parameters('PvnetName')))]",
+              "location": "global",
+              "properties": {
+                "registrationEnabled": false,
+                "virtualNetwork": {
+                  "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('PvnetName'))]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', variables('PprivateRedisDnsZoneName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/privateEndpoints",
+              "apiVersion": "2022-05-01",
+              "name": "[variables('PprivateEndpointRedisName')]",
+              "location": "[variables('Plocation')]",
+              "properties": {
+                "subnet": {
+                  "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('PvnetName'), variables('PprivateEndpointRedisSubnetName'))]"
+                },
+                "customNetworkInterfaceName": "[format('{0}-nic', variables('PprivateEndpointRedisName'))]",
+                "privateLinkServiceConnections": [
+                  {
+                    "name": "[variables('PprivateEndpointRedisName')]",
+                    "properties": {
+                      "privateLinkServiceId": "[parameters('PredisAccountId')]",
+                      "groupIds": [
+                        "redisCache"
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+              "apiVersion": "2022-05-01",
+              "name": "[format('{0}/{1}', variables('PprivateEndpointRedisName'), 'default')]",
+              "properties": {
+                "privateDnsZoneConfigs": [
+                  {
+                    "name": "privatelink-database-windows-net",
+                    "properties": {
+                      "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('PprivateRedisDnsZoneName'))]"
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/privateEndpoints', variables('PprivateEndpointRedisName'))]",
+                "[resourceId('Microsoft.Network/privateDnsZones', variables('PprivateRedisDnsZoneName'))]",
+                "[resourceId('Microsoft.Network/privateDnsZones/virtualNetworkLinks', variables('PprivateRedisDnsZoneName'), format('{0}-link', parameters('PvnetName')))]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'RedisUnLinkedResourceDefination')]"
+      ]
+    },
+    {
+      "condition": "[and(variables('deployRedisPrivateEndpoints'), variables('deployInfra'))]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "RedisLinkedResourceDefination",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "PmuiResourceId": {
+            "value": "[parameters('PredismuiResourceId')]"
+          },
+          "PredisCacheNames": {
+            "value": "[variables('PredisCacheNames')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.37.4.10188",
+              "templateHash": "5284320764998668811"
+            }
+          },
+          "parameters": {
+            "PredisCacheNames": {
+              "type": "array"
+            },
+            "PmuiResourceId": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "formattedArray": "[replace(replace(replace(string(json(string(parameters('PredisCacheNames')))), '[', '@('), ']', ')'), '\"', '''')]",
+            "scriptVariables": "[format(' $redisCacheNames = {0} \n  ', variables('formattedArray'))]",
+            "mainScript": " \r\ntry {\r\n      if ($RedisCacheNames.Length -gt 1) {\r\n        $PrimaryRedisCache = $RedisCacheNames[0]\r\n        $SecondaryRedisCaches = $RedisCacheNames[1..($RedisCacheNames.Length - 1)]\r\n        \r\n        # Link secondary Redis caches to primary\r\n        foreach ($SecondaryRedisCache in $SecondaryRedisCaches) {\r\n            Write-Output \"Linking $SecondaryRedisCache to $PrimaryRedisCache\"\r\n            New-AzRedisCacheLink  -PrimaryServerName $PrimaryRedisCache -SecondaryServerName $SecondaryRedisCache \r\n        }\r\n      }\r\n      else {\r\n        Write-Output \"Only one Redis cache in the array. Skipping linking.\"\r\n      }\r\n} \r\ncatch {\r\nWrite-Error \"An error occurred: $_\"\r\nthrow $_\r\n}\r\n",
+            "script": "[format('{0}{1}', variables('scriptVariables'), variables('mainScript'))]",
+            "scriptId": "LinkRedisClusters"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "[variables('scriptId')]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "Pps_command": {
+                    "value": "[variables('script')]"
+                  },
+                  "PmuiResourceId": {
+                    "value": "[parameters('PmuiResourceId')]"
+                  },
+                  "PScriptId": {
+                    "value": "[variables('scriptId')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.37.4.10188",
+                      "templateHash": "4644440018653794433"
+                    }
+                  },
+                  "parameters": {
+                    "utcValue": {
+                      "type": "string",
+                      "defaultValue": "[utcNow()]"
+                    },
+                    "Pps_command": {
+                      "type": "string"
+                    },
+                    "PmuiResourceId": {
+                      "type": "string"
+                    },
+                    "PScriptId": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Resources/deploymentScripts",
+                      "apiVersion": "2020-10-01",
+                      "name": "[format('runPsScript-{0}', guid(parameters('PScriptId')))]",
+                      "location": "[resourceGroup().location]",
+                      "identity": {
+                        "type": "UserAssigned",
+                        "userAssignedIdentities": {
+                          "[format('{0}', parameters('PmuiResourceId'))]": {}
+                        }
+                      },
+                      "kind": "AzurePowerShell",
+                      "properties": {
+                        "forceUpdateTag": "[parameters('utcValue')]",
+                        "azPowerShellVersion": "5.6.0",
+                        "scriptContent": "[parameters('Pps_command')]",
+                        "timeout": "PT30M",
+                        "cleanupPreference": "OnSuccess",
+                        "retentionInterval": "P1D"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "CreateRedisPrivateEndpoints"
+      ]
+    }
+  ]
+}

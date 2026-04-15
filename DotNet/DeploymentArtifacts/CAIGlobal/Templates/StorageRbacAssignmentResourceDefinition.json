@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.34.44.8038",
+      "templateHash": "8404697143548300624"
+    }
+  },
+  "parameters": {
+    "PstorageAccountName": {
+      "type": "string"
+    },
+    "PstorageRoleDefinationIds": {
+      "type": "array"
+    },
+    "PresourceManagedIdentityId": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "copy": {
+        "name": "rbacstorage",
+        "count": "[length(parameters('PstorageRoleDefinationIds'))]"
+      },
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2020-10-01-preview",
+      "scope": "[format('Microsoft.Storage/storageAccounts/{0}', parameters('PstorageAccountName'))]",
+      "name": "[guid(format('{0}-{1}', resourceId('Microsoft.Storage/storageAccounts', parameters('PstorageAccountName')), parameters('PresourceManagedIdentityId')), parameters('PstorageRoleDefinationIds')[copyIndex()])]",
+      "properties": {
+        "principalId": "[parameters('PresourceManagedIdentityId')]",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('PstorageRoleDefinationIds')[copyIndex()])]"
+      }
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+[
+    {
+        "skillName": "RetirementSkill",
+        "description": "Identifies retiring Azure resources and generates prioritized migration action plans with timelines. Correlates Advisor retirement recommendations with Service Health notices.",
+        "systemPrompt": "You are a Retirement Analysis specialist for the Azure Advisor Agent.\nYour job is to identify resources affected by upcoming Azure service retirements and produce a structured action plan.\n\nIMPORTANT: The user has already selected their subscription scope. Use the subscription IDs provided in your prompt context — do NOT call ListSubscriptions.\n\nWhen analyzing retiring resources:\n1. Use the GetRetiringResources tool with the subscription IDs from context.\n2. Link Advisor recommendations to Service Health notices via tracking IDs where available.\n3. Use GetRetirementTimeline for the most critical resources to get migration guidance.\n4. Use GenerateRetirementActionPlan to produce a prioritized migration plan.\n\nPresent findings in three sections: Insights (summary of urgency), Recommendations (table of findings), and Action Plan (prioritized steps).",
+        "modelName": "gpt-4o",
+        "expectedInput": "Provide the subscription ID and whether to focus on specific resource types or all retiring resources.",
+        "tools": [
+            {
+                "name": "SubscriptionTools-ListResourceGroups",
+                "description": "Lists resource groups in a subscription."
+            },
+            {
+                "name": "RetirementTools-GetRetiringResources",
+                "description": "Scans a subscription for retiring resources."
+            },
+            {
+                "name": "RetirementTools-GetRetirementTimeline",
+                "description": "Gets retirement timeline for a specific resource."
+            },
+            {
+                "name": "RetirementTools-GenerateRetirementActionPlan",
+                "description": "Generates a prioritized retirement migration plan."
+            },
+            {
+                "name": "ResourceGraphTools-QueryResources",
+                "description": "Queries resources from Azure Resource Graph."
+            }
+        ],
+        "temperature": 0.0,
+        "timeout": 120
+    },
+    {
+        "skillName": "OutageRemediationSkill",
+        "description": "Analyzes recent outage incidents and generates post-outage remediation action plans covering monitoring, BCDR, and chaos engineering.",
+        "systemPrompt": "You are a Post-Outage Remediation specialist for the Azure Advisor Agent.\nYour job is to analyze recent incidents and produce a comprehensive post-outage recovery and prevention action plan.\n\nIMPORTANT: The user has already selected their subscription scope. Use the subscription IDs provided in your prompt context — do NOT call ListSubscriptions.\n\nWhen building an outage remediation plan:\n1. Use GetActiveIncidents with the subscription IDs from context.\n2. Use GetRemediationPlan for specific incidents identified.\n3. Use GetPostOutageActionPlan to identify monitoring gaps, BCDR weaknesses, and alerting blind spots.\n4. Use QueryResources to understand the scope of impacted infrastructure.\n\nStructure your response with: Insights (gaps found), Recommendations (Advisor recommendations linked to gaps), and Action Plan (numbered detailed steps with implementation guidance).",
+        "modelName": "gpt-4o",
+        "expectedInput": "Provide the subscription ID and optionally a specific incident ID to focus on.",
+        "tools": [
+            {
+                "name": "SubscriptionTools-ListResourceGroups",
+                "description": "Lists resource groups in a subscription."
+            },
+            {
+                "name": "OutageRemediationTools-GetActiveIncidents",
+                "description": "Retrieves recent incidents for a subscription."
+            },
+            {
+                "name": "OutageRemediationTools-GetRemediationPlan",
+                "description": "Fetches Service Health event details by subscription and tracking ID for root cause analysis."
+            },
+            {
+                "name": "OutageRemediationTools-GetPostOutageActionPlan",
+                "description": "Comprehensive post-outage gap analysis and plan."
+            },
+            {
+                "name": "ResourceGraphTools-QueryResources",
+                "description": "Queries resources from Azure Resource Graph."
+            }
+        ],
+        "temperature": 0.0,
+        "timeout": 120
+    },
+    {
+        "skillName": "ResiliencySkill",
+        "description": "Assesses the resiliency posture of Azure workloads and produces improvement plans with score projections. Covers zone redundancy, failover, backup, and health monitoring.",
+        "systemPrompt": "You are a Resiliency Posture specialist for the Azure Advisor Agent.\nYour job is to assess and recommend improvements for the reliability of Azure workloads.\n\nIMPORTANT: The user has already selected their subscription scope. Use the subscription IDs provided in your prompt context — do NOT call ListSubscriptions.\n\nWhen assessing resiliency:\n1. Use GetResiliencyScore with the subscription IDs from context.\n2. Use GetResiliencyRecommendations to fetch specific reliability improvement recommendations.\n3. Use GetRecommendations with category 'Reliability' for additional Advisor recommendations.\n4. Use QueryResources if you need to understand the resource landscape.\n\nPresent: Insights (critical gaps), Resiliency Score (current vs projected), Recommendations (table with score impact), and Action Plan (prioritized steps grouped by timeline).",
+        "modelName": "gpt-4o",
+        "expectedInput": "Provide the subscription ID and optionally a resource group or service group to scope the assessment.",
+        "tools": [
+            {
+                "name": "SubscriptionTools-ListResourceGroups",
+                "description": "Lists resource groups in a subscription."
+            },
+            {
+                "name": "ResiliencyTools-GetResiliencyScore",
+                "description": "Gets reliability score and breakdown."
+            },
+            {
+                "name": "ResiliencyTools-GetResiliencyRecommendations",
+                "description": "Gets reliability recommendations with score impact."
+            },
+            {
+                "name": "AdvisorRecommendationTools-GetRecommendations",
+                "description": "Gets Advisor recommendations filtered by category."
+            },
+            {
+                "name": "ResourceGraphTools-QueryResources",
+                "description": "Queries resources from Azure Resource Graph."
+            }
+        ],
+        "temperature": 0.0,
+        "timeout": 120
+    },
+    {
+        "skillName": "CostOptimizationSkill",
+        "description": "Identifies cost-saving opportunities and generates optimization action plans with estimated savings breakdowns.",
+        "systemPrompt": "You are a Cost Optimization specialist for the Azure Advisor Agent.\nYour job is to analyze Azure spend patterns and produce a savings action plan.\n\nIMPORTANT: The user has already selected their subscription scope. Use the subscription IDs provided in your prompt context — do NOT call ListSubscriptions.\n\nWhen optimizing costs:\n1. Use GetCostRecommendations with the subscription IDs from context.\n2. Use EstimateSavings for an overall savings projection across the subscriptions.\n3. Use GetRecommendations with category 'Cost' for additional recommendations.\n4. Use GetRecommendationDetails for high-value recommendations needing deep analysis.\n\nPresent: Insights (spend summary and key findings), Recommendations (table with savings estimates), and Action Plan (prioritized by savings potential and implementation ease).",
+        "modelName": "gpt-4o",
+        "expectedInput": "Provide the subscription ID to analyze for cost optimization.",
+        "tools": [
+            {
+                "name": "SubscriptionTools-ListResourceGroups",
+                "description": "Lists resource groups in a subscription."
+            },
+            {
+                "name": "CostOptimizationTools-GetCostRecommendations",
+                "description": "Gets cost recommendations with savings estimates."
+            },
+            {
+                "name": "CostOptimizationTools-EstimateSavings",
+                "description": "Estimates total potential savings."
+            },
+            {
+                "name": "AdvisorRecommendationTools-GetRecommendations",
+                "description": "Gets Advisor recommendations filtered by category."
+            },
+            {
+                "name": "AdvisorRecommendationTools-GetRecommendationDetails",
+                "description": "Gets detailed recommendation info."
+            },
+            {
+                "name": "ResourceGraphTools-QueryResources",
+                "description": "Queries resources from Azure Resource Graph."
+            }
+        ],
+        "temperature": 0.0,
+        "timeout": 120
+    },
+    {
+        "skillName": "ArchitectureSkill",
+        "description": "Provides architectural guidance, technology comparisons, and modernization recommendations based on workload analysis and Azure Well-Architected Framework principles.",
+        "systemPrompt": "You are an Architecture Guidance specialist for the Azure Advisor Agent.\nYour job is to assess workload architecture and recommend improvements aligned with the Azure Well-Architected Framework.\n\nIMPORTANT: The user has already selected their subscription scope. Use the subscription IDs provided in your prompt context — do NOT call ListSubscriptions.\n\nWhen providing architecture guidance:\n1. Use QueryResources with the subscription IDs from context to understand current infrastructure.\n2. Use GetResourceDetails for deeper analysis of key resources.\n3. Use GetRecommendations to fetch Performance and Operational Excellence Advisor recommendations.\n4. Compare technology options with structured comparison tables.\n\nPresent: Insights (architectural gaps and modernization opportunities), Recommendations (relevant Advisor findings), Technology Comparison (if applicable), and Action Plan (phased steps).",
+        "modelName": "gpt-4o",
+        "expectedInput": "Provide the subscription ID and application context for architecture assessment.",
+        "tools": [
+            {
+                "name": "SubscriptionTools-ListResourceGroups",
+                "description": "Lists resource groups in a subscription."
+            },
+            {
+                "name": "ResourceGraphTools-QueryResources",
+                "description": "Queries resources from Azure Resource Graph."
+            },
+            {
+                "name": "ResourceGraphTools-GetResourceDetails",
+                "description": "Gets detailed resource configuration."
+            },
+            {
+                "name": "AdvisorRecommendationTools-GetRecommendations",
+                "description": "Gets Advisor recommendations filtered by category."
+            },
+            {
+                "name": "AdvisorRecommendationTools-GetRecommendationDetails",
+                "description": "Gets detailed recommendation info."
+            }
+        ],
+        "temperature": 0.0,
+        "timeout": 120
+    }
+]

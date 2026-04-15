@@ -1,0 +1,31 @@
+{
+  "version": "2.0",
+  "logging": {
+    "logLevel": {
+      "Default": "Information",
+      "CXOAI.Debug.Sensitive": "None",
+      "Microsoft.Extensions.AI": "Information",
+      "Microsoft.Agents.AI": "Warning",
+      "DurableTask.AzureStorage": "Warning",
+      "DurableTask.Core": "Warning",
+      "Microsoft.Azure.WebJobs.Extensions.DurableTask": "Warning",
+      "Microsoft.Azure.Cosmos": "Warning",
+      "Azure.Core": "Error",
+      "Azure.Storage": "Error",
+      "Azure.Data": "Error"
+    },
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "excludedTypes": "Request"
+      }
+    }
+  },
+  "extensions": {
+    "durableTask": {
+      "storageProvider": {
+        "type": "AzureStorage"
+      }
+    }
+  }
+}

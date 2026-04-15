@@ -1,0 +1,68 @@
+{
+  "$schema": "http://schema.express.azure.com/schemas/2015-01-01-alpha/RolloutParameters.json",
+  "contentVersion": "1.0.0.0",
+  "extensions": [
+    {
+      "name": "SetCertificateIssuer",
+      "type": "Microsoft.KeyVault.DataPlane/SetCertificateIssuer",
+      "version": "2020-03-01",
+      "connectionProperties": {
+        "maxExecutionTime": "PT30M",
+        "authentication": {
+          "type": "AadApplicationAuthentication",
+          "reference": {
+            "provider": "AzureKeyVault",
+            "parameters": {
+              "secretId": "__CERT_KEYVAULT_SECURE_ID__"
+            }
+          },
+          "properties": {
+            "applicationId": "__EV2_APPLICATION_APP_ID__"
+          }
+        }
+      },
+      "payloadProperties": {
+        "vaultBaseUrl": {
+          "value": "https://__CREATECAIGLOBALINFRA__DEFAULTKEYVALUENAME__.vault.azure.net/"
+        },
+        "issuerName": {
+          "value": "__CERT_KEYVAULT_PRIVATE_ISSUER__"
+        },
+        "provider": {
+          "value": "__CERT_KEYVAULT_PROVIDER_NAME__"
+        }
+      }
+    },
+    {
+      "name": "CreateCertificate",
+      "type": "Microsoft.KeyVault.DataPlane/CreateCertificate",
+      "version": "2020-03-01",
+      "connectionProperties": {
+        "maxExecutionTime": "PT30M",
+        "authentication": {
+          "type": "AadApplicationAuthentication",
+          "reference": {
+            "provider": "AzureKeyVault",
+            "parameters": {
+              "secretId": "__CERT_KEYVAULT_SECURE_ID__"
+            }
+          },
+          "properties": {
+            "applicationId": "__EV2_APPLICATION_APP_ID__"
+          }
+        }
+      },
+      "payloadProperties": {
+        "vaultBaseUrl": {
+          "value": "https://__CREATECAIGLOBALINFRA__DEFAULTKEYVALUENAME__.vault.azure.net/"
+        },
+        "certificateName": {
+          "value": "__CERTIFICATE_NAME__"
+        },
+        "policy": {
+          "value": "{\"key_props\":{\"exportable\":true,\"kty\":\"RSA\",\"key_size\":2048,\"reuse_key\":false},\"secret_props\":{\"contentType\":\"application/x-pkcs12\"},\"x509_props\":{\"subject\":\"CN=__CN_SUBJECT_NAME__\",\"sans\":{\"dns_names\":[\"__CN_SUBJECT_NAME__\"]}},\"issuer\":{\"name\":\"__CERT_KEYVAULT_PRIVATE_ISSUER__\"},\"validity_months\":6,\"lifetime_actions\":[{\"trigger\":{\"lifetime_percentage\":24},\"action\":{\"action_type\":\"AutoRenew\"}}]}"
+        }
+      }
+    }
+  ]
+}

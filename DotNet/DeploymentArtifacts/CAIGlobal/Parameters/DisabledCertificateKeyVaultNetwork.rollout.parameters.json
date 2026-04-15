@@ -1,0 +1,49 @@
+{
+  "$schema": "http://schema.express.azure.com/schemas/2015-01-01-alpha/RolloutParameters.json",
+  "contentVersion": "1.0.0.0",
+  "shellExtensions": [
+    {
+      "name": "FunctionAppArtifactFileUpload",
+      "type": "FileUploadToBlobStorage",
+      "properties": {
+        "maxExecutionTime": "__SHELL_MAX_EXECUTION_TIME__"
+      },
+      "package": {
+        "reference": {
+          "path": "__EV2_PACKAGE_NAME__"
+        }
+      },
+      "launch": {
+        "command": ["__COMMANDS_TO_EXECUTE_IN_SHELL__"],
+        "environmentVariables": [
+          {
+            "name": "resourceGroupName",
+            "value": "__APP__RESOURCEGROUP__NAME__"
+          },
+          {
+            "name": "identityClientId",
+            "value": "__CREATECAIGLOBALINFRA__CREATEAPPMUI_USERMANAGEDIDENTITYCLIENTID__"
+          },
+          {
+            "name": "keyvaultName",
+            "value": "__CREATECAIGLOBALINFRA__DEFAULTKEYVALUENAME__"
+          },
+          {
+            "name": "publicNetworkAccessState",
+            "value": "__PUBLIC_NETWORK_ACCESS_STATE_DISABLED__"
+          },
+          {
+            "name": "deployCertificates",
+            "value": "__DEPLOY_CERTIFICATES__"
+          }
+        ],
+        "identity": {
+          "type": "UserAssigned",
+          "UserAssignedIdentities": [
+            "__CREATECAIGLOBALINFRA__CREATEAPPMUI_USERMANAGEDIDENTITYRESOURCEID__"
+          ]
+        }
+      }
+    }
+  ]
+}

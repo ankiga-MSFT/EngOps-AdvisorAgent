@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "PredisResourceIds": {
+      "value": [
+        "__CXOAI__REDIS_CACHE_RESOURCE_IDS__"
+      ]
+    },
+    "PvnetName": {
+      "value": "__CXOAI__CREATECXOAIINFRA__DEFAULTVNETNAME__"
+    },
+    "PfunctionName": {
+      "value": "__CXOAI__CREATECXOAIINFRA__FUNCTIONNAME__"
+    },
+    "PredismuiResourceId": {
+      "value": "__CXOAI__CREATECXOAIINFRA__CREATEAPPMUI_USERMANAGEDIDENTITYRESOURCEID__"
+    },
+    "PdeployRedisPrivateEndpoints": {
+      "value": "__CXOAI__DEPLOY_REDIS_PRIVATE_ENDPOINTS__"
+    },
+    "PdeployInfra": {
+      "value": "__CXOAI__DEPLOY_INFRA__"
+    }
+  }
+}

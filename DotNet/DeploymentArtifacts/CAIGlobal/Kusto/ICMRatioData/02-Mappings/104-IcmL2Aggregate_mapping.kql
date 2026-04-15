@@ -1,0 +1,25 @@
+.create-or-alter table IcmL2Aggregate ingestion json mapping "IcmL2Aggregate_mapping"
+  ```
+  [
+    {"column":"IncidentIdCloud","Properties":{"path":"$.IncidentIdCloud"}},
+    {"column":"DataBoundary","Properties":{"path":"$.DataBoundary"}},
+    {"column":"IncidentId","Properties":{"path":"$.IncidentId"}},
+    {"column":"EventTime","Properties":{"path":"$.EventTime"}},
+    {"column":"EventType","Properties":{"path":"$.EventType"}},
+    {"column":"SnapshotId","Properties":{"path":"$.SnapshotId"}},
+    {"column":"SupportRequestsCount","Properties":{"path":"$.SupportRequestsCount"}},
+    {"column":"IsCritSitCount","Properties":{"path":"$.IsCritSitCount"}},
+    {"column":"LinkedSupportRequests_Ids_PUBLIC","Properties":{"path":"$.LinkedSupportRequests.Ids.Public"}},
+    {"column":"LinkedSupportRequests_Ids_EU","Properties":{"path":"$.LinkedSupportRequests.Ids.EU"}},
+    {"column":"LinkedSupportRequests_LinkedIncidents","Properties":{"path":"$.LinkedSupportRequests.LinkedIncidents"}},
+    {"column":"FetchLink","Properties":{"path":"$.FetchLink"}},
+    {"column":"SdpInternal","Properties":{"path":"$.SdpInternal"}},
+    {"column":"Content","Properties":{"path":"$"}},
+    {"column":"AutoLinkedCount","Properties":{"path":"$.AutoLinkedCount"}},
+    {"column":"AutoLinkedCritSitCount","Properties":{"path":"$.AutoLinkedCritSitCount"}},
+    {"column":"EventCreatedTime","Properties":{"path":"$.EventCreatedTime"}},
+    {"column":"ManuallyLinkedCount","Properties":{"path":"$.ManuallyLinkedCount"}},
+    {"column":"ManuallyLinkedCritSitCount","Properties":{"path":"$.ManuallyLinkedCritSitCount"}},
+    {"column":"TotalCount","Properties":{"path":"$.TotalCount"}}
+  ]
+  ```

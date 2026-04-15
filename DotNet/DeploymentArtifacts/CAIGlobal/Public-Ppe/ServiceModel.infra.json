@@ -1,0 +1,271 @@
+{
+  "$schema": "https://ev2schema.azure.net/schemas/2020-04-01/RegionAgnosticServiceModel.json",
+  "contentVersion": "1.0.0",
+  "serviceMetadata": {
+    "serviceIdentifier": "61b4b63c-3588-445e-a558-5352b1bd06c2",
+    "displayName": "caiglobal Deployment",
+    "serviceGroup": "Microsoft.Azure.EngOps.CAIGlobal.Ppe-sg",
+    "environment": "ppe",
+    "TenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "serviceSpecificationPath": "Public-Ppe\\ServiceSpec.json"
+  },
+  "serviceResourceGroupDefinitions": [
+    {
+      "name": "Microsoft.Azure.EngOps.CAIGlobal.Ppe-sg",
+      "azureResourceGroupName": "rg-caiglobal-ppe-$location()",
+      "subscriptionKey": "CAIGlobalPpeSubscriptionKey",
+      "serviceResourceDefinitions": [
+        {
+          "name": "ConfigurableStopByFailureDeployment",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\ConfigurableStopByFailureDeployment.json",
+              "parametersPath": "Parameters\\ConfigurableStopByFailureDeployment.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        },
+        {
+          "name": "CreateCAIGlobalInfra",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\CreateCAIGlobalInfraResourceDefination.json",
+              "parametersPath": "Parameters\\CreateCAIGlobalInfra.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        },
+        {
+          "name": "ResourceGroupRbacAssignmentResourceDefinition",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\ResourceGroupRbacAssignmentResourceDefinition.json",
+              "parametersPath": "Parameters\\ResourceGroupRbacAssignmentResourceDefinition.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        },
+        {
+          "name": "StorageRbacAssignmentResourceDefinition",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\StorageRbacAssignmentResourceDefinition.json",
+              "parametersPath": "Parameters\\StorageRbacAssignmentResourceDefinition.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        },
+        {
+          "name": "KeyvaultRbacAssignmentResourceDefinition",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\KeyvaultRbacAssignmentResourceDefinition.json",
+              "parametersPath": "Parameters\\KeyvaultRbacAssignmentResourceDefinition.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        },
+        {
+          "name": "AssistantEv2KeyvaultRbacAssign",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\KeyvaultRbacAssignmentResourceDefinition.json",
+              "parametersPath": "Parameters\\AssistantEv2KeyvaultRbacAssign.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        },
+        {
+          "name": "GenevaMSAppServiceKeyvaultRbacAssign",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\KeyvaultRbacAssignmentResourceDefinition.json",
+              "parametersPath": "Parameters\\GenevaMSAppServiceKeyvaultRbacAssign.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        },
+        {
+          "name": "AssistantEv2KeyvaultRbacAssignAppMui",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\ScopedKeyvaultRbacAssignmentResourceDefinition.json",
+              "parametersPath": "Parameters\\AssistantEv2KeyvaultRbacAssignAppMui.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        },
+        {
+          "name": "EnabledAssistedIdentityKeyVaultNetwork",
+          "composedOf": {
+            "extension": {
+              "shell": [
+                {
+                  "type": "FileUploadToBlobStorage",
+                  "properties": {
+                    "imageName": "adm-mariner-20-l",
+                    "imageVersion": "v6"
+                  }
+                }
+              ],
+              "rolloutParametersPath": "Parameters\\EnabledAssistedIdentityKeyVaultNetwork.rollout.parameters.json"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        },
+        {
+          "name": "EnabledCertificateKeyVaultNetwork",
+          "composedOf": {
+            "extension": {
+              "shell": [
+                {
+                  "type": "FileUploadToBlobStorage",
+                  "properties": {
+                    "imageName": "adm-mariner-20-l",
+                    "imageVersion": "v6"
+                  }
+                }
+              ],
+              "rolloutParametersPath": "Parameters\\EnabledCertificateKeyVaultNetwork.rollout.parameters.json"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        },
+        {
+          "name": "CreateCertificates",
+          "composedOf": {
+            "extension": {
+              "rolloutParametersPath": "Parameters\\CreateCertificates.rollout.parameters.json",
+              "allowedTypes": [
+                {
+                  "Type": "Microsoft.KeyVault.DataPlane/SetCertificateIssuer"
+                },
+                {
+                  "Type": "Microsoft.KeyVault.DataPlane/CreateCertificate"
+                }
+              ]
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        },
+        {
+          "name": "CreateAppCertificates",
+          "composedOf": {
+            "extension": {
+              "rolloutParametersPath": "Parameters\\CreateAppCertificates.rollout.parameters.json",
+              "allowedTypes": [
+                {
+                  "Type": "Microsoft.KeyVault.DataPlane/SetCertificateIssuer"
+                },
+                {
+                  "Type": "Microsoft.KeyVault.DataPlane/CreateCertificate"
+                }
+              ]
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        },
+        {
+          "name": "DisabledCertificateKeyVaultNetwork",
+          "composedOf": {
+            "extension": {
+              "shell": [
+                {
+                  "type": "FileUploadToBlobStorage",
+                  "properties": {
+                    "imageName": "adm-mariner-20-l",
+                    "imageVersion": "v6"
+                  }
+                }
+              ],
+              "rolloutParametersPath": "Parameters\\DisabledCertificateKeyVaultNetwork.rollout.parameters.json"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        },
+        {
+          "name": "DisabledAssistedIdentityKeyVaultNetwork",
+          "composedOf": {
+            "extension": {
+              "shell": [
+                {
+                  "type": "FileUploadToBlobStorage",
+                  "properties": {
+                    "imageName": "adm-mariner-20-l",
+                    "imageVersion": "v6"
+                  }
+                }
+              ],
+              "rolloutParametersPath": "Parameters\\DisabledAssistedIdentityKeyVaultNetwork.rollout.parameters.json"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "ppe"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

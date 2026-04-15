@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "PfunctionName": {
+      "value": "__CXOAI__CREATECXOAIINFRA__FUNCTIONNAME__"
+    },
+    "PstorageAccountRGroupName": {
+      "value": "__CXOAI__APP__RESOURCEGROUP__NAME__"
+    },
+    "PSubscriptionId": {
+      "value": "__CXOAI__APP__SUBSCRIPTION__SUBSCRIPTIONID__"
+    },
+    "PmuiResourceId": {
+      "value": "__CXOAI__GET_APP_MANAGED_USER_IDENTITY_RESOURCE_ID__"
+    },
+    "PnoOfFunctionDeployedPerApp": {
+      "value": "__CXOAI__NO_OF_FUNCTION_DEPLOYED_PER_APP__"
+    }
+  }
+}

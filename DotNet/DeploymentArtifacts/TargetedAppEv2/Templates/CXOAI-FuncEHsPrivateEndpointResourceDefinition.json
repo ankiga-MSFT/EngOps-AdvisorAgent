@@ -1,0 +1,106 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "1252025573277349223"
+    }
+  },
+  "parameters": {
+    "PeventHubNamespaceAccountId": {
+      "type": "string"
+    },
+    "PvnetName": {
+      "type": "string"
+    },
+    "PfunctionName": {
+      "type": "string"
+    },
+    "PdeployInfra": {
+      "type": "string"
+    },
+    "PdeployEventhubPrivateEndpoint": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "deployInfra": "[bool(parameters('PdeployInfra'))]",
+    "deployEventhubPrivateEndpoint": "[bool(parameters('PdeployEventhubPrivateEndpoint'))]",
+    "eventHubNamespaceAccountName": "[split(parameters('PeventHubNamespaceAccountId'), '/')[8]]",
+    "PprivateEndpointeventHubNamespaceSubnetName": "storage",
+    "PprivateeventHubNamespaceDnsZoneName": "privatelink.servicebus.windows.net",
+    "PprivateEndpointeventHubNamespaceName": "[format('{0}.{1}-endpoint', replace(variables('eventHubNamespaceAccountName'), '-', ''), replace(parameters('PfunctionName'), '-', ''))]",
+    "Plocation": "[resourceGroup().location]"
+  },
+  "resources": [
+    {
+      "condition": "[and(variables('deployEventhubPrivateEndpoint'), variables('deployInfra'))]",
+      "type": "Microsoft.Network/privateDnsZones",
+      "apiVersion": "2020-06-01",
+      "name": "[variables('PprivateeventHubNamespaceDnsZoneName')]",
+      "location": "global"
+    },
+    {
+      "condition": "[and(variables('deployEventhubPrivateEndpoint'), variables('deployInfra'))]",
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}/{1}', variables('PprivateeventHubNamespaceDnsZoneName'), format('{0}-link', parameters('PvnetName')))]",
+      "location": "global",
+      "properties": {
+        "registrationEnabled": false,
+        "virtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('PvnetName'))]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', variables('PprivateeventHubNamespaceDnsZoneName'))]"
+      ]
+    },
+    {
+      "condition": "[and(variables('deployEventhubPrivateEndpoint'), variables('deployInfra'))]",
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2022-05-01",
+      "name": "[variables('PprivateEndpointeventHubNamespaceName')]",
+      "location": "[variables('Plocation')]",
+      "properties": {
+        "subnet": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('PvnetName'), variables('PprivateEndpointeventHubNamespaceSubnetName'))]"
+        },
+        "customNetworkInterfaceName": "[format('{0}-nic', variables('PprivateEndpointeventHubNamespaceName'))]",
+        "privateLinkServiceConnections": [
+          {
+            "name": "[variables('PprivateEndpointeventHubNamespaceName')]",
+            "properties": {
+              "privateLinkServiceId": "[parameters('PeventHubNamespaceAccountId')]",
+              "groupIds": [
+                "namespace"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "condition": "[and(variables('deployEventhubPrivateEndpoint'), variables('deployInfra'))]",
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2022-05-01",
+      "name": "[format('{0}/{1}', variables('PprivateEndpointeventHubNamespaceName'), format('{0}-dns', variables('PprivateEndpointeventHubNamespaceName')))]",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "[variables('PprivateeventHubNamespaceDnsZoneName')]",
+            "properties": {
+              "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('PprivateeventHubNamespaceDnsZoneName'))]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateEndpoints', variables('PprivateEndpointeventHubNamespaceName'))]",
+        "[resourceId('Microsoft.Network/privateDnsZones', variables('PprivateeventHubNamespaceDnsZoneName'))]"
+      ]
+    }
+  ]
+}

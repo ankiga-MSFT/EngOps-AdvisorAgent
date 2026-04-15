@@ -1,0 +1,2313 @@
+[
+  {
+    "Name": "get_consumption_units_value",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the Consumption Units values provided the filtering conditions. This data is a relative measure that allows comparisons across services using different meters and units.",
+    "Keywords": [
+      "consumption units",
+      "consumption",
+      "acu",
+      "azure consumption units",
+      "usage units",
+      "consumption value",
+      "consumption metric",
+      "consumption trend",
+      "metrics",
+      "chart",
+      "trend"
+    ],
+    "Domain": "Consumption",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "customer",
+      "workload",
+      "product",
+      "program"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:consumptionunits?startDate={startDate}&endDate={endDate}&unit={unit}&view={view}&aggregation={aggregation}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": null,
+        "Filter": "",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": true,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Is Critical (ACE)",
+        "Type": "boolean",
+        "ValueEnums": [
+          "true",
+          "false"
+        ],
+        "Default": "",
+        "Description": "Filter for Subscription Is Critical (ACE). If user mentions critical subscription, it will be true.",
+        "Required": false,
+        "Expression": "(IsCritical eq {value})",
+        "Keywords": [
+          "critical subscription",
+          "ace",
+          "is critical"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "L1 - Service Family",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by service family (L1). Use when user mentions service family or category.",
+        "Required": false,
+        "Expression": "(workload_dimensions_service_level_1 eq '{value}')",
+        "Keywords": [
+          "service family",
+          "l1",
+          "service level 1"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "L2 - Service Name",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by service name (L2). Use when user mentions service name.",
+        "Required": false,
+        "Expression": "(workload_dimensions_service_level_2 eq '{value}')",
+        "Keywords": [
+          "service name",
+          "l2",
+          "service level 2"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "L3 - Product Category",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by product category (L3). Use when user mentions product category.",
+        "Required": false,
+        "Expression": "(workload_dimensions_service_level_3 eq '{value}')",
+        "Keywords": [
+          "product category",
+          "l3",
+          "service level 3"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "L4 - Product Name",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by product name (L4). Use when user mentions product name.",
+        "Required": false,
+        "Expression": "(workload_dimensions_service_level_4 eq '{value}')",
+        "Keywords": [
+          "product name",
+          "l4",
+          "service level 4"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "L5 - SKU",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by SKU (L5). Use when user mentions SKU.",
+        "Required": false,
+        "Expression": "(workload_dimensions_service_level_5 eq '{value}')",
+        "Keywords": [
+          "sku",
+          "l5",
+          "service level 5"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "Workload",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by workload name. Use when user mentions workload.",
+        "Required": false,
+        "Expression": "(workload_dimensions_workload_name eq '{value}')",
+        "Keywords": [
+          "workload",
+          "workload name"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "Sold Service",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by sold service name. Use when user mentions sold service.",
+        "Required": false,
+        "Expression": "(workload_dimensions_sold_service_name eq '{value}')",
+        "Keywords": [
+          "sold service",
+          "sold service name"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "Region",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by Azure region/location. Use when user asks about geographic location or region.",
+        "Required": false,
+        "Expression": "(Location eq '{value}')",
+        "Keywords": [
+          "region",
+          "location",
+          "data center"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "Sales Segment",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by sales segment. Use when user mentions segment or enterprise vs commercial.",
+        "Required": false,
+        "Expression": "(Customer_SalesSegmentName eq '{value}')",
+        "Keywords": [
+          "sales segment",
+          "segment",
+          "enterprise",
+          "commercial"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Fraud",
+        "Type": "string",
+        "ValueEnums": [
+          "true",
+          "false"
+        ],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to include or exclude fraud identified customers.",
+        "Required": false,
+        "Expression": "(Customer_IsFraudIdentified eq '{value}')",
+        "Keywords": [
+          "fraud",
+          "fraud identified"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": [],
+    "SelectGroupBy": [
+      {
+        "Name": "workload_dimensions_service_level_1",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate consumption units results by service family (L1). Use when user mentions group by service family, L1 services, or top-level service categories.",
+        "Keywords": [
+          "service family",
+          "l1",
+          "by service family"
+        ]
+      },
+      {
+        "Name": "workload_dimensions_service_level_2",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate consumption units results by service name (L2). Use when user mentions group by service name, L2 services, or specific service types.",
+        "Keywords": [
+          "service name",
+          "l2",
+          "by service name"
+        ]
+      },
+      {
+        "Name": "Location",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate consumption units results by Azure region. Use when user mentions group by region, location, or geographic area.",
+        "Keywords": [
+          "region",
+          "location",
+          "by region"
+        ]
+      },
+      {
+        "Name": "SubscriptionGuid",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate consumption units results by subscription. Use when user mentions group by subscription, per subscription breakdown, or subscription-level analysis.",
+        "Keywords": [
+          "subscription",
+          "by subscription"
+        ]
+      }
+    ],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Customer, Workload, or Product entity ID (e.g., ch:customer::tpid:123456, ch:customer:workloadname, or ch:product::id:GUID). ALWAYS get the value of customer ID from get_customer_id_by_customer_name or product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "startDate",
+        "Type": "string",
+        "Description": "Start date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "endDate",
+        "Type": "string",
+        "Description": "End date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "pivotedmetric",
+          "pivotedchart"
+        ],
+        "Default": "pivotedmetric",
+        "Description": "Type of metric view - pivotedmetric for metric value, pivotedchart for trend",
+        "Required": true
+      },
+      {
+        "Name": "unit",
+        "Type": "string",
+        "ValueEnums": [
+          "day",
+          "week",
+          "month"
+        ],
+        "Default": "month",
+        "Description": "Time unit for aggregation",
+        "Required": false
+      },
+      {
+        "Name": "aggregation",
+        "Type": "string",
+        "ValueEnums": [
+          "Sum"
+        ],
+        "Default": "Sum",
+        "Description": "Aggregation type for the metric",
+        "Required": false
+      },
+      {
+        "Name": "dateOffsetInDays",
+        "Type": "integer",
+        "Default": "30",
+        "Description": "Number of days offset for date range calculation. If not specified, defaults to 30 days. If user specified time period like show me value for last 4 months, then it will be 120 days.",
+        "Required": false
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "consumption/usage",
+      "MetricUIComponentMap": "consumptionUnits",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  },
+  {
+    "Name": "get_compute_usage_value",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the Compute Usage values provided the filtering conditions. Shows VM core counts and compute resource usage. Note: Product entities are not supported for this metric.",
+    "Keywords": [
+      "compute usage",
+      "compute",
+      "vm cores",
+      "virtual machine",
+      "compute metric",
+      "compute trend",
+      "vm usage",
+      "metrics",
+      "chart",
+      "trend"
+    ],
+    "Domain": "Consumption",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "customer",
+      "workload",
+      "program"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:compute?startDate={startDate}&endDate={endDate}&unit={unit}&view={view}&aggregation={aggregation}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": null,
+        "Filter": "",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": true,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Is Critical (ACE)",
+        "Type": "boolean",
+        "ValueEnums": [
+          "true",
+          "false"
+        ],
+        "Default": "",
+        "Description": "Filter for Subscription Is Critical (ACE). If user mentions critical subscription, it will be true.",
+        "Required": false,
+        "Expression": "(IsCritical eq {value})",
+        "Keywords": [
+          "critical subscription",
+          "ace",
+          "is critical"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Product Category",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by OS type (Windows/Linux). Use when user mentions OS type.",
+        "Required": false,
+        "Expression": "(OsType eq '{value}')",
+        "Keywords": [
+          "os type",
+          "windows",
+          "linux",
+          "product category"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "OS Name",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by specific OS name.",
+        "Required": false,
+        "Expression": "(OsName eq '{value}')",
+        "Keywords": [
+          "os name",
+          "operating system"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "VM Size Family",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by VM size family. Use when user mentions D series, E series, etc.",
+        "Required": false,
+        "Expression": "(VmSizeFamily eq '{value}')",
+        "Keywords": [
+          "vm size family",
+          "vm family",
+          "d series",
+          "e series"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "VM Size",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by specific VM size.",
+        "Required": false,
+        "Expression": "(Size eq '{value}')",
+        "Keywords": [
+          "vm size",
+          "size"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Sales Segment",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by sales segment.",
+        "Required": false,
+        "Expression": "(Customer_SalesSegmentName eq '{value}')",
+        "Keywords": [
+          "sales segment",
+          "segment"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Container",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by container usage.",
+        "Required": false,
+        "Expression": "(Container eq '{value}')",
+        "Keywords": [
+          "container",
+          "containerized"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Azure Spot",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by Azure Spot (low priority) VMs.",
+        "Required": false,
+        "Expression": "(IsLowPriority eq '{value}')",
+        "Keywords": [
+          "azure spot",
+          "spot vm",
+          "low priority"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": [],
+    "SelectGroupBy": [
+      {
+        "Name": "OsType",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate compute usage results by operating system type. Use when user mentions group by OS, Windows vs Linux, or operating system breakdown.",
+        "Keywords": [
+          "os type",
+          "os",
+          "by os"
+        ]
+      },
+      {
+        "Name": "VmSizeFamily",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate compute usage results by VM size family. Use when user mentions group by VM family, D series, E series, or VM size categories.",
+        "Keywords": [
+          "vm family",
+          "vm size family",
+          "by vm family"
+        ]
+      },
+      {
+        "Name": "SubscriptionGuid",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate compute usage results by subscription. Use when user mentions group by subscription, per subscription breakdown, or subscription-level analysis.",
+        "Keywords": [
+          "subscription",
+          "by subscription"
+        ]
+      }
+    ],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Customer, Workload, or Product entity ID (e.g., ch:customer::tpid:123456, ch:customer:workloadname, or ch:product::id:GUID). ALWAYS get the value of customer ID from get_customer_id_by_customer_name or product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "startDate",
+        "Type": "string",
+        "Description": "Start date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "endDate",
+        "Type": "string",
+        "Description": "End date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "pivotedmetric",
+          "pivotedextendedchart"
+        ],
+        "Default": "pivotedmetric",
+        "Description": "Type of metric view - pivotedmetric for metric value, pivotedextendedchart for trend(if user says something like last 3 months trend)",
+        "Required": true
+      },
+      {
+        "Name": "unit",
+        "Type": "string",
+        "ValueEnums": [
+          "day",
+          "week",
+          "month"
+        ],
+        "Default": "month",
+        "Description": "Time unit for aggregation",
+        "Required": false
+      },
+      {
+        "Name": "aggregation",
+        "Type": "string",
+        "ValueEnums": [
+          "DailyAverageSum"
+        ],
+        "Default": "DailyAverageSum",
+        "Description": "Aggregation type for the metric",
+        "Required": false
+      },
+      {
+        "Name": "dateOffsetInDays",
+        "Type": "integer",
+        "Default": "30",
+        "Description": "Number of days offset for date range calculation. If not specified, defaults to 30 days.",
+        "Required": false
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "consumption/compute",
+      "MetricUIComponentMap": "computeUsage",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  },
+  {
+    "Name": "get_storage_usage_value",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the Storage Usage values provided the filtering conditions. Shows storage capacity and usage metrics. Note: Product entities are not supported for this metric.",
+    "Keywords": [
+      "storage usage",
+      "storage",
+      "storage capacity",
+      "blob storage",
+      "storage metric",
+      "storage trend",
+      "metrics",
+      "chart",
+      "trend"
+    ],
+    "Domain": "Consumption",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "customer",
+      "workload",
+      "program"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:storage?startDate={startDate}&endDate={endDate}&unit={unit}&view={view}&aggregation={aggregation}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": null,
+        "Filter": "",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": true,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Is Critical (ACE)",
+        "Type": "boolean",
+        "ValueEnums": [
+          "true",
+          "false"
+        ],
+        "Default": "",
+        "Description": "Filter for Subscription Is Critical (ACE).",
+        "Required": false,
+        "Expression": "(IsCritical eq {value})",
+        "Keywords": [
+          "critical subscription",
+          "ace",
+          "is critical"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Product Category",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by storage product type (Blob, Files, etc.).",
+        "Required": false,
+        "Expression": "(StorageProduct eq '{value}')",
+        "Keywords": [
+          "storage product",
+          "blob",
+          "files",
+          "product category"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Access Tier",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by storage access tier (Hot, Cool, Archive).",
+        "Required": false,
+        "Expression": "(AccessTier eq '{value}')",
+        "Keywords": [
+          "access tier",
+          "hot",
+          "cool",
+          "archive"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Geo Replication Type",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by geo-replication type (LRS, GRS, ZRS, etc.).",
+        "Required": false,
+        "Expression": "(GeoReplicationType eq '{value}')",
+        "Keywords": [
+          "geo replication",
+          "lrs",
+          "grs",
+          "zrs",
+          "replication type"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Managed Disks",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by managed disk usage.",
+        "Required": false,
+        "Expression": "(ManagedDisks eq '{value}')",
+        "Keywords": [
+          "managed disks",
+          "disks"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "DataCenter",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by data center location.",
+        "Required": false,
+        "Expression": "(DataCenter eq '{value}')",
+        "Keywords": [
+          "data center",
+          "datacenter",
+          "dc"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Sales Segment",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by sales segment.",
+        "Required": false,
+        "Expression": "(Customer_SalesSegmentName eq '{value}')",
+        "Keywords": [
+          "sales segment",
+          "segment"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": [],
+    "SelectGroupBy": [
+      {
+        "Name": "StorageProduct",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate storage usage results by storage product type. Use when user mentions group by storage product, blob, file, queue, or table storage.",
+        "Keywords": [
+          "storage product",
+          "by product"
+        ]
+      },
+      {
+        "Name": "AccessTier",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate storage usage results by access tier. Use when user mentions group by tier, hot, cool, cold, or archive storage.",
+        "Keywords": [
+          "access tier",
+          "by tier"
+        ]
+      },
+      {
+        "Name": "GeoReplicationType",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate storage usage results by geo-replication type. Use when user mentions group by replication, LRS, ZRS, GRS, or RA-GRS.",
+        "Keywords": [
+          "geo replication",
+          "by replication"
+        ]
+      },
+      {
+        "Name": "SubscriptionGuid",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate storage usage results by subscription. Use when user mentions group by subscription, per subscription breakdown, or subscription-level analysis.",
+        "Keywords": [
+          "subscription",
+          "by subscription"
+        ]
+      }
+    ],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Customer, Workload, or Product entity ID (e.g., ch:customer::tpid:123456, ch:customer:workloadname, or ch:product::id:GUID). ALWAYS get the value of customer ID from get_customer_id_by_customer_name or product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "startDate",
+        "Type": "string",
+        "Description": "Start date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "endDate",
+        "Type": "string",
+        "Description": "End date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "pivotedmetric",
+          "pivotedextendedchart"
+        ],
+        "Default": "pivotedmetric",
+        "Description": "Type of metric view - pivotedmetric for metric value, pivotedextendedchart for trend",
+        "Required": true
+      },
+      {
+        "Name": "unit",
+        "Type": "string",
+        "ValueEnums": [
+          "day",
+          "week",
+          "month"
+        ],
+        "Default": "month",
+        "Description": "Time unit for aggregation",
+        "Required": false
+      },
+      {
+        "Name": "aggregation",
+        "Type": "string",
+        "ValueEnums": [
+          "DailyAverageSum"
+        ],
+        "Default": "DailyAverageSum",
+        "Description": "Aggregation type for the metric",
+        "Required": false
+      },
+      {
+        "Name": "dateOffsetInDays",
+        "Type": "integer",
+        "Default": "30",
+        "Description": "Number of days offset for date range calculation. If not specified, defaults to 30 days.",
+        "Required": false
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "consumption/storage",
+      "MetricUIComponentMap": "storageUsage",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  },
+  {
+    "Name": "get_sqldb_usage_value",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the SQL DB Usage values provided the filtering conditions. Shows SQL Database usage metrics including normalized usage. Note: Product entities are not supported for this metric.",
+    "Keywords": [
+      "sql db usage",
+      "sql database",
+      "sqldb",
+      "sql usage",
+      "database usage",
+      "sql metric",
+      "sql trend",
+      "metrics",
+      "chart",
+      "trend"
+    ],
+    "Domain": "Consumption",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "customer",
+      "workload",
+      "program"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:sqldatabase?startDate={startDate}&endDate={endDate}&unit={unit}&view={view}&aggregation={aggregation}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": null,
+        "Filter": "",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": true,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Is Critical (ACE)",
+        "Type": "boolean",
+        "ValueEnums": [
+          "true",
+          "false"
+        ],
+        "Default": "",
+        "Description": "Filter for Subscription Is Critical (ACE).",
+        "Required": false,
+        "Expression": "(IsCritical eq {value})",
+        "Keywords": [
+          "critical subscription",
+          "ace",
+          "is critical"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Edition",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by SQL DB edition (Basic, Standard, Premium, etc.).",
+        "Required": false,
+        "Expression": "(edition eq '{value}')",
+        "Keywords": [
+          "edition",
+          "basic",
+          "standard",
+          "premium"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Resource Type",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by SQL resource type (Single DB, Elastic Pool, Managed Instance).",
+        "Required": false,
+        "Expression": "(service_category_name eq '{value}')",
+        "Keywords": [
+          "resource type",
+          "single db",
+          "elastic pool",
+          "managed instance"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Cloud Environment",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by cloud environment type.",
+        "Required": false,
+        "Expression": "(cluster_environment_type eq '{value}')",
+        "Keywords": [
+          "cloud environment",
+          "environment type"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "SQL License",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by SQL license type.",
+        "Required": false,
+        "Expression": "(sql_license eq '{value}')",
+        "Keywords": [
+          "sql license",
+          "license type"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Region",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by Azure region.",
+        "Required": false,
+        "Expression": "(KpiRegion eq '{value}')",
+        "Keywords": [
+          "region",
+          "location"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Sales Segment",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by sales segment.",
+        "Required": false,
+        "Expression": "(Customer_SalesSegmentName eq '{value}')",
+        "Keywords": [
+          "sales segment",
+          "segment"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": [],
+    "SelectGroupBy": [
+      {
+        "Name": "edition",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate SQL DB usage results by SQL edition. Use when user mentions group by edition, Basic, Standard, Premium, or DTU tiers.",
+        "Keywords": [
+          "edition",
+          "by edition"
+        ]
+      },
+      {
+        "Name": "service_category_name",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate SQL DB usage results by resource type. Use when user mentions group by resource type, SQL Database, Elastic Pool, or Managed Instance.",
+        "Keywords": [
+          "resource type",
+          "by resource type"
+        ]
+      },
+      {
+        "Name": "KpiRegion",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate SQL DB usage results by region. Use when user mentions group by region, location, or geographic area.",
+        "Keywords": [
+          "region",
+          "by region"
+        ]
+      },
+      {
+        "Name": "SubscriptionGuid",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate SQL DB usage results by subscription. Use when user mentions group by subscription, per subscription breakdown, or subscription-level analysis.",
+        "Keywords": [
+          "subscription",
+          "by subscription"
+        ]
+      }
+    ],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Customer, Workload, or Product entity ID (e.g., ch:customer::tpid:123456, ch:customer:workloadname, or ch:product::id:GUID). ALWAYS get the value of customer ID from get_customer_id_by_customer_name or product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "startDate",
+        "Type": "string",
+        "Description": "Start date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "endDate",
+        "Type": "string",
+        "Description": "End date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "pivotedmetric",
+          "pivotedextendedchart"
+        ],
+        "Default": "pivotedmetric",
+        "Description": "Type of metric view - pivotedmetric for metric value, pivotedextendedchart for trend",
+        "Required": true
+      },
+      {
+        "Name": "unit",
+        "Type": "string",
+        "ValueEnums": [
+          "day",
+          "week",
+          "month"
+        ],
+        "Default": "month",
+        "Description": "Time unit for aggregation",
+        "Required": false
+      },
+      {
+        "Name": "aggregation",
+        "Type": "string",
+        "ValueEnums": [
+          "Sum",
+          "DailyAverageSum"
+        ],
+        "Default": "Sum",
+        "Description": "Aggregation type for the metric",
+        "Required": false
+      },
+      {
+        "Name": "dateOffsetInDays",
+        "Type": "integer",
+        "Default": "30",
+        "Description": "Number of days offset for date range calculation. If not specified, defaults to 30 days.",
+        "Required": false
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "consumption/sqldb",
+      "MetricUIComponentMap": "sqlDbUsage",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  },
+  {
+    "Name": "get_revenue_value",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the Revenue values for Azure customers, Portfolio and products provided the filtering conditions. Returns revenue data in USD. Note: User may need special access to view revenue data.",
+    "Keywords": [
+      "revenue",
+      "revenue value",
+      "revenue metric",
+      "revenue trend",
+      "billing",
+      "acr",
+      "azure consumed revenue",
+      "metrics",
+      "chart",
+      "trend"
+    ],
+    "Domain": "Consumption",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "customer",
+      "workload",
+      "product",
+      "program"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:revenue?startDate={startDate}&endDate={endDate}&unit={unit}&view={view}&aggregation={aggregation}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": null,
+        "Filter": "",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": true,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Is Critical (ACE)",
+        "Type": "boolean",
+        "ValueEnums": [
+          "true",
+          "false"
+        ],
+        "Default": "",
+        "Description": "Filter for Subscription Is Critical (ACE).",
+        "Required": false,
+        "Expression": "(IsCritical eq {value})",
+        "Keywords": [
+          "critical subscription",
+          "ace",
+          "is critical"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "L1 - Service Family",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by service family (L1).",
+        "Required": false,
+        "Expression": "(workload_dimensions_service_level_1 eq '{value}')",
+        "Keywords": [
+          "service family",
+          "l1",
+          "service level 1"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "L2 - Service Name",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by service name (L2).",
+        "Required": false,
+        "Expression": "(workload_dimensions_service_level_2 eq '{value}')",
+        "Keywords": [
+          "service name",
+          "l2",
+          "service level 2"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "L3 - Product Category",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by product category (L3).",
+        "Required": false,
+        "Expression": "(workload_dimensions_service_level_3 eq '{value}')",
+        "Keywords": [
+          "product category",
+          "l3",
+          "service level 3"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "L4 - Product Name",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by product name (L4).",
+        "Required": false,
+        "Expression": "(workload_dimensions_service_level_4 eq '{value}')",
+        "Keywords": [
+          "product name",
+          "l4",
+          "service level 4"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "L5 - SKU",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by SKU (L5).",
+        "Required": false,
+        "Expression": "(workload_dimensions_service_level_5 eq '{value}')",
+        "Keywords": [
+          "sku",
+          "l5",
+          "service level 5"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "Region",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by Azure region/location.",
+        "Required": false,
+        "Expression": "(Location eq '{value}')",
+        "Keywords": [
+          "region",
+          "location",
+          "data center"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "Azure Pricing Level",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by Azure pricing level.",
+        "Required": false,
+        "Expression": "(azure_pricing_level eq '{value}')",
+        "Keywords": [
+          "pricing level",
+          "azure pricing"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "Workload",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by workload name.",
+        "Required": false,
+        "Expression": "(workload_dimensions_workload_name eq '{value}')",
+        "Keywords": [
+          "workload",
+          "workload name"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ]
+      },
+      {
+        "Name": "Sales Segment",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by sales segment.",
+        "Required": false,
+        "Expression": "(Customer_SalesSegmentName eq '{value}')",
+        "Keywords": [
+          "sales segment",
+          "segment",
+          "enterprise",
+          "commercial"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Sales Area",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by sales area.",
+        "Required": false,
+        "Expression": "(Customer_SalesAreaName eq '{value}')",
+        "Keywords": [
+          "sales area",
+          "area"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Sales Region",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Apply this filter when the user wants to filter by sales region.",
+        "Required": false,
+        "Expression": "(Customer_SalesRegionName eq '{value}')",
+        "Keywords": [
+          "sales region",
+          "region"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "program"
+        ]
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product",
+          "program"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": [],
+    "SelectGroupBy": [
+      {
+        "Name": "workload_dimensions_service_level_1",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate revenue results by service family (L1). Use when user mentions group by service family, L1 services, or top-level service categories.",
+        "Keywords": [
+          "service family",
+          "l1",
+          "by service family"
+        ]
+      },
+      {
+        "Name": "workload_dimensions_service_level_2",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate revenue results by service name (L2). Use when user mentions group by service name, L2 services, or specific service types.",
+        "Keywords": [
+          "service name",
+          "l2",
+          "by service name"
+        ]
+      },
+      {
+        "Name": "Location",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate revenue results by Azure region. Use when user mentions group by region, location, or geographic area.",
+        "Keywords": [
+          "region",
+          "location",
+          "by region"
+        ]
+      },
+      {
+        "Name": "SubscriptionGuid",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate revenue results by subscription. Use when user mentions group by subscription, per subscription breakdown, or subscription-level analysis.",
+        "Keywords": [
+          "subscription",
+          "by subscription"
+        ]
+      },
+      {
+        "Name": "azure_pricing_level",
+        "Type": "string",
+        "Description": "Apply this grouping when the user wants to aggregate revenue results by Azure pricing level. Use when user mentions group by pricing level, pricing tier, or cost categories.",
+        "Keywords": [
+          "pricing level",
+          "by pricing"
+        ]
+      }
+    ],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Customer, Workload, or Product entity ID (e.g., ch:customer::tpid:123456, ch:customer:workloadname, or ch:product::id:GUID). ALWAYS get the value of customer ID from get_customer_id_by_customer_name or product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "startDate",
+        "Type": "string",
+        "Description": "Start date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "endDate",
+        "Type": "string",
+        "Description": "End date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "pivotedmetric",
+          "pivotedextendedchart"
+        ],
+        "Default": "pivotedmetric",
+        "Description": "Type of metric view - pivotedmetric for metric value, pivotedextendedchart for trend",
+        "Required": true
+      },
+      {
+        "Name": "unit",
+        "Type": "string",
+        "ValueEnums": [
+          "month"
+        ],
+        "Default": "month",
+        "Description": "Time unit for aggregation (revenue data is monthly)",
+        "Required": false
+      },
+      {
+        "Name": "aggregation",
+        "Type": "string",
+        "ValueEnums": [
+          "Sum"
+        ],
+        "Default": "Sum",
+        "Description": "Aggregation type for the metric",
+        "Required": false
+      },
+      {
+        "Name": "dateOffsetInDays",
+        "Type": "integer",
+        "Default": "30",
+        "Description": "Number of days offset for date range calculation. If not specified, defaults to 30 days.",
+        "Required": false
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "consumption/revenue",
+      "MetricUIComponentMap": "revenue",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  }
+]

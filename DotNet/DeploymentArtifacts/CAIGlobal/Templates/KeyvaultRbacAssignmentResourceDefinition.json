@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.34.44.8038",
+      "templateHash": "13434827851028887459"
+    }
+  },
+  "parameters": {
+    "PkeyvaultAccountName": {
+      "type": "string"
+    },
+    "PkeyvaultRoleDefinationIds": {
+      "type": "array"
+    },
+    "PresourceManagedIdentityId": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "copy": {
+        "name": "rbackeyvault",
+        "count": "[length(parameters('PkeyvaultRoleDefinationIds'))]"
+      },
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2020-10-01-preview",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', parameters('PkeyvaultAccountName'))]",
+      "name": "[guid(format('{0}-{1}', resourceId('Microsoft.KeyVault/vaults', parameters('PkeyvaultAccountName')), parameters('PresourceManagedIdentityId')), parameters('PkeyvaultRoleDefinationIds')[copyIndex()])]",
+      "properties": {
+        "principalId": "[parameters('PresourceManagedIdentityId')]",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('PkeyvaultRoleDefinationIds')[copyIndex()])]"
+      }
+    }
+  ]
+}

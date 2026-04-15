@@ -1,0 +1,108 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "732544607965696230"
+    }
+  },
+  "parameters": {
+    "PfunctionName": {
+      "type": "string"
+    },
+    "PstorageAccountRGroupName": {
+      "type": "string"
+    },
+    "PSubscriptionId": {
+      "type": "string"
+    },
+    "PmuiResourceId": {
+      "type": "string"
+    },
+    "PnoOfFunctionDeployedPerApp": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "scriptVariables": "[format('$functionAppName = \"{0}\" \n $resourceGroupName = \"{1}\" \n $expectedFunctionCount = {2} \n $subscriptionId= \"{3}\" \n $slotName = \"staging\" \n', parameters('PfunctionName'), parameters('PstorageAccountRGroupName'), parameters('PnoOfFunctionDeployedPerApp'), parameters('PSubscriptionId'))]",
+    "fetchcountScript": "[format('$jsoncontent=Invoke-AzRestMethod -Path \"/subscriptions/{0}/resourcegroups/{1}/providers/Microsoft.Web/sites/{2}/slots/staging/functions?api-version=2018-11-01\" -Method GET \n', parameters('PSubscriptionId'), parameters('PstorageAccountRGroupName'), parameters('PfunctionName'))]",
+    "mainScript": " \r\n$resultObject = $jsoncontent.Content | ConvertFrom-Json \r\n $functionCount = $resultObject.Value.length\r\n \r\nif($functionCount -eq $expectedFunctionCount){\r\n   Write-Output \"Success: The number of functions ($functionCount) matches the expected number ($expectedFunctionCount).\"\r\n   \r\n} \r\nelse {\r\n   throw \"Error: The number of functions ($functionCount) does not match the expected number ($expectedFunctionCount). The Params are: PfunctionName - ($functionAppName), PstorageAccountRGroupName = ($resourceGroupName), PSubscriptionId = ($subscriptionId), PnoOfFunctionDeployedPerApp = ($expectedFunctionCount) \\n resultObject : $resultObject\"\r\n   \r\n} \r\n",
+    "script": "[format('{0}{1}{2}', variables('scriptVariables'), variables('fetchcountScript'), variables('mainScript'))]",
+    "scriptId": "[format('ValidateDeploymentSlot-{0}', parameters('PfunctionName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('scriptId')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "Pps_command": {
+            "value": "[variables('script')]"
+          },
+          "PmuiResourceId": {
+            "value": "[parameters('PmuiResourceId')]"
+          },
+          "PScriptId": {
+            "value": "[variables('scriptId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.37.4.10188",
+              "templateHash": "4644440018653794433"
+            }
+          },
+          "parameters": {
+            "utcValue": {
+              "type": "string",
+              "defaultValue": "[utcNow()]"
+            },
+            "Pps_command": {
+              "type": "string"
+            },
+            "PmuiResourceId": {
+              "type": "string"
+            },
+            "PScriptId": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deploymentScripts",
+              "apiVersion": "2020-10-01",
+              "name": "[format('runPsScript-{0}', guid(parameters('PScriptId')))]",
+              "location": "[resourceGroup().location]",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', parameters('PmuiResourceId'))]": {}
+                }
+              },
+              "kind": "AzurePowerShell",
+              "properties": {
+                "forceUpdateTag": "[parameters('utcValue')]",
+                "azPowerShellVersion": "5.6.0",
+                "scriptContent": "[parameters('Pps_command')]",
+                "timeout": "PT30M",
+                "cleanupPreference": "OnSuccess",
+                "retentionInterval": "P1D"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

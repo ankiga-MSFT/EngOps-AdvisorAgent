@@ -1,0 +1,141 @@
+{
+  "$schema": "https://ev2schema.azure.net/schemas/2020-04-01/RegionAgnosticServiceModel.json",
+  "contentVersion": "1.0.0",
+  "serviceMetadata": {
+    "serviceIdentifier": "61b4b63c-3588-445e-a558-5352b1bd06c2",
+    "displayName": "caiglobal Deployment",
+    "serviceGroup": "Microsoft.Azure.EngOps.CAIGlobal.Test-sg",
+    "environment": "test",
+    "TenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "serviceSpecificationPath": "Public-Test\\ServiceSpec.json"
+  },
+  "serviceResourceGroupDefinitions": [
+    {
+      "name": "Microsoft.Azure.EngOps.CAIGlobalKusto.Test-sg",
+      "azureResourceGroupName": "rg-caiglobal-test-$location()",
+      "subscriptionKey": "CAIGlobalTestSubscriptionKey",
+      "serviceResourceDefinitions": [
+        {
+          "name": "ConfigurableStopByFailureDeployment",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\ConfigurableStopByFailureDeployment.json",
+              "parametersPath": "Parameters\\ConfigurableStopByFailureDeployment.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "DeployKustoScript",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\auto.scopedKustoScriptDefination.json",
+              "parametersPath": "Parameters\\DeployKustoScript.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "ScopedKustoClusterRbac",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\ScopedKustoRbacResourceDefination.json",
+              "parametersPath": "Parameters\\ScopedKustoClusterRbac.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "ScopedEventhubConsumerGroup",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\ScopedEventhubConsumerGroupResourceDefination.json",
+              "parametersPath": "Parameters\\ScopedEventhubConsumerGroup.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "ScopedKustoClusterManagedPrivateEndpoint",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\ScopedKustoManagedPrivateEndpointResourceDefination.json",
+              "parametersPath": "Parameters\\ScopedKustoClusterManagedPrivateEndpoint.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "ScopedAssignCosmosDbRoles",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\ScopedCosmosDbRbacResourceDescription.json",
+              "parametersPath": "Parameters\\ScopedAssignCosmosDbRoles.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "ScopedEventhubRolesAssignment",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\ScopedEventhubRbacAssignmentResourceDefinition.json",
+              "parametersPath": "Parameters\\ScopedEventhubRolesAssignment.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        },
+        {
+          "name": "ScopedKustoClusterDataConnection",
+          "composedOf": {
+            "arm": {
+              "templatePath": "Templates\\ScopedKustoDirectIngestionResourceDefination.json",
+              "parametersPath": "Parameters\\ScopedKustoClusterDataConnection.parameters.json",
+              "deploymentLevel": "ResourceGroup"
+            }
+          },
+          "scopeTags": [
+            {
+              "name": "test"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

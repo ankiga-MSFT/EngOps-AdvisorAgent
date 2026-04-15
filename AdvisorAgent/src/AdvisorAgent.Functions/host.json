@@ -1,0 +1,31 @@
+{
+    "version": "2.0",
+    "logging": {
+        "applicationInsights": {
+            "samplingSettings": {
+                "isEnabled": true,
+                "excludedTypes": "Request"
+            },
+            "enableLiveMetricsFilters": true
+        },
+        "logLevel": {
+            "default": "Information",
+            "Microsoft.DurableTask": "Warning",
+            "Azure.Core": "Warning",
+            "Azure.Identity": "Warning",
+            "Azure.Storage": "Warning",
+            "Azure.Data": "Warning"
+        }
+    },
+    "extensions": {
+        "durableTask": {
+            "hubName": "%TASKHUB_NAME%",
+            "storageProvider": {
+                "type": "azureManaged",
+                "connectionStringName": "DURABLE_TASK_SCHEDULER_CONNECTION_STRING"
+            },
+            "maxConcurrentActivityFunctions": 10,
+            "maxConcurrentOrchestratorFunctions": 5
+        }
+    }
+}

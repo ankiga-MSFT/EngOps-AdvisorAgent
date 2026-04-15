@@ -1,0 +1,3 @@
+.create-or-alter materialized-view  with ( folder='SRICM',docString='IcmL2Aggregate Latest Event',autoUpdateSchema=true) IcmL2AggregateView on table IcmL2Aggregate { IcmL2Aggregate
+        | summarize arg_max(EventCreatedTime, *)
+        by IncidentIdCloud } 

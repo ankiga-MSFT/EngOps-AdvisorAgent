@@ -1,0 +1,109 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "17475161963394340475"
+    }
+  },
+  "parameters": {
+    "PtargetResourceId": {
+      "type": "string"
+    },
+    "ProleDefinationIds": {
+      "type": "array"
+    },
+    "PsourceRGName": {
+      "type": "string"
+    },
+    "PsourceResourceSubscriptionId": {
+      "type": "string"
+    },
+    "PsourceResourceName": {
+      "type": "string"
+    },
+    "PdeployInfra": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "deployInfra": "[bool(parameters('PdeployInfra'))]",
+    "targetResourceResourceGroup": "[split(parameters('PtargetResourceId'), '/')[4]]",
+    "targetResourceName": "[split(parameters('PtargetResourceId'), '/')[8]]"
+  },
+  "resources": [
+    {
+      "condition": "[variables('deployInfra')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('StorageRbacAssignment-{0}', guid(variables('targetResourceName'), parameters('PsourceResourceName')))]",
+      "resourceGroup": "[variables('targetResourceResourceGroup')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "PsourceResourceIdRef": {
+            "value": "[reference(format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{2}', parameters('PsourceResourceSubscriptionId'), parameters('PsourceRGName'), parameters('PsourceResourceName')), '2023-01-31', 'full')]"
+          },
+          "PtargetResourceName": {
+            "value": "[variables('targetResourceName')]"
+          },
+          "ProleDefinationIds": {
+            "value": "[parameters('ProleDefinationIds')]"
+          },
+          "PsourceResourceName": {
+            "value": "[parameters('PsourceResourceName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.37.4.10188",
+              "templateHash": "13994929563265527773"
+            }
+          },
+          "parameters": {
+            "PsourceResourceIdRef": {
+              "type": "object"
+            },
+            "PsourceResourceName": {
+              "type": "string"
+            },
+            "ProleDefinationIds": {
+              "type": "array"
+            },
+            "PtargetResourceName": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "principleid": "[parameters('PsourceResourceIdRef').properties.principalId]"
+          },
+          "resources": [
+            {
+              "copy": {
+                "name": "RoleAssignment",
+                "count": "[length(range(0, length(parameters('ProleDefinationIds'))))]"
+              },
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2020-10-01-preview",
+              "name": "[guid(format('{0}-{1}-{2}-{3}', variables('principleid'), parameters('PsourceResourceName'), parameters('PtargetResourceName'), parameters('ProleDefinationIds')[range(0, length(parameters('ProleDefinationIds')))[copyIndex()]]))]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('ProleDefinationIds')[range(0, length(parameters('ProleDefinationIds')))[copyIndex()]])]",
+                "principalId": "[variables('principleid')]",
+                "principalType": "ServicePrincipal"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

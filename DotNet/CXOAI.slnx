@@ -1,0 +1,118 @@
+<Solution>
+  <Folder Name="/ADF/">
+    <File Path="ADF/CXOAIConfigurationStoreTrigger.json" />
+    <File Path="ADF/DataSetCXOAIADXConfigurationStore.json" />
+    <File Path="ADF/DataSetCXOAICosmosConfigurationStore.json" />
+    <File Path="ADF/PipelineLoadCXOAIConfigurationStore.json" />
+  </Folder>
+  <Folder Name="/AgenticDesignPatterns/">
+    <File Path="AgenticDesignPatterns/README.md" />
+  </Folder>
+  <Folder Name="/AgenticDesignPatterns/ascii-art/">
+    <File Path="AgenticDesignPatterns/ascii-art/all-patterns-overview.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/evaluation-and-monitoring.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/exception-handling-and-recovery.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/exploration-and-discovery.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/goal-setting-and-monitoring.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/guardrails-safety-patterns.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/human-in-the-loop.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/inter-agent-communication-a2a.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/knowledge-retrieval-rag.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/learning-and-adaptation.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/memory-management.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/model-context-protocol.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/multi-agent-collaboration.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/parallelization.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/planning.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/prioritization.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/prompt-chaining.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/reasoning-techniques.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/reflection.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/resource-aware-optimization.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/routing.txt" />
+    <File Path="AgenticDesignPatterns/ascii-art/tool-use.txt" />
+  </Folder>
+  <Folder Name="/AgenticDesignPatterns/mermaid-diagrams/">
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/evaluation-and-monitoring.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/exception-handling-and-recovery.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/exploration-and-discovery.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/goal-setting-and-monitoring.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/guardrails-safety-patterns.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/human-in-the-loop.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/inter-agent-communication-a2a.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/knowledge-retrieval-rag.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/learning-and-adaptation.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/memory-management.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/model-context-protocol.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/multi-agent-collaboration.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/parallelization.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/planning.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/prioritization.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/prompt-chaining.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/reasoning-techniques.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/reflection.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/resource-aware-optimization.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/routing.mmd" />
+    <File Path="AgenticDesignPatterns/mermaid-diagrams/tool-use.mmd" />
+  </Folder>
+  <Folder Name="/AgenticDesignPatterns/pattern-discussion/">
+    <File Path="AgenticDesignPatterns/pattern-discussion/evaluation-and-monitoring.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/exception-handling-and-recovery.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/exploration-and-discovery.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/goal-setting-and-monitoring.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/guardrails-safety-patterns.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/human-in-the-loop.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/inter-agent-communication-a2a.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/knowledge-retrieval-rag.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/learning-and-adaptation.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/memory-management.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/model-context-protocol.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/multi-agent-collaboration.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/parallelization.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/planning.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/prioritization.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/prompt-chaining.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/reasoning-techniques.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/reflection.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/resource-aware-optimization.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/routing.md" />
+    <File Path="AgenticDesignPatterns/pattern-discussion/tool-use.md" />
+  </Folder>
+  <Folder Name="/Common/" />
+  <Folder Name="/Common/Providers/">
+    <Project Path="Common/Providers/Provider/Providers.csproj" />
+  </Folder>
+  <Folder Name="/Common/Services/">
+    <Project Path="Common/Services/AppServices/CXOAI.AppServices/AppServices.csproj" />
+    <Project Path="Common/Services/ConfigurationStoreService/ConfigurationStoreService.csproj" />
+    <Project Path="Common/Services/ConversationStoreService/ConversationStoreService.csproj" />
+    <Project Path="Common/Services/InfraService/InfraService.csproj" />
+    <Project Path="Common/Services/MemoryService/MemoryService.csproj" />
+    <Project Path="Common/Services/Middleware/Middleware.csproj" />
+    <Project Path="Common/Services/SkillFramework/SkillFramework.csproj" />
+    <Project Path="Common/Services/StatusNotifierService/StatusNotifierService.csproj" />
+    <Project Path="Services/NLTKql/NLTKql.csproj" />
+  </Folder>
+  <Folder Name="/Functions/">
+    <Project Path="Functions/CXOAI/CXOAI.csproj" />
+  </Folder>
+  <Folder Name="/Tools/" />
+  <Folder Name="/Tools/CXOAI/">
+    <Project Path="Tools/CXOAI/CXOAIToolsService.csproj" />
+  </Folder>
+  <Folder Name="/Tools/ManageResilency/" />
+  <Folder Name="/UnitTests/" />
+  <Folder Name="/UnitTests/CXOAI/">
+    <Project Path="UnitTests/CXOAI/UnitTests/UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/UnitTests/ManagedResilency/" />
+  <Folder Name="/UtilityApps/" />
+  <Folder Name="/UtilityApps/CXOAI/">
+    <Project Path="UtilityApps/CXOAI/CXOAIConsole/CXOAIConsole.csproj" />
+    <Project Path="UtilityApps/CXOAI/MemoryTester/MemoryTester.csproj" />
+    <Project Path="UtilityApps/CXOAI/NLTKqlTester/NLTKqlTester.csproj" Id="4e635fad-33d2-458a-b254-5fc6d2400f0b" />
+    <Project Path="UtilityApps/CXOAI/SkillTester/SkillTester.csproj" />
+  </Folder>
+  <Folder Name="/UtilityApps/ManageResilency/" />
+  <Project Path="DeploymentArtifacts/DeploymentArtifacts.csproj" />
+</Solution>

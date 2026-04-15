@@ -1,0 +1,8 @@
+.create-or-alter function with (folder = "ADF", docstring = "Get Missing Ratio Linkage ", skipvalidation = "true") GetIcmL2AggregateMissingEvent(executionTime:datetime) {
+IcmL2AggregateView 
+|where EventCreatedTime between (todatetime("2001-01-01").. executionTime) 
+|extend IncidentIdCloud= iff(isempty(IncidentIdCloud),strcat(IncidentId,"-PUBLIC"),IncidentIdCloud ) 
+|extend DataBoundary= iff(isempty(DataBoundary),"PUBLIC",DataBoundary ) 
+|order by EventCreatedTime asc 
+| project IncidentIdCloud,EventCreatedTime,executionTime
+}

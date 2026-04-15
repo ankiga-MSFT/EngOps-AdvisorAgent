@@ -1,0 +1,11 @@
+.create-or-alter function with (folder = "ADF", docstring = "Get IcmL2Aggregate Change Feed", skipvalidation = "true") GetIcmL2AggregateChangeFeed(startTime:datetime, endtime:datetime, batch:int, correctionReason:string, index:int) {
+let skiprow=batch*index;
+let currentTime=now();
+let latestSrs=ChangeFeedPipelineIcmL2Aggregate|summarize arg_max(ExecutionTime,*) by IncidentIdCloud|order by EventCreatedTime asc| extend rownum=row_number()|where rownum >skiprow|take batch;
+latestSrs| join kind=inner (IcmL2AggregateView | extend DataBoundary=iff(isempty(DataBoundary),'PUBLIC',DataBoundary),IncidentIdCloud=iff(isempty( IncidentIdCloud),strcat(IncidentId,'-PUBLIC'),IncidentIdCloud))  on IncidentIdCloud |
+where EventCreatedTime between (startTime.. endtime)
+|order by EventCreatedTime asc 
+| extend bag=bag_pack("SDPIcmL2AggregateCorrection",correctionReason,"SdpServiceName","ICMUtility","DataBoundary",DataBoundary, "IncidentIdCloud",IncidentIdCloud,"EventCreatedTime",currentTime,"id",IncidentIdCloud,"EventTime",currentTime)
+|extend Content=bag_merge(bag,Content)
+| project Key=IncidentIdCloud,Value=tostring(Content)
+} 

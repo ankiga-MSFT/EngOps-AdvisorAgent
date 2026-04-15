@@ -1,0 +1,521 @@
+{
+  "$schema": "https://ev2schema.azure.net/schemas/2020-04-01/RegionAgnosticRolloutSpecification.json",
+  "contentVersion": "1.0.0",
+  "rolloutMetadata": {
+    "serviceModelPath": "Public-Ppe/ServiceModel.app.json",
+    "scopeBindingsPath": "Public-Ppe/ScopeBindings.app.test.json",
+    "configuration": {
+      "serviceGroupScope": {
+        "specPath": "Public-Ppe/ConfigurationSpecification.app.json"
+      }
+    },
+    "name": "TARGETEDAPPEV2-APP - Complete Rollout",
+    "rolloutType": "major",
+    "buildSource": {
+      "parameters": {
+        "versionFile": "version.txt"
+      }
+    },
+    "notification": {
+      "email": {
+        "to": "madhulikafte@microsoft.com"
+      }
+    }
+  },
+  "orchestratedSteps": [
+    {
+      "name": "Default-MergeEv2Metadata",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-MergeEv2Metadata",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": []
+    },
+    {
+      "name": "Default-CreateStorageAccount",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-StorageAccountResourceDefinition",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": []
+    },
+    {
+      "name": "Default-CreateServicePlan",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-ServicePlanResourceDefinition",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": []
+    },
+    {
+      "name": "Default-GetAppInsights",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-AppInsightResourceDefinition",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": []
+    },
+    {
+      "name": "Default-CreateAppMui",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-AppMUIResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": []
+    },
+    {
+      "name": "Default-CreateNSG",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-NsgResourceDefinition",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": []
+    },
+    {
+      "name": "Default-NATGateway",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-NATGateWay",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": []
+    },
+    {
+      "name": "Default-CreateStorageSystemTopic",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-StorageSystemTopicResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "Default-CreateStorageAccount"
+      ]
+    },
+    {
+      "name": "Default-AppMuiStorageRbac",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-MuiStorageRbacAssignmentResourceDefination.bicep",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "Default-CreateStorageAccount"
+      ]
+    },
+    {
+      "name": "Default-CreateFunction",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-FunctionResourceDefinition",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "Default-CreateServicePlan",
+        "Default-CreateStorageAccount",
+        "Default-GetAppInsights"
+      ]
+    },
+    {
+      "name": "Default-SetFunctionSettings",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-FunctionSettingResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "Default-CreateFunction",
+        "Default-GetAppInsights"
+      ]
+    },
+    {
+      "name": "Default-AssignAppMuiRoles",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-MUIRoleAssignmentResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "Default-CreateAppMui",
+        "Default-SetFunctionSettings"
+      ]
+    },
+    {
+      "name": "Default-AssignCosmosDbRoles",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-FunctionCosmosDbRbacResourceDescription",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "Default-SetFunctionSettings"
+      ]
+    },
+    {
+      "name": "Default-AssignStorageRoles",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-FuncStorageRbacAssignmentResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "Default-CreateStorageAccount",
+        "Default-SetFunctionSettings"
+      ]
+    },
+    {
+      "name": "Default-grantRedisRBACToFunc",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-MultiFunctionRedisRbacAssignmentResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "Default-CreateAppMui",
+        "Default-SetFunctionSettings"
+      ]
+    },
+    {
+      "name": "Default-AssignVNetToFunctions",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "Default-FunctionVnetSettingResourceDefinition",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "Default-CreateNSG",
+        "Default-CreateStorageAccount",
+        "Default-NATGateway",
+        "Default-SetFunctionSettings"
+      ]
+    },
+    {
+      "name": "CXOAI-StopDeployment",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-ConfigurableStopByFailureDeployment",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": []
+    },
+    {
+      "name": "CXOAI-CreateCXOAIInfra",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-CreateCXOAIInfra",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-StopDeployment"
+      ]
+    },
+    {
+      "name": "CXOAI-AppMuiStorageRbac",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-MuiStorageRbacAssignmentResourceDefination.bicep",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-AssignAppMuiRoles",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-MUIRoleAssignmentResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-AssignStorageRoles",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-AssignStorageRoles",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-AssignRedisRoles",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-MultiFunctionRedisRbacAssignmentResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-AssignKeyVaultRoles",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-FuncKeyVaultRbacAssignmentResourceGroup",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-AssignSupportCaseEventHubNameSpaceRoles",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-FuncSupportCaseEventHubNameSpaceRbacAssignmentResourceGroup",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-AssignCSEventhubNameSpaceRoles",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-FuncCSEventhubNameSpaceRbacAssignmentResourceGroup",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-AssignCosmosDbRoles",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-FunctionCosmosDbRbacResourceDescription",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-AssignSearchServiceRbac",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-FuncSearchServiceRbacAssignmentResourceGroup",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-CreateStoragePrivateEndpoints",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-CreateStoragePrivateEndpoints",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-CreatekeyVaultPrivateEndpoints",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-keyVaultPrivateEndpointResourceDefinition",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-CreateSupportCaseEventHubNameSpacePrivateEndpoints",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-CreateSupportCaseEventHubNameSpacePrivateEndpoints",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-StopStagingSlot",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-AppSlotStopResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-CreateRedisPrivateEndpoints",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-RedisPrivateEndpointResourceDefinition",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-AssignRedisRoles",
+        "CXOAI-CreateCXOAIInfra"
+      ]
+    },
+    {
+      "name": "CXOAI-CreateCSEventhubNameSpacePrivateEndpoints",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-CSEventhubNameSpacePrivateEndpointResourceDefinition",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra",
+        "CXOAI-CreateSupportCaseEventHubNameSpacePrivateEndpoints"
+      ]
+    },
+    {
+      "name": "CXOAI-CreateCosmosDbPrivateEndpoints",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-FunctionCosmosDbVnetPrivateEndpointResourceDefinition",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra",
+        "CXOAI-CreateSupportCaseEventHubNameSpacePrivateEndpoints"
+      ]
+    },
+    {
+      "name": "CXOAI-CreateSearchServicePrivateEndpoints",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-MultiSearchPrivateEndpointResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra",
+        "CXOAI-CreateSupportCaseEventHubNameSpacePrivateEndpoints"
+      ]
+    },
+    {
+      "name": "CXOAI-GetAppMui",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-GetAppMUIResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra",
+        "CXOAI-StopStagingSlot"
+      ]
+    },
+    {
+      "name": "CXOAI-UploadArtifactToBlob",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-FunctionAppUploadArtifactFileShellDefinition",
+      "actions": [
+        "Shell/FunctionAppArtifactFileUpload"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra",
+        "CXOAI-GetAppMui"
+      ]
+    },
+    {
+      "name": "CXOAI-StartSlot",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-SlotStartResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra",
+        "CXOAI-GetAppMui",
+        "CXOAI-UploadArtifactToBlob"
+      ]
+    },
+    {
+      "name": "CXOAI-SetSlotSettings",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-SlotDeployResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra",
+        "CXOAI-StartSlot"
+      ]
+    },
+    {
+      "name": "CXOAI-WaitforSlotToDeploy",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-SlotWaitResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-GetAppMui",
+        "CXOAI-SetSlotSettings"
+      ]
+    },
+    {
+      "name": "CXOAI-ValidateSlot",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-SlotValidateResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra",
+        "CXOAI-GetAppMui",
+        "CXOAI-WaitforSlotToDeploy"
+      ]
+    },
+    {
+      "name": "CXOAI-SwapSlot",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-SlotSwapResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra",
+        "CXOAI-GetAppMui",
+        "CXOAI-ValidateSlot"
+      ]
+    },
+    {
+      "name": "CXOAI-StopSlot",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-SlotStopResourceDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra",
+        "CXOAI-GetAppMui",
+        "CXOAI-SwapSlot"
+      ]
+    },
+    {
+      "name": "CXOAI-CreateAFDProfileOriginRouteDefination",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "CXOAI-AFDProfileOriginRouteDefination",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "CXOAI-CreateCXOAIInfra",
+        "CXOAI-StopSlot"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "$schema": "https://ev2schema.azure.net/schemas/2020-01-01/scopeBindings.json",
+  "contentVersion": "1.0.0.0",
+  "scopeBindings": [
+    {
+      "scopeTagName": "Prod",
+      "bindings": [
+        {
+          "find": "__DEFAULT__CURRENT_APPLICATION_SUBSCRIPTION__",
+          "replaceWith": "443efde9-a0c0-4d0e-8f52-63cdcd9e0931"
+        },
+        {
+          "find": "__DEFAULT__CURRENT_APPLICATION_RESOURCE_GROUP__",
+          "replaceWith": "rg-default-prod-$location()"
+        },
+        {
+          "find": "__CXOAI__FAIL_DEPLOYMENT__",
+          "replaceWith": "$config(config_failcxoaideployment)"
+        },
+        {
+          "find": "__CXOAI__DEPLOY_INFRA__",
+          "replaceWith": "$config(config_deploycxoaiinfra)"
+        },
+        {
+          "find": "\"__CXOAI__CREATE_CXOAI_INFRA_INPUT__\"",
+          "replaceWith": "{\r\n  \"PservicePlanName\": \"asp-cxoai-prod-$config(regionShortName)\",\r\n  \"PservicePlanSkuName\": \"P2MV3\",\r\n  \"PservicePlanSkuTier\": \"PremiumMV3\",\r\n  \"PservicePlanSkuCapacity\": \"1\",\r\n  \"PgenevaCertSecretName\": \"sdp-geneva-auth-certificate\",\r\n  \"PmonitoringConfigVersion\": \"1.3\",\r\n  \"PmonitoringGcsAccount\": \"AzCXPSDP\",\r\n  \"PmonitoringGcsAuthId\": \"prod.geneva.keyvault.cxpes.microsoft.com\",\r\n  \"PmonitoringGcsEnvironment\": \"Diagnostics Prod\",\r\n  \"PmonitoringGcsNamespace\": \"SDPProd\",\r\n  \"PmonitoringTenant\": \"sdp-public-prod\",\r\n  \"PcomputeRegionOverride\": \"none\",\r\n  \"PappInsightName\": \"ai-caiglobal-prod-ccan\",\r\n  \"PappInsightsResourceGroupName\": \"rg-caiglobal-prod-canadacentral\",\r\n  \"PmuiName\": \"mui-cxoai-prod-$config(regionShortName)\",\r\n  \"PfunctionName\": \"fun-cxoai-prod-$config(regionShortName)\",\r\n  \"PnsgName\": \"nsg-cxoai-prod-$config(regionShortName)\",\r\n  \"PpublicIpName\": \"pip-cxoai-prod-$config(regionShortName)\",\r\n  \"PnatGatewayName\": \"nat-cxoai-prod-$config(regionShortName)\",\r\n  \"PnumberOfPublicIPs\": \"3\",\r\n  \"PoutboundServiceTag\": [],\r\n  \"PvnetName\": \"vnet-cxoai-prod-$config(regionShortName)\",\r\n  \"PKeyvaultResourceId\": \"/subscriptions/443efde9-a0c0-4d0e-8f52-63cdcd9e0931/resourceGroups/rg-caiglobal-prod-canadacentral/providers/Microsoft.KeyVault/vaults/kv-caiglobal-prod-ccan\",\r\n  \"PstorageAccountResourceId\": \"/subscriptions/443efde9-a0c0-4d0e-8f52-63cdcd9e0931/resourceGroups/rg-caiglobal-prod-canadacentral/providers/Microsoft.Storage/storageAccounts/stmcxoaiprodccan\",\r\n  \"PstorageAccountName\": \"stmcxoaiprodccan\"\r\n}"
+        },
+        {
+          "find": "\"__CXOAI__MUI_STORAGE_ROLE_DEFINATION_IDS__\"",
+          "replaceWith": "\"b24988ac-6180-42a0-ab88-20f7382dd24c\",\"17d1049b-9a84-46fb-8f53-869881c3d3ab\",\"ba92f5b4-2d11-453d-a403-e96b0029c9fe\",\"974c5e8b-45b9-4653-ba55-5f855dd0fb88\",\"0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3\""
+        },
+        {
+          "find": "__CXOAI__CREATECXOAIINFRA__APP_MUINAME__",
+          "replaceWith": "$serviceResourceDefinition(CXOAI-CreateCXOAIInfra).action(deploy).outputs(App_MuiName.value)"
+        },
+        {
+          "find": "__CXOAI__APP__SUBSCRIPTION__SUBSCRIPTIONID__",
+          "replaceWith": "$azureSubscriptionId()"
+        },
+        {
+          "find": "__CXOAI__APP__RESOURCEGROUP__NAME__",
+          "replaceWith": "$azureResourceGroup()"
+        },
+        {
+          "find": "__CXOAI__CREATECXOAIINFRA__APP_STORAGEACCOUNTRESOURCEID__",
+          "replaceWith": "$serviceResourceDefinition(CXOAI-CreateCXOAIInfra).action(deploy).outputs(App_StorageAccountResourceId.value)"
+        },
+        {
+          "find": "__CXOAI__CREATECXOAIINFRA__FUNCTIONNAME__",
+          "replaceWith": "$serviceResourceDefinition(CXOAI-CreateCXOAIInfra).action(deploy).outputs(FunctionName.value)"
+        },
+        {
+          "find": "__CXOAI__CREATECXOAIINFRA__CREATEAPPMUI_USERMANAGEDIDENTITYPRINCIPLEID__",
+          "replaceWith": "$serviceResourceDefinition(CXOAI-CreateCXOAIInfra).action(deploy).outputs(CreateAppMui_userManagedIdentityPrincipleId.value)"
+        },
+        {
+          "find": "\"__CXOAI__STORAGE_ROLE_DEFINATION_IDS__\"",
+          "replaceWith": "\"17d1049b-9a84-46fb-8f53-869881c3d3ab\",\"ba92f5b4-2d11-453d-a403-e96b0029c9fe\",\"974c5e8b-45b9-4653-ba55-5f855dd0fb88\",\"0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3\",\"2a2b9908-6ea1-4ae2-8e65-a410df84e7d1\""
+        },
+        {
+          "find": "\"__CXOAI__REDIS_CACHE_RESOURCE_IDS__\"",
+          "replaceWith": "\"/subscriptions/443efde9-a0c0-4d0e-8f52-63cdcd9e0931/resourceGroups/rg-caiglobal-prod-canadacentral/providers/Microsoft.Cache/Redis/rd-icmcache-prod-ccan\",\"/subscriptions/443efde9-a0c0-4d0e-8f52-63cdcd9e0931/resourceGroups/rg-caiglobal-prod-canadacentral/providers/Microsoft.Cache/Redis/rd-icmcache-prod-ecan\""
+        },
+        {
+          "find": "__CXOAI__REDISROLENAME__",
+          "replaceWith": "Data Owner"
+        },
+        {
+          "find": "\"__CXOAI__KEYVAULT_ROLE_DEFINATION_IDS__\"",
+          "replaceWith": "\"a4417e6f-fecd-4de8-b567-7b0420556985\",\"b86a8fe4-44ce-4948-aee5-eccb2c155cd7\""
+        },
+        {
+          "find": "__CXOAI__CREATECXOAIINFRA__APP_KEYVAULTRESOURCEID__",
+          "replaceWith": "$serviceResourceDefinition(CXOAI-CreateCXOAIInfra).action(deploy).outputs(App_KeyvaultResourceId.value)"
+        },
+        {
+          "find": "\"__CXOAI__EVENTHUBNAMESPACE_ROLE_DEFINATION_IDS__\"",
+          "replaceWith": "\"f526a384-b230-433a-b45c-95f59c4a2dec\""
+        },
+        {
+          "find": "__CXOAI__SUPPORT_CASE_EVENTHUB_NAMESPACE_RESOURCE_ID__",
+          "replaceWith": "/subscriptions/443efde9-a0c0-4d0e-8f52-63cdcd9e0931/resourceGroups/rg-caiglobal-prod-canadacentral/providers/Microsoft.EventHub/namespaces/ehns-icm-srevent-prod-ccan"
+        },
+        {
+          "find": "__CXOAI__CORNERSTONE_EVENTHUB_NAMESPACE_RESOURCE_ID__",
+          "replaceWith": "/subscriptions/443efde9-a0c0-4d0e-8f52-63cdcd9e0931/resourceGroups/rg-eh-prod-sdp-cm/providers/Microsoft.EventHub/namespaces/SupportCasesNamespace-Prod"
+        },
+        {
+          "find": "__CXOAI__DEPLOY_CORNERSTONE_EVENTHUB_ROLE_ASSIGNMENTS__",
+          "replaceWith": "true"
+        },
+        {
+          "find": "__CXOAI__COMMERCIAL_COSMOSDB_RESOURCE_ID__",
+          "replaceWith": "/subscriptions/443efde9-a0c0-4d0e-8f52-63cdcd9e0931/resourceGroups/rg-caiglobal-prod-canadacentral/providers/Microsoft.DocumentDB/databaseAccounts/csms-caiglobal-prod-cm"
+        },
+        {
+          "find": "__CXOAI__DEPLOY_COSMOS_RESOURCES__",
+          "replaceWith": "true"
+        },
+        {
+          "find": "__CXOAI__DEPLOY_SEARCH_SERVICE_RESOURCES__",
+          "replaceWith": "false"
+        },
+        {
+          "find": "\"__CXOAI__SEARCH_SERVICE_RESOURCE_IDS__\"",
+          "replaceWith": "\"/subscriptions/443efde9-a0c0-4d0e-8f52-63cdcd9e0931/resourceGroups/rg-caiglobal-prod-canadacentral/providers/Microsoft.Search/searchServices/srch-caiglobal-prod-ccan\",\"/subscriptions/443efde9-a0c0-4d0e-8f52-63cdcd9e0931/resourceGroups/rg-caiglobal-prod-canadacentral/providers/Microsoft.Search/searchServices/srch-caiglobal-prod-ecan\""
+        },
+        {
+          "find": "\"__CXOAI__SEARCH_SERVICE_ROLE_DEFINATION_IDS__\"",
+          "replaceWith": "\"8ebe5a00-799e-43f5-93ac-243d3dce84a7\""
+        },
+        {
+          "find": "__CXOAI__CREATECXOAIINFRA__DEFAULTVNETNAME__",
+          "replaceWith": "$serviceResourceDefinition(CXOAI-CreateCXOAIInfra).action(deploy).outputs(DefaultVnetName.value)"
+        },
+        {
+          "find": "__CXOAI__CREATECXOAIINFRA__CREATEAPPMUI_USERMANAGEDIDENTITYRESOURCEID__",
+          "replaceWith": "$serviceResourceDefinition(CXOAI-CreateCXOAIInfra).action(deploy).outputs(CreateAppMui_userManagedIdentityResourceId.value)"
+        },
+        {
+          "find": "__CXOAI__DEPLOY_REDIS_PRIVATE_ENDPOINTS__",
+          "replaceWith": "false"
+        },
+        {
+          "find": "__CXOAI__DEPLOY_CORNERSTONE_EVENTHUB_PRIVATE_ENDPOINT__",
+          "replaceWith": "true"
+        },
+        {
+          "find": "__CXOAI__BLOBCONTAINERNAME__",
+          "replaceWith": "deploymentpackages"
+        },
+        {
+          "find": "__CXOAI__CREATECXOAIINFRA__APP_STORAGEACCOUNTNAME__",
+          "replaceWith": "$serviceResourceDefinition(CXOAI-CreateCXOAIInfra).action(deploy).outputs(App_StorageAccountName.value)"
+        },
+        {
+          "find": "__CXOAI__FUNCTION_APP_ARTIFACT_BLOB_FILE_NAME__",
+          "replaceWith": "CXOAI.zip"
+        },
+        {
+          "find": "__CXOAI__GET_APP_MANAGED_USER_IDENTITY_CLIENT_ID__",
+          "replaceWith": "$serviceResourceDefinition(CXOAI-GetAppMUIResourceDefination).action(deploy).outputs(userManagedIdentityClientId.value)"
+        },
+        {
+          "find": "__CXOAI__GET_APP_MANAGED_USER_IDENTITY_RESOURCE_ID__",
+          "replaceWith": "$serviceResourceDefinition(CXOAI-GetAppMUIResourceDefination).action(deploy).outputs(userManagedIdentityResourceId.value)"
+        },
+        {
+          "find": "__CXOAI__EV2_PACKAGE_NAME__",
+          "replaceWith": "package.zip"
+        },
+        {
+          "find": "\"__CXOAI__COMMANDS_TO_EXECUTE_IN_SHELL__\"",
+          "replaceWith": "\"/bin/bash\",\"-c\",\"pwsh FunctionAppArtifactBlobFileUpload.ps1\""
+        },
+        {
+          "find": "__CXOAI__SHELL_MAX_EXECUTION_TIME__",
+          "replaceWith": "PT5M"
+        },
+        {
+          "find": "__CXOAI__STORAGE_ACCOUNT_RESOURCE_GROUP_NAME__",
+          "replaceWith": "rg-caiglobal-prod-canadacentral"
+        },
+        {
+          "find": "__CXOAI__APP_ENVIRONMENT_NAME__",
+          "replaceWith": "prod"
+        },
+        {
+          "find": "__CXOAI__CURRENT_APPLICATION_SUBSCRIPTION__",
+          "replaceWith": "443efde9-a0c0-4d0e-8f52-63cdcd9e0931"
+        },
+        {
+          "find": "__CXOAI__CREATECXOAIINFRA__GETAPPINSIGHTS_APPINSIGHTCONNECTIONSTRING__",
+          "replaceWith": "$serviceResourceDefinition(CXOAI-CreateCXOAIInfra).action(deploy).outputs(GetAppInsights_AppInsightConnectionString.value)"
+        },
+        {
+          "find": "__CXOAI__SOURCE_EVENTHUB_CONSUMER_GROUP__",
+          "replaceWith": "comcxoai"
+        },
+        {
+          "find": "__CXOAI__SOURCE_EVENTHUB_NAME__",
+          "replaceWith": "supportcaseseventhub-prod"
+        },
+        {
+          "find": "__CXOAI__SOURCE_EVENTHUB_NAMESPACE__",
+          "replaceWith": "SupportCasesNamespace-Prod"
+        },
+        {
+          "find": "__CXOAI__WAIT_DELAY_IN_SECONDS__",
+          "replaceWith": "60"
+        },
+        {
+          "find": "__CXOAI__NO_OF_FUNCTION_DEPLOYED_PER_APP__",
+          "replaceWith": "3"
+        },
+        {
+          "find": "__CXOAI__AZURE_FRONT_DOOR_RESOURCE_ID__",
+          "replaceWith": "/subscriptions/443efde9-a0c0-4d0e-8f52-63cdcd9e0931/resourceGroups/rg-caiglobal-prod-canadacentral/providers/Microsoft.Cdn/profiles/afd-caiglobal-prod-ccan"
+        },
+        {
+          "find": "__CXOAI__PATTERN_MATCH__",
+          "replaceWith": "/Api/ServiceRequestApi"
+        },
+        {
+          "find": "__CXOAI__ORIGIN_GROUP_NAMES__",
+          "replaceWith": "srrequestapi-origin-group"
+        },
+        {
+          "find": "__CXOAI__ORIGIN_NAME__",
+          "replaceWith": "srrequestapi-origin-$config(regionShortName)"
+        },
+        {
+          "find": "__CXOAI__ROUTE_NAME__",
+          "replaceWith": "srapi-route"
+        }
+      ]
+    }
+  ]
+}

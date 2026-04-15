@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "keyVaultAppId": {
+      "value": "__EV2_APPLICATION_APP_ID__"
+    },
+    "keyvaultSecureId": {
+      "value": "__CERT_KEYVAULT_SECURE_ID__"
+    },
+    "KeyvaultName": {
+      "value": "__CREATECAIGLOBALINFRA__DEFAULTKEYVALUENAME__"
+    },
+    "keyVaultPrivateIssuer": {
+      "value": "__CERT_KEYVAULT_PRIVATE_ISSUER__"
+    },
+    "keyvaultProvider": {
+      "value": "__CERT_KEYVAULT_PROVIDER_NAME__"
+    },
+    "cnSubjectName": {
+      "value": "__APP_CN_SUBJECT_NAME__"
+    },
+    "certificateName": {
+      "value": "__APP_CERTIFICATE_NAME__"
+    },
+    "deployCertificates": {
+      "value": "__DEPLOY_CERTIFICATES__"
+    }
+  }
+}

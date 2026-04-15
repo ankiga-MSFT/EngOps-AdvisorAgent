@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AdvisorAgent.Core/AdvisorAgent.Core.csproj" />
+    <Project Path="src/AdvisorAgent.Functions/AdvisorAgent.Functions.csproj" />
+    <Project Path="src/AdvisorAgent.Tools/AdvisorAgent.Tools.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AdvisorAgent.Tests/AdvisorAgent.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,23 @@
+{
+    "name": "CXOAIConfigurationStoreTrigger",
+    "properties": {
+        "type": "ScheduleTrigger",
+        "typeProperties": {
+            "recurrence": {
+                "frequency": "Minute",
+                "interval": 30,
+                "startTime": "2025-01-01T00:00:00Z",
+                "timeZone": "UTC"
+            }
+        },
+        "pipelines": [
+            {
+                "pipelineReference": {
+                    "referenceName": "PipelineLoadCXOAIConfigurationStore",
+                    "type": "PipelineReference"
+                }
+            }
+        ],
+        "annotations": []
+    }
+}

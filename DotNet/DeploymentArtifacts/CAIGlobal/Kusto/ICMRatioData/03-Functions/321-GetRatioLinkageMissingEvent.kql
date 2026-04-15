@@ -1,0 +1,10 @@
+.create-or-alter function with (folder = "ADF", docstring = "Get Missing Ratio Linkage ", skipvalidation = "true") GetRatioLinkageMissingEvent(executionTime:datetime) {
+ cluster("ratiorepwus3prod.westus3").database("ratiodata").View_allsupportoutagescore()
+    | where likelihood == "High"   and Processtimestamp >=todatetime('2001-01-01')
+    | join kind=leftouter (
+    SrSnapshotView  | project-away IncidentId
+    ) on $left.CaseNumber==$right.CaseNumber  
+    |where LinkedICMs !contains tostring(IncidentId) and isnotempty(SREventActionType ) and SREventActionType !='Delete'
+    | project CaseNumber,SREventActionType,EventDate,LinkedICMs, LinkedIncidents,RatioIncidentIds,NonDFMLinkageActivities,IncidentId=tostring(IncidentId),ModifiedOn=iff(isempty(ModifiedOn ),datetime('2025-05-19'),ModifiedOn)
+| distinct CaseNumber,EventDateTime=EventDate,ExecutionTime=executionTime
+} 

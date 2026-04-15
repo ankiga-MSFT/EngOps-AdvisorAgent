@@ -1,0 +1,2 @@
+.create-merge table IcmL2Aggregate (IncidentIdCloud:string, IncidentId: string, DataBoundary: string, EventTime: datetime, EventType: string, SnapshotId: string, SupportRequestsCount: int, IsCritSitCount: int, 
+    LinkedSupportRequests_Ids_PUBLIC: dynamic, LinkedSupportRequests_Ids_EU: dynamic, LinkedSupportRequests_LinkedIncidents: dynamic, FetchLink: string, SdpInternal: dynamic, Content: dynamic, AutoLinkedCount:int, AutoLinkedCritSitCount:int, EventCreatedTime: datetime, ManuallyLinkedCount: int, ManuallyLinkedCritSitCount: int, TotalCount : int); 

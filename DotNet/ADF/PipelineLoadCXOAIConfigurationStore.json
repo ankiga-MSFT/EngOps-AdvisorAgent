@@ -1,0 +1,145 @@
+{
+  "name": "PipelineLoadCXOAIConfigurationStore",
+  "properties": {
+    "description": "Checks if GetLatestConfigurations() returns any records in ADX; if so, copies them into the Cosmos DB Configurations container.",
+    "activities": [
+      {
+        "name": "CheckForNewConfigurations",
+        "description": "Runs GetLatestConfigurations() with count to determine if any rows exist.",
+        "type": "Lookup",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.00:10:00",
+          "retry": 2,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "AzureDataExplorerSource",
+            "query": "GetLatestConfigurations() | summarize RecordCount = count()",
+            "queryTimeout": "00:10:00",
+            "noTruncation": false
+          },
+          "dataset": {
+            "referenceName": "DataSetCXOAIADXConfigurationStore",
+            "type": "DatasetReference"
+          },
+          "firstRowOnly": true
+        }
+      },
+      {
+        "name": "IfRecordsExist",
+        "description": "Proceeds with copy only when the Kusto function returned at least one record.",
+        "type": "IfCondition",
+        "dependsOn": [
+          {
+            "activity": "CheckForNewConfigurations",
+            "dependencyConditions": [ "Succeeded" ]
+          }
+        ],
+        "typeProperties": {
+          "expression": {
+            "value": "@greater(activity('CheckForNewConfigurations').output.firstRow.RecordCount, 0)",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [
+            {
+              "name": "CopyConfigurationsFromADXToCosmos",
+              "type": "Copy",
+              "dependsOn": [],
+              "policy": {
+                "timeout": "0.00:30:00",
+                "retry": 2,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "AzureDataExplorerSource",
+                  "query": "GetLatestConfigurations()",
+                  "queryTimeout": "00:10:00",
+                  "noTruncation": false
+                },
+                "sink": {
+                  "type": "CosmosDbSqlApiSink",
+                  "writeBehavior": "upsert"
+                },
+                "enableStaging": false,
+                "translator": {
+                  "type": "TabularTranslator",
+                  "mappings": [
+                    {
+                      "source": {
+                        "name": "Id",
+                        "type": "String"
+                      },
+                      "sink": { "path": "$.id" }
+                    },
+                    {
+                      "source": {
+                        "name": "ComponentName",
+                        "type": "String"
+                      },
+                      "sink": { "path": "$.ComponentName" }
+                    },
+                    {
+                      "source": {
+                        "name": "ConfigurationName",
+                        "type": "String"
+                      },
+                      "sink": { "path": "$.ConfigurationName" }
+                    },
+                    {
+                      "source": {
+                        "name": "Description",
+                        "type": "String"
+                      },
+                      "sink": { "path": "$.Description" }
+                    },
+                    {
+                      "source": {
+                        "name": "Configuration",
+                        "type": "String"
+                      },
+                      "sink": { "path": "$.Configuration" }
+                    },
+                    {
+                      "source": {
+                        "name": "DependsOn",
+                        "type": "String"
+                      },
+                      "sink": { "path": "$.DependsOn" }
+                    },
+                    {
+                      "source": {
+                        "name": "ModifiedOn",
+                        "type": "DateTime"
+                      },
+                      "sink": { "path": "$.ModifiedOn" }
+                    }
+                  ]
+                }
+              },
+              "inputs": [
+                {
+                  "referenceName": "DataSetCXOAIADXConfigurationStore",
+                  "type": "DatasetReference"
+                }
+              ],
+              "outputs": [
+                {
+                  "referenceName": "DataSetCXOAICosmosConfigurationStore",
+                  "type": "DatasetReference"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "annotations": []
+  }
+}

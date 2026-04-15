@@ -1,0 +1,8 @@
+.alter table ReconciliationDataHistory policy update
+```[{"IsEnabled": true,
+    "Source": "ReconciliationData",
+    "Query": "ReconciliationData",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": true,
+    "ManagedIdentity": null
+  }]```

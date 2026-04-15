@@ -1,0 +1,21 @@
+.create-or-alter function with (folder = "ADF", docstring = "Get RatioRecords for CaseNumbers", skipvalidation = "true") GetRatioLinkageChangeFeedLocal(startTime:datetime, endtime:datetime, batch:int, correctionReason:string, index:int) {
+// let startTime=todatetime('2001-01-01');
+// let endtime=now(); 
+// let batch=100;
+// let correctionReason='';
+// let index=0;
+let skiprow=batch*index;
+let currentTime=now();
+let casenumbers=ChangeFeedPipelineRatioLinkage  |summarize arg_max(ExecutionTime,*) by CaseNumber|order by EventDateTime asc| extend rownum=row_number()|where rownum >skiprow|take batch | distinct CaseNumber;
+casenumbers 
+| join kind=inner RatioLinkageView on CaseNumber  |
+where EventDateTime between (startTime.. endtime) 
+|order by ModifiedOn asc 
+| extend UserProperties=todynamic(extract_json('$.RawProperties.UserProperties',tostring(Content)))
+| extend UserProperties= bag_merge(bag_remove_keys(UserProperties,dynamic(["EventDateTime"])),bag_pack("EventDateTime",currentTime))
+| extend RawProperties=todynamic(extract_json('$.RawProperties',tostring(Content)))
+| extend RawProperties= bag_merge(bag_remove_keys(RawProperties,dynamic(["UserProperties"])),bag_pack("UserProperties",UserProperties))
+| extend SdpInternal=bag_pack("IngestorRecievedTime",currentTime,"CornerStoneServiceBusEnqueueTime",currentTime,"CornerStoneEventhubEnqueueTime",currentTime)
+| extend Content=bag_merge(bag_remove_keys(Content,dynamic(["RawProperties","SdpInternal","createdOn","modifiedOn"])),bag_pack("RawProperties",RawProperties,"SdpInternal",SdpInternal,"createdOn",currentTime,"modifiedOn",currentTime))
+| project Key=CaseNumber,Value=tostring(Content) 
+} 

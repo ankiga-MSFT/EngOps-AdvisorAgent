@@ -1,0 +1,57 @@
+.create-merge table RawCxoAiConfigurationStore(ComponentName: string, ConfigurationName: string, Description: string, Configuration: string, DependsOn: dynamic) with (folder = "CXOAI")
+
+.create-or-alter table RawCxoAiConfigurationStore ingestion json mapping 'RawCxoAiConfigurationStoreJsonMapping'
+```
+[
+    { "column": "ComponentName",     "path": "$.ComponentName",     "datatype": "string" },
+    { "column": "ConfigurationName", "path": "$.ConfigurationName", "datatype": "string" },
+    { "column": "Description",       "path": "$.Description",       "datatype": "string" },
+    { "column": "Configuration",     "path": "$.Configuration",     "datatype": "string" },
+    { "column": "DependsOn",         "path": "$.DependsOn",         "datatype": "dynamic" }
+]
+```
+
+.create-merge table CxoAiConfigurationStore (Id: string, ComponentName: string, ConfigurationName: string, Description: string, Configuration: string, DependsOn: dynamic, ModifiedOn: datetime) with (folder = "CXOAI")
+
+.create-or-alter function with (folder = "CXOAI") CxoAiConfigurationStore_Transform() {
+    RawCxoAiConfigurationStore
+    | extend Id = strcat(ComponentName, "-", ConfigurationName)
+    | extend ModifiedOn = ingestion_time()
+    | project Id, ComponentName, ConfigurationName, Description, Configuration, DependsOn, ModifiedOn
+}
+
+.alter table CxoAiConfigurationStore policy update
+```
+[
+    {
+        "IsEnabled": true,
+        "Source": "RawCxoAiConfigurationStore",
+        "Query": "CxoAiConfigurationStore_Transform()",
+        "IsTransactional": true,
+        "PropagateIngestionProperties": true
+    }
+]
+```
+
+.create-or-alter function with (folder = "CXOAI") GetLatestConfigurations() {
+    CxoAiConfigurationStore
+    | where ModifiedOn > ago(2h)
+    | summarize arg_max(ModifiedOn, Id, ComponentName, ConfigurationName, Description, Configuration, DependsOn) by Id
+    | project Id, ComponentName, ConfigurationName, Description, Configuration, DependsOn, ModifiedOn
+}
+
+// ?? Manual ingestion of SeedData.json into RawCxoAiConfigurationStore ???????
+// SeedData.json is a JSON array ([{...}, {...}]), so use format='multijson'.
+// The update policy on CxoAiConfigurationStore will auto-fire for each row,
+// computing Id and ModifiedOn.
+
+// Option 1: From local file (Kusto Explorer ? run this command)
+ .ingest into table RawCxoAiConfigurationStore ('path/to/SeedData.json') with (format='multijson', ingestionMappingReference='RawCxoAiConfigurationStoreJsonMapping')
+
+// Option 2: From blob storage
+// .ingest into table RawCxoAiConfigurationStore ('https://<storageaccount>.blob.core.windows.net/<container>/SeedData.json;managed_identity=system') with (format='multijson', ingestionMappingReference='RawCxoAiConfigurationStoreJsonMapping')
+
+
+
+
+

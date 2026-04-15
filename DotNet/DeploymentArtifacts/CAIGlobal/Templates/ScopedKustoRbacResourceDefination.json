@@ -1,0 +1,115 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.34.44.8038",
+      "templateHash": "14102391964367035908"
+    }
+  },
+  "parameters": {
+    "PkustoClusterResourceId": {
+      "type": "string"
+    },
+    "PkustoResourceIdsPrincipleMappings": {
+      "type": "array"
+    },
+    "PdeployKustoRoleAssignment": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "deployKustoRoleAssignment": "[bool(parameters('PdeployKustoRoleAssignment'))]",
+    "jsonArray": "[parameters('PkustoResourceIdsPrincipleMappings')]",
+    "subscriptionId": "[if(variables('deployKustoRoleAssignment'), split(parameters('PkustoClusterResourceId'), '/')[2], '')]",
+    "resourceGroupName": "[if(variables('deployKustoRoleAssignment'), split(parameters('PkustoClusterResourceId'), '/')[4], '')]",
+    "clusterName": "[if(variables('deployKustoRoleAssignment'), split(parameters('PkustoClusterResourceId'), '/')[8], '')]"
+  },
+  "resources": [
+    {
+      "copy": {
+        "name": "KustoRbacResourceDefination",
+        "count": "[length(variables('jsonArray'))]",
+        "mode": "serial",
+        "batchSize": 1
+      },
+      "condition": "[variables('deployKustoRoleAssignment')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('KustoRbacResourceDefination-{0}', copyIndex())]",
+      "subscriptionId": "[variables('subscriptionId')]",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "PclusterName": {
+            "value": "[variables('clusterName')]"
+          },
+          "PkustoDatabaseName": {
+            "value": "[variables('jsonArray')[copyIndex()].kustoDatabaseName]"
+          },
+          "Pprincipleid": {
+            "value": "[variables('jsonArray')[copyIndex()].principleid]"
+          },
+          "Ptenantid": {
+            "value": "[variables('jsonArray')[copyIndex()].tenantid]"
+          },
+          "Prole": {
+            "value": "[variables('jsonArray')[copyIndex()].role]"
+          },
+          "PprincipleType": {
+            "value": "[variables('jsonArray')[copyIndex()].principleType]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.34.44.8038",
+              "templateHash": "330195942521150120"
+            }
+          },
+          "parameters": {
+            "PclusterName": {
+              "type": "string"
+            },
+            "PkustoDatabaseName": {
+              "type": "string"
+            },
+            "Pprincipleid": {
+              "type": "string"
+            },
+            "Ptenantid": {
+              "type": "string"
+            },
+            "Prole": {
+              "type": "string"
+            },
+            "PprincipleType": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Kusto/clusters/databases/principalAssignments",
+              "apiVersion": "2023-08-15",
+              "name": "[format('{0}/{1}/{2}', parameters('PclusterName'), parameters('PkustoDatabaseName'), parameters('Pprincipleid'))]",
+              "properties": {
+                "principalId": "[parameters('Pprincipleid')]",
+                "principalType": "[parameters('PprincipleType')]",
+                "role": "[parameters('Prole')]",
+                "tenantId": "[parameters('Ptenantid')]"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

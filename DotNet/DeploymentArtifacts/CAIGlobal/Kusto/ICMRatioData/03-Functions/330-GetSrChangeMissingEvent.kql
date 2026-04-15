@@ -1,0 +1,20 @@
+.create-or-alter function with (folder = "ADF", docstring = "Get Missing SRChange Linkage ", skipvalidation = "true") GetSrChangeMissingEvent(executionTime:datetime) {
+let srChangeLinkages=materialize(SRChange //IMPORTANT do join in srsnapview compartio icm and type to case number linkedICM if equal then do
+| where ChangeProperties contains "LinkedICMs" and ICMLinkChange contains "Removed" |  project CaseNumber,ICMLinkChange,LinkedICMsPrevious,LinkedICMsCurrent,EventDateTime
+| mv-expand ICMLinkChange
+| extend RemovedNumber=tostring(ICMLinkChange.Number),RemovedType=tostring(ICMLinkChange.Type),RemovedSource=tostring(ICMLinkChange.Source),RemovedDataBoundary=tostring(ICMLinkChange.DataBoundary),RemovedIncidentIdCloud=tostring(ICMLinkChange.IncidentIdCloud),RemovedLinkedDateTime=tostring(ICMLinkChange.LinkedDateTime),RemovedAction=tostring(ICMLinkChange.Action)
+| where RemovedAction =='Removed'
+| extend Key=strcat(CaseNumber,'-',EventDateTime)
+|project Key,RemovedNumber,RemovedType,RemovedSource,RemovedDataBoundary,RemovedIncidentIdCloud,RemovedLinkedDateTime,RemovedAction,LinkedICMsCurrent,LinkedICMsPrevious,CaseNumber
+|where LinkedICMsCurrent contains RemovedNumber
+|mv-expand LinkedICMsCurrent
+| extend CurrentNumber=tostring(LinkedICMsCurrent.Number),CurrentType=tostring(LinkedICMsCurrent.Type),CurrentSource=tostring(LinkedICMsCurrent.Source),CurrentDataBoundary=tostring(LinkedICMsCurrent.DataBoundary),CurrentIncidentIdCloud=tostring(LinkedICMsCurrent.IncidentIdCloud),CurrentLinkedDateTime=tostring(LinkedICMsCurrent.LinkedDateTime)
+|project-away LinkedICMsCurrent
+|project Key,RemovedNumber,CurrentNumber,RemovedType,CurrentType,RemovedSource,CurrentSource,RemovedDataBoundary,CurrentDataBoundary,RemovedIncidentIdCloud,CurrentIncidentIdCloud,RemovedLinkedDateTime,CurrentLinkedDateTime,RemovedAction,LinkedICMsPrevious,CaseNumber
+| where RemovedNumber ==CurrentNumber
+| extend IsInvalidIcm=tolong(split(RemovedIncidentIdCloud,'-')[0])
+|where isempty(IsInvalidIcm)
+|order by Key| distinct CaseNumber );
+srChangeLinkages|join kind=inner SrSnapshotView on CaseNumber | project CaseNumber,ModifiedOn,executionTime
+|order by ModifiedOn asc
+} 

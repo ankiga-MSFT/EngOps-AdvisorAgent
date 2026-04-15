@@ -1,0 +1,5 @@
+.create-or-alter function with (folder = "ADF", docstring = "Get Missing Ratio Linkage ", skipvalidation = "true") GetSrSnapshotMissingEvent(executionTime:datetime) {
+SrSnapshotView |where EventDateTime between (todatetime("2001-01-01").. executionTime) and isnotempty(State)  and iff(isempty(LinkedICMs),"[]",LinkedICMs) !="[]" 
+|order by ModifiedOn asc 
+| project CaseNumber,ModifiedOn,executionTime
+} 

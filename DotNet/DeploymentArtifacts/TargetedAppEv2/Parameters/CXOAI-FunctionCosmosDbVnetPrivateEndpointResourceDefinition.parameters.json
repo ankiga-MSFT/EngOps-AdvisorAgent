@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "PCosmosDbAccountResourceId": {
+      "value": "__CXOAI__COMMERCIAL_COSMOSDB_RESOURCE_ID__"
+    },
+    "PvnetName": {
+      "value": "__CXOAI__CREATECXOAIINFRA__DEFAULTVNETNAME__"
+    },
+    "PfunctionName": {
+      "value": "__CXOAI__CREATECXOAIINFRA__FUNCTIONNAME__"
+    },
+    "PdeployInfra": {
+      "value": "__CXOAI__DEPLOY_INFRA__"
+    },
+    "PdeployCosmosResources": {
+      "value": "__CXOAI__DEPLOY_COSMOS_RESOURCES__"
+    }
+  }
+}

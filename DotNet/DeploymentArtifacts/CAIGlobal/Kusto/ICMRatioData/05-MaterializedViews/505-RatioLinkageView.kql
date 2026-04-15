@@ -1,0 +1,3 @@
+.create-or-alter   materialized-view  with ( folder='SRICM',docString='Ratio Linkage Latest Event',autoUpdateSchema=true) RatioLinkageView on table RatioLinkage { RatioLinkage
+        | summarize arg_max(EventDateTime, *)
+        by CaseNumber } 

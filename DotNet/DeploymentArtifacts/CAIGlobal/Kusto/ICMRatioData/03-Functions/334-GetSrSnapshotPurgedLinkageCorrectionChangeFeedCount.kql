@@ -1,0 +1,5 @@
+.create-or-alter function with (folder = "ADF", docstring = "Get SrSnapshot Purged Linkage Correction Change Feed Count", skipvalidation = "true") GetSrSnapshotPurgedLinkageCorrectionChangeFeedCount(startTime:datetime, endtime:datetime, batch:int, index:int) {
+let skiprow=batch*index;
+let latestSrs=PurgedLinkageCorrectionPipelineSRs|summarize arg_max(ExecutionTime,*) by CaseNumber;
+latestSrs|order by ModifiedOn asc| extend rownum=row_number()|where rownum >skiprow|take batch| count
+}

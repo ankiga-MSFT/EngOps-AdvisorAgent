@@ -1,0 +1,5 @@
+.create-or-alter function with (folder = "ADF", docstring = "Get SRChange Change Feed Count", skipvalidation = "true") GetSRChangeChangeFeedCount(startTime:datetime, endtime:datetime, batch:int, index:int) {
+let skiprow=batch*index;
+let latestSrs=ChangeFeedPipelineSRChange|summarize arg_max(ExecutionTime,*) by CaseNumber;
+latestSrs|order by ModifiedOn asc| extend rownum=row_number()|where rownum >skiprow|take batch| count
+}

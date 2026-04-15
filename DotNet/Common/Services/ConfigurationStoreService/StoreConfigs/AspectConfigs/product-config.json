@@ -1,0 +1,2011 @@
+[
+  {
+    "Name": "get_pm_owner_details",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the PM Owner of the Product. Here PM means Product Manager.",
+    "Keywords": [
+      "pm owner",
+      "product manager",
+      "pm",
+      "product owner",
+      "who owns the product",
+      "product manager details"
+    ],
+    "Domain": "Product",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "product"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:productdetails?startDate={startDate}&endDate={endDate}&unit={unit}&view={view}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": null,
+        "Filter": "",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": false,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Product Id",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Filter by Product ID. This is automatically applied based on the entity context.",
+        "Required": true,
+        "Expression": "(ProductId eq '{value}')",
+        "Keywords": [
+          "product id",
+          "product"
+        ],
+        "SupportedEntities": [
+          "product"
+        ]
+      },
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Product entity ID (e.g., ch:product::id:GUID). ALWAYS get the value of product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "startDate",
+        "Type": "string",
+        "Description": "Start date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "endDate",
+        "Type": "string",
+        "Description": "End date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "List"
+        ],
+        "Default": "List",
+        "Description": "Type of metric view - List for PM owner details",
+        "Required": true
+      },
+      {
+        "Name": "unit",
+        "Type": "string",
+        "ValueEnums": [
+          "day",
+          "week",
+          "month"
+        ],
+        "Default": "week",
+        "Description": "Time unit for aggregation",
+        "Required": false
+      },
+      {
+        "Name": "dateOffsetInDays",
+        "Type": "integer",
+        "Default": "0",
+        "Description": "Number of days offset for date range calculation. Always 0 for this function.",
+        "Required": false
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "productsummary",
+      "MetricUIComponentMap": "pmowner",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  },
+  {
+    "Name": "get_dev_owner_details",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the Dev Owner of the Product.",
+    "Keywords": [
+      "dev owner",
+      "developer owner",
+      "dev",
+      "development owner",
+      "who develops the product",
+      "developer details"
+    ],
+    "Domain": "Product",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "product"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:productdetails?startDate={startDate}&endDate={endDate}&unit={unit}&view={view}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": null,
+        "Filter": "",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": false,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Product Id",
+        "Type": "string",
+        "ValueEnums": [],
+        "Default": "",
+        "Description": "Filter by Product ID. This is automatically applied based on the entity context.",
+        "Required": true,
+        "Expression": "(ProductId eq '{value}')",
+        "Keywords": [
+          "product id",
+          "product"
+        ],
+        "SupportedEntities": [
+          "product"
+        ]
+      },
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Product entity ID (e.g., ch:product::id:GUID). ALWAYS get the value of product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "startDate",
+        "Type": "string",
+        "Description": "Start date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "endDate",
+        "Type": "string",
+        "Description": "End date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "List"
+        ],
+        "Default": "List",
+        "Description": "Type of metric view - List for Dev owner details",
+        "Required": true
+      },
+      {
+        "Name": "unit",
+        "Type": "string",
+        "ValueEnums": [
+          "day",
+          "week",
+          "month"
+        ],
+        "Default": "week",
+        "Description": "Time unit for aggregation",
+        "Required": false
+      },
+      {
+        "Name": "dateOffsetInDays",
+        "Type": "integer",
+        "Default": "0",
+        "Description": "Number of days offset for date range calculation. Always 0 for this function.",
+        "Required": false
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "productsummary",
+      "MetricUIComponentMap": "devowner",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  },
+  {
+    "Name": "get_active_tpids",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the Total number of distinct active customers by TPID across all non-zero Consumption usage for a product.",
+    "Keywords": [
+      "active tpids",
+      "active customers",
+      "customers",
+      "tpid count",
+      "customer count",
+      "active customer count",
+      "distinct customers",
+      "metrics"
+    ],
+    "Domain": "Product",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "product"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:consumptionunits?startDate={startDate}&endDate={endDate}&unit={unit}&view={view}&aggregation={aggregation}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": null,
+        "Filter": "",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": true,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": {
+      "DefaultFields": [
+        "",
+        "Customer_TPID"
+      ],
+      "Description": "Default fields to return ",
+      "Required": true
+    },
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Product entity ID (e.g., ch:product::id:GUID). ALWAYS get the value of product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "startDate",
+        "Type": "string",
+        "Description": "Start date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "endDate",
+        "Type": "string",
+        "Description": "End date in ISO 8601 format",
+        "Required": true,
+        "ValueEnums": [],
+        "Default": ""
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "pivotedmetric",
+          "pivotedchart"
+        ],
+        "Default": "pivotedmetric",
+        "Description": "Type of metric view - pivotedmetric for metric value, pivotedchart for trend",
+        "Required": true
+      },
+      {
+        "Name": "unit",
+        "Type": "string",
+        "ValueEnums": [
+          "day",
+          "week",
+          "month"
+        ],
+        "Default": "month",
+        "Description": "Time unit for aggregation",
+        "Required": false
+      },
+      {
+        "Name": "aggregation",
+        "Type": "string",
+        "ValueEnums": [
+          "DistinctCountDimension"
+        ],
+        "Default": "DistinctCountDimension",
+        "Description": "Aggregation type for distinct count of TPIDs",
+        "Required": true
+      },
+      {
+        "Name": "dateOffsetInDays",
+        "Type": "integer",
+        "Default": "30",
+        "Description": "Number of days offset for date range calculation. If not specified, defaults to 30 days. If user specified time period like show me value for last 4 months, then it will be 120 days.",
+        "Required": false
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "consumption/usage",
+      "MetricUIComponentMap": "activetpids",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  },
+  {
+    "Name": "get_new_customer_acu_for_product",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the list of new customers for the given product id. This can also be rephrased as List down top 10 most consistently active customers that heavily use the Product.",
+    "Keywords": [
+      "new customers",
+      "new customer acu",
+      "customer acu",
+      "new active customers",
+      "recently acquired customers",
+      "new customer list",
+      "chart",
+      "trend"
+    ],
+    "Domain": "Product",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "product"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:customerchurn?view={view}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": [
+          "ThisMonthACU desc"
+        ],
+        "Filter": "(search.in(ActiveState, 'New'))",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": true,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Active State",
+        "Type": "string",
+        "ValueEnums": [
+          "New"
+        ],
+        "Default": "New",
+        "Description": "Filter for new customers only.",
+        "Required": false,
+        "Expression": "(search.in(ActiveState, '{value}'))",
+        "Keywords": [
+          "new",
+          "active state"
+        ],
+        "SupportedEntities": [
+          "product"
+        ]
+      },
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Product entity ID (e.g., ch:product::id:GUID). ALWAYS get the value of product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "list"
+        ],
+        "Default": "list",
+        "Description": "Type of metric view - list for customer list",
+        "Required": true
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "productsummary",
+      "MetricUIComponentMap": "",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  },
+  {
+    "Name": "get_likely_to_churned_customer_for_product",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the list of likely to churn customers for the given product id. This can also be rephrased as List down the top 10 to be Likely Churned customer for the Product.",
+    "Keywords": [
+      "likely to churn",
+      "churn customers",
+      "customer churn",
+      "churning customers",
+      "at risk of churn",
+      "likely churned",
+      "chart",
+      "trend"
+    ],
+    "Domain": "Product",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "product"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:customerriskpredictor?view={view}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": [
+          "ThisMonthACU desc"
+        ],
+        "Filter": "(search.in(predictedState, 'likelychurn'))",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": true,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Predicted State",
+        "Type": "string",
+        "ValueEnums": [
+          "likelychurn"
+        ],
+        "Default": "likelychurn",
+        "Description": "Filter for likely to churn customers.",
+        "Required": false,
+        "Expression": "(search.in(predictedState, '{value}'))",
+        "Keywords": [
+          "likely churn",
+          "predicted state"
+        ],
+        "SupportedEntities": [
+          "product"
+        ]
+      },
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Product entity ID (e.g., ch:product::id:GUID). ALWAYS get the value of product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "list"
+        ],
+        "Default": "list",
+        "Description": "Type of metric view - list for customer list",
+        "Required": true
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "productsummary",
+      "MetricUIComponentMap": "",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  },
+  {
+    "Name": "get_at_risk_customer_for_product",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the list of at risk customers for the given product id. This can also be rephrased as List down the top 10 at Risk customer for the Product.",
+    "Keywords": [
+      "at risk customers",
+      "risk customers",
+      "customer risk",
+      "risky customers",
+      "customers at risk",
+      "chart",
+      "trend"
+    ],
+    "Domain": "Product",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "product"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:customerriskpredictor?view={view}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": [
+          "ThisMonthACU desc"
+        ],
+        "Filter": "(search.in(predictedState, 'atrisk'))",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": true,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Predicted State",
+        "Type": "string",
+        "ValueEnums": [
+          "atrisk"
+        ],
+        "Default": "atrisk",
+        "Description": "Filter for at risk customers.",
+        "Required": false,
+        "Expression": "(search.in(predictedState, '{value}'))",
+        "Keywords": [
+          "at risk",
+          "predicted state"
+        ],
+        "SupportedEntities": [
+          "product"
+        ]
+      },
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Product entity ID (e.g., ch:product::id:GUID). ALWAYS get the value of product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "list"
+        ],
+        "Default": "list",
+        "Description": "Type of metric view - list for customer list",
+        "Required": true
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "productsummary",
+      "MetricUIComponentMap": "",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  },
+  {
+    "Name": "get_likely_to_churned_product_for_given_customer",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the list of likely to churn products for the given customer. This can also be rephrased as List down top 10 to be Likely Churned Products for the given customer.",
+    "Keywords": [
+      "likely to churn products",
+      "churn products",
+      "product churn",
+      "churning products",
+      "products at risk of churn",
+      "chart",
+      "trend"
+    ],
+    "Domain": "Product",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "customer",
+      "workload"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:customerriskpredictor?view={view}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": [
+          "ThisMonthACU desc"
+        ],
+        "Filter": "(search.in(predictedState, 'likelychurn'))",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": true,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Predicted State",
+        "Type": "string",
+        "ValueEnums": [
+          "likelychurn"
+        ],
+        "Default": "likelychurn",
+        "Description": "Filter for likely to churn products.",
+        "Required": false,
+        "Expression": "(search.in(predictedState, '{value}'))",
+        "Keywords": [
+          "likely churn",
+          "predicted state"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload"
+        ]
+      },
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Customer, Workload, or Product entity ID (e.g., ch:customer::tpid:123456 or ch:product::id:GUID). ALWAYS get the value of customer ID from get_customer_id_by_customer_name or product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "list"
+        ],
+        "Default": "list",
+        "Description": "Type of metric view - list for product list",
+        "Required": true
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "productsummary",
+      "MetricUIComponentMap": "",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  },
+  {
+    "Name": "get_at_risk_product_for_given_customer",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the list of at risk products for the given customer. This can also be rephrased as List down top 10 to be At Risk Products for the given customer.",
+    "Keywords": [
+      "at risk products",
+      "risk products",
+      "product risk",
+      "risky products",
+      "products at risk",
+      "chart",
+      "trend"
+    ],
+    "Domain": "Product",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "customer",
+      "workload"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:customerriskpredictor?view={view}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": [
+          "ThisMonthACU desc"
+        ],
+        "Filter": "(search.in(predictedState, 'atrisk'))",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": true,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Predicted State",
+        "Type": "string",
+        "ValueEnums": [
+          "atrisk"
+        ],
+        "Default": "atrisk",
+        "Description": "Filter for at risk products.",
+        "Required": false,
+        "Expression": "(search.in(predictedState, '{value}'))",
+        "Keywords": [
+          "at risk",
+          "predicted state"
+        ],
+        "SupportedEntities": [
+          "customer",
+          "workload"
+        ]
+      },
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Customer, Workload, or Product entity ID (e.g., ch:customer::tpid:123456 or ch:product::id:GUID). ALWAYS get the value of customer ID from get_customer_id_by_customer_name or product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "list"
+        ],
+        "Default": "list",
+        "Description": "Type of metric view - list for product list",
+        "Required": true
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "productsummary",
+      "MetricUIComponentMap": "",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  },
+  {
+    "Name": "get_new_product_acu_for_customer",
+    "PluginType": "AspectExecutor",
+    "Description": "Gets the list of new products for the given customer. This can also be rephrased as List down top 10 most consistently active Products that heavily used by the Customer.",
+    "Keywords": [
+      "new products",
+      "new product acu",
+      "product acu",
+      "new active products",
+      "recently adopted products",
+      "new product list",
+      "chart",
+      "trend"
+    ],
+    "Domain": "Product",
+    "IsActive": true,
+    "SupportedEntityTypes": [
+      "product"
+    ],
+    "DataSource": {
+      "SourceType": "insights",
+      "SystemUrl": "ch:aspect:customerchurn?view={view}",
+      "PayloadFormat": {
+        "Select": [],
+        "OrderBy": [
+          "ThisMonthACU desc"
+        ],
+        "Filter": "(search.in(ActiveState, 'New'))",
+        "Facets": null,
+        "Top": 10,
+        "Skip": 0,
+        "SearchText": "",
+        "IncludeTotalResultCount": true,
+        "SearchMode": "All",
+        "SearchFields": null,
+        "ScoringProfile": null,
+        "QueryType": "Full"
+      }
+    },
+    "Filters": [
+      {
+        "Name": "Active State",
+        "Type": "string",
+        "ValueEnums": [
+          "New"
+        ],
+        "Default": "New",
+        "Description": "Filter for new products only.",
+        "Required": false,
+        "Expression": "(search.in(ActiveState, '{value}'))",
+        "Keywords": [
+          "new",
+          "active state"
+        ],
+        "SupportedEntities": [
+          "product"
+        ]
+      },
+      {
+        "Name": "Subscription Id",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Id. Use when user mentions Subscription Id.",
+        "Keywords": [
+          "subscription id",
+          "subscription guid"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionGuid, '{value}', ','))",
+        "KustoExpression": "SubscriptionGuid in ({value})",
+        "BackendFilterName": "SubscriptionGuid",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Name. Use when user mentions Subscription Name.",
+        "Keywords": [
+          "Subscription Name",
+          "Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionName, '{value}', ','))",
+        "KustoExpression": "SubscriptionName in ({value})",
+        "BackendFilterName": "SubscriptionName",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Subscription Status",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Subscription Status. Use when user mentions Active Subscription or Disabled Subscription.",
+        "Keywords": [
+          "Subscription Status",
+          "Active Subscription"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload",
+          "product"
+        ],
+        "Expression": "(search.in(SubscriptionStatus, '{value}', ','))",
+        "KustoExpression": "SubscriptionStatus in ({value})",
+        "BackendFilterName": "SubscriptionStatus",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Enrollment Number",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Enrollment Number.",
+        "Keywords": [
+          "Enrollment Number",
+          "Enrollment Num"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "customer",
+          "workload"
+        ],
+        "Expression": "(search.in(EnrollmentNum, '{value}', ','))",
+        "KustoExpression": "EnrollmentNum in ({value})",
+        "BackendFilterName": "EnrollmentNum",
+        "IsGlobal": true
+      },
+      {
+        "Name": "TPID",
+        "Description": "Apply this filter when the user wants to narrow results to a specific TPID.",
+        "Keywords": [
+          "TPID",
+          "top parent id"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(TPID, '{value}', ','))",
+        "KustoExpression": "TPID in ({value})",
+        "BackendFilterName": "TPID",
+        "IsGlobal": true
+      },
+      {
+        "Name": "Customer Name",
+        "Description": "Apply this filter when the user wants to narrow results to a specific Customer Name.",
+        "Keywords": [
+          "Customer Name",
+          "Customer Friendly Name"
+        ],
+        "IsActive": true,
+        "Type": "array",
+        "Required": false,
+        "ValueEnums": [],
+        "Default": "",
+        "SupportedEntities": [
+          "product"
+        ],
+        "Expression": "(search.in(CustomerFriendlyName, '{value}', ','))",
+        "KustoExpression": "CustomerFriendlyName in ({value})",
+        "BackendFilterName": "CustomerFriendlyName",
+        "IsGlobal": true
+      }
+    ],
+    "Select": [],
+    "SelectGroupBy": [],
+    "Parameters": [
+      {
+        "Name": "entityId",
+        "Type": "string",
+        "Required": true,
+        "Description": "The Product entity ID (e.g., ch:product::id:GUID). ALWAYS get the value of product ID from get_product_id_from_product_name before proceeding"
+      },
+      {
+        "Name": "view",
+        "Type": "string",
+        "ValueEnums": [
+          "list"
+        ],
+        "Default": "list",
+        "Description": "Type of metric view - list for product list",
+        "Required": true
+      }
+    ],
+    "AdditionalMetadata": {
+      "MetricViewPath": "productsummary",
+      "MetricUIComponentMap": "",
+      "AgentPrompt": "",
+      "PostProcessingSchemaMapping": {}
+    }
+  }
+]

@@ -1,0 +1,164 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.34.44.8038",
+      "templateHash": "5491182930194041102"
+    }
+  },
+  "parameters": {
+    "PresourceIdsPrincipleMappings": {
+      "type": "array",
+      "metadata": {
+        "description": "Cosmos DB account Resource Id"
+      }
+    },
+    "PdeployCosmosRoleAssignment": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "copy": [
+      {
+        "name": "subscriptionIds",
+        "count": "[length(variables('jsonArray'))]",
+        "input": "[if(variables('deployCosmosRoleAssignment'), split(variables('jsonArray')[copyIndex('subscriptionIds')].cosmosDbAccountResourceId, '/')[2], '')]"
+      },
+      {
+        "name": "resourceGroupNames",
+        "count": "[length(variables('jsonArray'))]",
+        "input": "[if(variables('deployCosmosRoleAssignment'), split(variables('jsonArray')[copyIndex('resourceGroupNames')].cosmosDbAccountResourceId, '/')[4], '')]"
+      },
+      {
+        "name": "CosmosDbAccountNames",
+        "count": "[length(variables('jsonArray'))]",
+        "input": "[if(variables('deployCosmosRoleAssignment'), split(variables('jsonArray')[copyIndex('CosmosDbAccountNames')].cosmosDbAccountResourceId, '/')[8], '')]"
+      }
+    ],
+    "deployCosmosRoleAssignment": "[bool(parameters('PdeployCosmosRoleAssignment'))]",
+    "jsonArray": "[parameters('PresourceIdsPrincipleMappings')]"
+  },
+  "resources": [
+    {
+      "copy": {
+        "name": "grantCosmosDbRBACToFunc",
+        "count": "[length(variables('jsonArray'))]",
+        "mode": "serial",
+        "batchSize": 1
+      },
+      "condition": "[variables('deployCosmosRoleAssignment')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('FunctionCosmosDbRBAC-{0}', guid(variables('CosmosDbAccountNames')[copyIndex()], variables('jsonArray')[copyIndex()].appName, variables('jsonArray')[copyIndex()].roleDefinitionId))]",
+      "subscriptionId": "[variables('subscriptionIds')[copyIndex()]]",
+      "resourceGroup": "[variables('resourceGroupNames')[copyIndex()]]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "PprincipleId": {
+            "value": "[variables('jsonArray')[copyIndex()].principleId]"
+          },
+          "PcosmosDbAccountName": {
+            "value": "[variables('CosmosDbAccountNames')[copyIndex()]]"
+          },
+          "PcosmosDbDataRoleIds": {
+            "value": [
+              "[variables('jsonArray')[copyIndex()].roleDefinitionId]"
+            ]
+          },
+          "PappName": {
+            "value": "[variables('jsonArray')[copyIndex()].appName]"
+          },
+          "PdeploySqlAssignment": {
+            "value": "[variables('jsonArray')[copyIndex()].deploySqlAssignment]"
+          },
+          "PdeployRoleAssignment": {
+            "value": "[variables('jsonArray')[copyIndex()].deployRoleAssignment]"
+          },
+          "PcosmosDbAccountResourceId": {
+            "value": "[variables('jsonArray')[copyIndex()].cosmosDbAccountResourceId]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.34.44.8038",
+              "templateHash": "9451730749900891365"
+            }
+          },
+          "parameters": {
+            "PprincipleId": {
+              "type": "string"
+            },
+            "PcosmosDbAccountName": {
+              "type": "string"
+            },
+            "PcosmosDbDataRoleIds": {
+              "type": "array"
+            },
+            "PappName": {
+              "type": "string"
+            },
+            "PdeployRoleAssignment": {
+              "type": "string"
+            },
+            "PdeploySqlAssignment": {
+              "type": "string"
+            },
+            "PcosmosDbAccountResourceId": {
+              "type": "string",
+              "metadata": {
+                "description": "Cosmos DB account Resource Id"
+              }
+            }
+          },
+          "variables": {
+            "deployRoleAssignment": "[bool(parameters('PdeployRoleAssignment'))]",
+            "deploySqlAssignment": "[bool(parameters('PdeploySqlAssignment'))]",
+            "cosmosDbAccountReadeRoleId": "fbdf93bf-df7d-467e-a4d2-9458aa1360c8"
+          },
+          "resources": [
+            {
+              "condition": "[variables('deployRoleAssignment')]",
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2020-10-01-preview",
+              "scope": "[format('Microsoft.DocumentDB/databaseAccounts/{0}', parameters('PcosmosDbAccountName'))]",
+              "name": "[guid(format('{0}--{1}-{2}', parameters('PprincipleId'), parameters('PcosmosDbAccountName'), variables('cosmosDbAccountReadeRoleId')))]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('cosmosDbAccountReadeRoleId'))]",
+                "principalId": "[parameters('PprincipleId')]",
+                "principalType": "ServicePrincipal"
+              }
+            },
+            {
+              "copy": {
+                "name": "CosmosRoleAssignment",
+                "count": "[length(range(0, length(parameters('PcosmosDbDataRoleIds'))))]"
+              },
+              "condition": "[variables('deploySqlAssignment')]",
+              "type": "Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments",
+              "apiVersion": "2020-06-01-preview",
+              "name": "[format('{0}/{1}', parameters('PcosmosDbAccountName'), guid(format('{0}-{1}-{2}', parameters('PprincipleId'), parameters('PappName'), parameters('PcosmosDbDataRoleIds')[range(0, length(parameters('PcosmosDbDataRoleIds')))[copyIndex()]])))]",
+              "properties": {
+                "roleDefinitionId": "[format('{0}/sqlRoleDefinitions/{1}', parameters('PcosmosDbAccountResourceId'), parameters('PcosmosDbDataRoleIds')[range(0, length(parameters('PcosmosDbDataRoleIds')))[copyIndex()]])]",
+                "principalId": "[parameters('PprincipleId')]",
+                "scope": "[parameters('PcosmosDbAccountResourceId')]"
+              },
+              "dependsOn": [
+                "[extensionResourceId(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('PcosmosDbAccountName')), 'Microsoft.Authorization/roleAssignments', guid(format('{0}--{1}-{2}', parameters('PprincipleId'), parameters('PcosmosDbAccountName'), variables('cosmosDbAccountReadeRoleId'))))]"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "$schema": "https://ev2schema.azure.net/schemas/2020-04-01/RegionAgnosticRolloutSpecification.json",
+  "contentVersion": "1.0.0",
+  "rolloutMetadata": {
+    "serviceModelPath": "Public-Ppe/ServiceModel.kusto.json",
+    "scopeBindingsPath": "Public-Ppe/ScopeBindings.kusto.test.json",
+    "configuration": {
+      "serviceGroupScope": {
+        "specPath": "Public-Ppe/ConfigurationSpecification.kusto.json"
+      }
+    },
+    "name": "CAIGLOBAL-KUSTO - Complete Rollout",
+    "rolloutType": "major",
+    "buildSource": {
+      "parameters": {
+        "versionFile": "version.txt"
+      }
+    },
+    "notification": {
+      "email": {
+        "to": "duvenkatteam@microsoft.com"
+      }
+    }
+  },
+  "orchestratedSteps": [
+    {
+      "name": "StopDeployment",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "ConfigurableStopByFailureDeployment",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": []
+    },
+    {
+      "name": "DeployKustoScript",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "DeployKustoScript",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "StopDeployment"
+      ]
+    },
+    {
+      "name": "EventhubConsumerGroup",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "ScopedEventhubConsumerGroup",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "StopDeployment"
+      ]
+    },
+    {
+      "name": "KustoClusterManagedPrivateEndpoint",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "ScopedKustoClusterManagedPrivateEndpoint",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "StopDeployment"
+      ]
+    },
+    {
+      "name": "AssignCosmosDbRoles",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "ScopedAssignCosmosDbRoles",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "StopDeployment"
+      ]
+    },
+    {
+      "name": "EventhubRolesAssignment",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "ScopedEventhubRolesAssignment",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "StopDeployment"
+      ]
+    },
+    {
+      "name": "KustoClusterRbac",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "ScopedKustoClusterRbac",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "DeployKustoScript"
+      ]
+    },
+    {
+      "name": "KustoClusterDataConnection",
+      "targetType": "ServiceResourceDefinition",
+      "targetName": "ScopedKustoClusterDataConnection",
+      "actions": [
+        "deploy"
+      ],
+      "dependsOn": [
+        "AssignCosmosDbRoles",
+        "DeployKustoScript",
+        "EventhubConsumerGroup",
+        "EventhubRolesAssignment",
+        "KustoClusterManagedPrivateEndpoint"
+      ]
+    }
+  ]
+}

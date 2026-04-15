@@ -1,0 +1,19 @@
+.create-or-alter table RatioLinkage ingestion json mapping "RatioLinkage_mapping"
+```
+[
+  {"column":"CaseNumber","Properties":{"path":"$.Content.CaseNumber","datatype":"string"}},
+  {"column":"Linkages","Properties":{"path":"$.Content.Linkages","datatype":"dynamic"}},
+  {"column":"EventType","Properties":{"path":"$.EventType","datatype":"string"}},
+  {"column":"EntityType","Properties":{"path":"$.RawProperties.UserProperties.EntityType","datatype":"string"}},
+  {"column":"EntityAction","Properties":{"path":"$.RawProperties.UserProperties.EntityAction","datatype":"string"}},
+  {"column":"EntityEventDateTime","Properties":{"path":"$.RawProperties.UserProperties.EventDateTime","datatype":"datetime"}},
+  {"column":"EntityID","Properties":{"path":"$.RawProperties.UserProperties.EntityID","datatype":"string"}},
+  {"column":"CreatedBy","Properties":{"path":"$.createdBy","datatype":"string"}},
+  {"column":"ModifiedBy","Properties":{"path":"$.modifiedBy","datatype":"string"}},
+  {"column":"CreatedOn","Properties":{"path":"$.createdOn","datatype":"datetime"}},
+  {"column":"ModifiedOn","Properties":{"path":"$.modifiedOn","datatype":"datetime"}},
+  {"column":"EventDateTime","Properties":{"path":"$.SdpInternal.CornerStoneServiceBusEnqueueTime","datatype":"datetime"}},
+  {"column":"CosmosDbTs","Properties":{"path":"$._ts","datatype":"long"}},
+  {"column":"Content","Properties":{"path":"$","datatype":"dynamic"}}
+]
+```
