@@ -26,10 +26,19 @@ project = "One"
 repositories = ["EngOps-CXObserve-AI"]
 branch = "Staging"
 
+[mcps.servers.github]
+type = "http"
+url = "https://api.githubcopilot.com/mcp/"
+
 [mcps.servers.enghub]
 type = "stdio"
 command = "enghub-mcp"
 args = ["start"]
+
+[mcps.servers.drawio]
+type = "stdio"
+command = "npx"
+args = ["-y", "@drawio/mcp"]
 
 [marketplaces]
 # Restrict the Agency service to only these marketplace sources
@@ -47,8 +56,7 @@ default = [
     "market:s360-breeze-toolkit@agency-microsoft/.github-private",
     "market:deep-review@agency-microsoft/playground",
     "market:deep-wiki@agency-microsoft/.github-private",
-    "market:plugin-eval@agency-microsoft/.github-private",
-    "local:./plugins/placeholder"
+    "market:plugin-eval@agency-microsoft/.github-private"
 ]
 
 # Block these plugins on service-side runs

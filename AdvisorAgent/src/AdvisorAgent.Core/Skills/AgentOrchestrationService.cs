@@ -171,7 +171,18 @@ public sealed class AgentOrchestrationService : IAgentOrchestrationService
             Decompose the user's request into a list of tasks. Each task uses exactly one skill.
             Tasks may depend on prior tasks (by 0-based index).
             Return a JSON array: [{ "task": "...", "skillName": "...", "dependsOn": [int] }]
-            Only use skills from the list above. Keep the plan minimal.
+            Only use skills from the list above.
+
+            IMPORTANT: Keep the plan strictly focused on what the user explicitly asked for.
+            Do NOT speculatively add skills that seem tangentially related.
+            For example, if the user asks about cost optimization, only use CostOptimizationSkill — do NOT add RetirementSkill unless the user specifically mentioned retirements or migrations.
+            Each skill should be included only if the user's request directly requires its capabilities.
+            
+            CRITICAL: Each skill must appear AT MOST ONCE in the plan. Never create multiple tasks for the same skill.
+            Each skill is self-contained — it handles discovery, analysis, and action plan generation internally via its own tools.
+            Do NOT break a single skill's work into multiple tasks (e.g., do NOT create separate "find resources" and "generate plan" tasks for the same skill).
+            
+            Prefer fewer tasks over more.
             """,
             conversationHistory,
             prompt);
@@ -475,7 +486,10 @@ public sealed class AgentOrchestrationService : IAgentOrchestrationService
         <analysis of findings>
         
         ## Recommendations  
-        <table or list of specific recommendations with severity/impact>
+        <table of specific recommendations>
+        CRITICAL: Every Recommendations table MUST include a "Resource ID" column containing the full ARM resource ID (e.g. /subscriptions/.../resourceGroups/.../providers/...) for each affected resource.
+        The table MUST also include columns for Resource Type, Recommendation, and Impact at minimum.
+        Never summarize or omit resource IDs — the user needs them to take action.
         
         ## Action Plan
         <numbered prioritized steps>

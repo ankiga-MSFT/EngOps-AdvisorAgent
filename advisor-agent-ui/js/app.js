@@ -86,11 +86,12 @@
   // Back button
   document.getElementById('backBtn').addEventListener('click', goBack);
 
-  // Reasoning header toggle
-  document.getElementById('reasoningHeader').addEventListener('click', () => {
-    const header = document.getElementById('reasoningHeader');
-    header.classList.toggle('expanded');
-    document.getElementById('reasoningSteps').classList.toggle('open');
+  // Reasoning header toggle (FAI Chain of Thought)
+  document.getElementById('cotToggle').addEventListener('click', () => {
+    const toggle = document.getElementById('cotToggle');
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    document.getElementById('cotCard').classList.toggle('open');
   });
 
   // Follow-up click handler
@@ -173,6 +174,7 @@
       });
     } else if (data.isSuccess && data.response) {
       UI.showAnswer(data.response);
+      UI.showFeedbackButtons();
       generateFollowups(data.response);
     } else {
       UI.showError(data.response || 'The agent could not complete your request.');
@@ -198,46 +200,88 @@
       });
     } else if (output.isSuccess && output.response) {
       UI.showAnswer(output.response);
+      UI.showFeedbackButtons();
       generateFollowups(output.response);
     } else {
       UI.showError(output.response || 'The agent could not complete your request.');
     }
   }
 
+  // ── Skill-catalog-driven follow-ups ─────────────────
+  // Each entry maps to a supported skill in skills.json so follow-ups
+  // always invoke scenarios the backend can handle.
+  const SKILL_FOLLOWUPS = {
+    RetirementSkill: {
+      detect: ['retir', 'migration', 'migrate', 'sunset', 'deprecat'],
+      suggestions: [
+        'Show retiring resources and migration timelines for my subscriptions',
+        'Create a prioritized migration plan for critical retirements'
+      ]
+    },
+    OutageRemediationSkill: {
+      detect: ['outage', 'incident', 'bcdr', 'remediat', 'service health'],
+      suggestions: [
+        'Analyze recent outages and recommend remediation steps',
+        'Identify monitoring and alerting gaps for my workload'
+      ]
+    },
+    ResiliencySkill: {
+      detect: ['resilien', 'reliab', 'availability', 'failover', 'redundan'],
+      suggestions: [
+        'Assess my workload resiliency posture and score',
+        'Show reliability recommendations with score impact'
+      ]
+    },
+    CostOptimizationSkill: {
+      detect: ['cost', 'saving', 'spend', 'optimi', 'underutil'],
+      suggestions: [
+        'Identify cost-saving opportunities across my subscriptions',
+        'Estimate total potential savings and create an optimization plan'
+      ]
+    },
+    ArchitectureSkill: {
+      detect: ['architecture', 'well-architect', 'moderniz', 'container', 'design'],
+      suggestions: [
+        'Review my architecture against the Well-Architected Framework',
+        'Compare modernization options for my workload'
+      ]
+    }
+  };
+
   function generateFollowups(responseText) {
-    const followups = [];
     const lower = responseText.toLowerCase();
 
-    if (lower.includes('retir') || lower.includes('migration') || lower.includes('migrate')) {
-      followups.push('Help me create a detailed migration plan for the most critical retiring resource');
-      followups.push('Show me the timeline for all upcoming retirements');
-    }
-    if (lower.includes('cost') || lower.includes('saving') || lower.includes('spend')) {
-      followups.push('Show me the detailed breakdown of underutilized resources');
-      followups.push('Help me create a cost optimization report for leadership');
-    }
-    if (lower.includes('resilien') || lower.includes('reliab') || lower.includes('availability')) {
-      followups.push('Help me implement the quick wins to improve resiliency');
-      followups.push('Design a multi-region failover architecture');
-    }
-    if (lower.includes('outage') || lower.includes('incident') || lower.includes('bcdr')) {
-      followups.push('Help me configure Service Health alerts for production');
-      followups.push('Set up chaos engineering experiments for my workload');
-    }
-    if (lower.includes('architecture') || lower.includes('container') || lower.includes('moderniz')) {
-      followups.push('Generate a detailed migration plan to Azure Container Apps');
-      followups.push('Estimate cost differences between current and recommended architecture');
-    }
-    if (lower.includes('service group')) {
-      followups.push('Fix the critical issues in the lowest scoring service group');
-      followups.push('Generate a reliability improvement plan for all service groups');
+    // Detect which skills were already covered in this response
+    const coveredSkills = new Set();
+    for (const [skill, cfg] of Object.entries(SKILL_FOLLOWUPS)) {
+      if (cfg.detect.some(kw => lower.includes(kw))) {
+        coveredSkills.add(skill);
+      }
     }
 
-    // Default follow-ups if nothing specific matched
+    // Suggest follow-ups from skills NOT already covered (explore other scenarios)
+    const followups = [];
+    for (const [skill, cfg] of Object.entries(SKILL_FOLLOWUPS)) {
+      if (!coveredSkills.has(skill)) {
+        followups.push(cfg.suggestions[0]);
+      }
+    }
+
+    // If all skills were covered or few remain, offer deeper-dive follow-ups
+    // from the skills that WERE covered
+    if (followups.length < 2) {
+      for (const [skill, cfg] of Object.entries(SKILL_FOLLOWUPS)) {
+        if (coveredSkills.has(skill) && cfg.suggestions.length > 1) {
+          followups.push(cfg.suggestions[1]);
+        }
+      }
+    }
+
+    // Fallback: always have at least one actionable follow-up
     if (followups.length === 0) {
-      followups.push('Tell me more about the recommendations');
-      followups.push('How do I implement the suggested action plan?');
-      followups.push('What are the risks if I don\'t act on these recommendations?');
+      followups.push('Assess my workload resiliency posture and score');
+      followups.push('Identify cost-saving opportunities across my subscriptions');
+      followups.push('Show retiring resources and migration timelines for my subscriptions');
     }
 
     UI.showFollowups(followups.slice(0, 4));

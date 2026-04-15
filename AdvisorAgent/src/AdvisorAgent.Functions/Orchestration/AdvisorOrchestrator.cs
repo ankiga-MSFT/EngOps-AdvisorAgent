@@ -210,30 +210,81 @@ public static class AdvisorOrchestrator
                     i, t.Task, t.SkillName, string.Join(", ", t.DependsOn));
             }
 
-            // Step 5: Execute skills via sub-orchestrator
-            logger.LogInformation("━━━ Step 5/5: SkillExecution (sub-orchestrator) ━━━");
-            var subInput = new SkillExecutionSubInput
+            // Step 5: Execute skills (inlined for granular progress reporting)
+            logger.LogInformation("━━━ Step 5/5: SkillExecution ━━━");
+
+            // Build skill definition lookup for tool-level progress messages
+            var skillDefMap = skillDefs.ToDictionary(s => s.SkillName);
+
+            var outputs = new Dictionary<int, string>();
+            var allResponses = new StringBuilder();
+
+            foreach (int taskIndex in executionOrder)
             {
-                Prompt = input.Prompt,
-                AzureContextSummary = contextSummary,
-                TaskPlan = taskPlan.Select(t => new TaskPlanItemDto
+                var task = taskPlan[taskIndex];
+                var skillStepName = $"ExecuteSkill:{task.SkillName}";
+
+                // Publish: preparing skill prompt
+                var toolNames = skillDefMap.TryGetValue(task.SkillName, out var def)
+                    ? string.Join(", ", def.Tools.Select(t => t.Name.Split('-', 2).Last()))
+                    : "";
+                var toolHint = string.IsNullOrEmpty(toolNames) ? "" : $" (tools: {toolNames})";
+                await PublishStatus(context, input, skillStepName, "Running",
+                    $"Preparing {task.SkillName} — {task.Task}...{toolHint}");
+                logger.LogInformation("━━━ Step 5: Task[{Index}] \"{Task}\" → {Skill} ━━━", taskIndex, task.Task, task.SkillName);
+
+                // Collect upstream outputs from dependencies
+                var upstreamOutputs = new StringBuilder();
+                foreach (int dep in task.DependsOn)
                 {
-                    Task = t.Task,
-                    SkillName = t.SkillName,
-                    DependsOn = t.DependsOn
-                }).ToList(),
-                ExecutionOrder = executionOrder,
-                SessionId = input.SessionId,
-                AccessToken = input.AccessToken,
-                ConversationHistory = historyDtos
-            };
+                    if (outputs.TryGetValue(dep, out var depOutput))
+                    {
+                        upstreamOutputs.AppendLine($"[{taskPlan[dep].Task}]: {depOutput}");
+                    }
+                }
 
-            var subResult = await context.CallSubOrchestratorAsync<SubOrchestratorResult>(
-                nameof(SkillExecutionSubOrchestrator), subInput);
+                // Generate skill-specific prompt
+                var skillPrompt = await context.CallActivityAsync<string>(
+                    nameof(AdvisorActivities.GenerateSkillPromptActivity),
+                    new GenerateSkillPromptInput
+                    {
+                        TaskLabel = task.Task,
+                        SkillDescription = task.SkillName,
+                        ExpectedInput = string.Empty,
+                        AzureContextSummary = contextSummary,
+                        UpstreamOutputs = upstreamOutputs.ToString(),
+                        OriginalPrompt = input.Prompt,
+                        ConversationHistory = historyDtos
+                    });
 
-            var finalResponse = subResult.IsSuccess
-                ? AdvisorAgentResponse.Success(subResult.AggregatedResponse)
-                : AdvisorAgentResponse.Failure(subResult.AggregatedResponse);
+                // Publish: executing skill (now invoking ARM APIs)
+                await PublishStatus(context, input, skillStepName, "Running",
+                    $"Executing {task.SkillName} — invoking Azure APIs...{toolHint}");
+
+                // Execute skill
+                var result = await context.CallActivityAsync<SkillExecutionResult>(
+                    nameof(AdvisorActivities.ExecuteSkillActivity),
+                    new ExecuteSkillInput
+                    {
+                        SkillName = task.SkillName,
+                        Prompt = skillPrompt,
+                        SessionId = input.SessionId,
+                        AccessToken = input.AccessToken
+                    });
+
+                outputs[taskIndex] = result.Response;
+
+                if (allResponses.Length > 0) allResponses.AppendLine("\n---\n");
+                allResponses.AppendLine(result.Response);
+
+                // Publish: skill completed
+                await PublishStatus(context, input, skillStepName, "Completed",
+                    $"{task.SkillName} completed.");
+                logger.LogInformation("━━━ Step 5: Task[{Index}] ({Skill}): {Status}, {Length} chars ━━━",
+                    taskIndex, task.SkillName, result.IsSuccess ? "SUCCESS" : "FAILED", result.Response.Length);
+            }
+
+            var finalResponse = AdvisorAgentResponse.Success(allResponses.ToString());
 
             logger.LogInformation("╔══════════════════════════════════════════════════════════════╗");
             logger.LogInformation("║  ADVISOR ORCHESTRATION COMPLETED                            ║");
@@ -255,82 +306,6 @@ public static class AdvisorOrchestrator
             await PublishCompleted(context, input, error);
             return error;
         }
-    }
-
-    [Function(nameof(SkillExecutionSubOrchestrator))]
-    public static async Task<SubOrchestratorResult> SkillExecutionSubOrchestrator(
-        [OrchestrationTrigger] TaskOrchestrationContext context)
-    {
-        var input = context.GetInput<SkillExecutionSubInput>()
-            ?? throw new ArgumentNullException("input", "Sub-orchestrator input is required");
-
-        var logger = context.CreateReplaySafeLogger(nameof(SkillExecutionSubOrchestrator));
-        var outputs = new Dictionary<int, string>();
-        var allResponses = new StringBuilder();
-
-        logger.LogInformation("[SubOrchestrator] Starting — {TaskCount} tasks to execute in order: [{Order}]",
-            input.TaskPlan.Count, string.Join(" → ", input.ExecutionOrder));
-
-        foreach (int taskIndex in input.ExecutionOrder)
-        {
-            var task = input.TaskPlan[taskIndex];
-
-            logger.LogInformation("[SubOrchestrator] ── Executing Task[{Index}]: \"{Task}\" (Skill: {Skill}) ──",
-                taskIndex, task.Task, task.SkillName);
-
-            // Collect upstream outputs from dependencies
-            var upstreamOutputs = new StringBuilder();
-            foreach (int dep in task.DependsOn)
-            {
-                if (outputs.TryGetValue(dep, out var depOutput))
-                {
-                    upstreamOutputs.AppendLine($"[{input.TaskPlan[dep].Task}]: {depOutput}");
-                    logger.LogInformation("[SubOrchestrator]   Using upstream output from Task[{Dep}]: {Length} chars", dep, depOutput.Length);
-                }
-            }
-
-            // Generate skill-specific prompt
-            var skillPrompt = await context.CallActivityAsync<string>(
-                nameof(AdvisorActivities.GenerateSkillPromptActivity),
-                new GenerateSkillPromptInput
-                {
-                    TaskLabel = task.Task,
-                    SkillDescription = task.SkillName,
-                    ExpectedInput = string.Empty,
-                    AzureContextSummary = input.AzureContextSummary,
-                    UpstreamOutputs = upstreamOutputs.ToString(),
-                    OriginalPrompt = input.Prompt,
-                    ConversationHistory = input.ConversationHistory
-                });
-
-            // Execute skill
-            var result = await context.CallActivityAsync<SkillExecutionResult>(
-                nameof(AdvisorActivities.ExecuteSkillActivity),
-                new ExecuteSkillInput
-                {
-                    SkillName = task.SkillName,
-                    Prompt = skillPrompt,
-                    SessionId = input.SessionId,
-                    AccessToken = input.AccessToken
-                });
-
-            outputs[taskIndex] = result.Response;
-
-            if (allResponses.Length > 0) allResponses.AppendLine("\n---\n");
-            allResponses.AppendLine(result.Response);
-
-            logger.LogInformation("[SubOrchestrator] ── Task[{Index}] ({SkillName}): {Status}, ResponseLength: {Length} chars ──",
-                taskIndex, task.SkillName, result.IsSuccess ? "SUCCESS" : "FAILED", result.Response.Length);
-        }
-
-        logger.LogInformation("[SubOrchestrator] All {Count} tasks completed — Total response: {Length} chars",
-            input.ExecutionOrder.Count, allResponses.Length);
-
-        return new SubOrchestratorResult
-        {
-            IsSuccess = true,
-            AggregatedResponse = allResponses.ToString()
-        };
     }
 
     // ── Status publishing helpers ─────────────────────────
